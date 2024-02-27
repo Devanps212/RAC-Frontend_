@@ -33,7 +33,7 @@ export const userLogin = async(payload : signInPayload):Promise<any>=>
 {
     try{
         const config:AxiosRequestConfig={
-            url: apiConfig.otpGenerate,
+            url: apiConfig.userSignIn,
             method:'post',
             data:payload
         }
@@ -44,34 +44,43 @@ export const userLogin = async(payload : signInPayload):Promise<any>=>
         console.log(error.message)
     }
 }
-export const otpGenerate = async()=>{
+export const otpGenerate = async(input : signInPayload | string)=>{
     try{
-        const userData = JSON.parse(sessionStorage.getItem('UserData') || '{}');
+        let payload : signInPayload
+        if(typeof input === 'string')
+        {
+            payload = {email : input, password : ''}
+        }
+        else
+        {
+            payload = input
+        }
         const otp: AxiosRequestConfig = {
             url:apiConfig.otpGenerate,
             method:'post',
-            data:userData
+            data:payload
         }
         const response:AxiosResponse = await axios(otp)
         console.log("return response = ",response)
         return response.data
     }
-    catch(error)
+    catch(error:any)
     {
         throw new Error(error.message)
     }
 }
 export const otpVer = async(otp:string)=>{
+
+        const storedSecret = sessionStorage.getItem('otpSecret');
+        const parsedSecret = storedSecret ? JSON.parse(storedSecret) : null;
     try
     {
+        console.log("otp passing :", otp)
         console.log("reached otpVer passing")
-        const userData = JSON.parse(sessionStorage.getItem('UserData') || '{}')
-        const sample = JSON.parse(sessionStorage.getItem('samp') || '')
-        console.log("userData", userData, "sample :", sample)
         const otpConfig : AxiosRequestConfig = {
             url:apiConfig.otpVerify,
             method:'post',
-            data:{otp, userData, sample}
+            data:{otp, secret: parsedSecret}
         }
 
         console.log(otpConfig)
@@ -80,7 +89,7 @@ export const otpVer = async(otp:string)=>{
         console.log("Response reurns from otpver",response.data)
         return response.data
     }
-    catch(error)
+    catch(error:any)
     {
         throw new Error(error.message)
     }

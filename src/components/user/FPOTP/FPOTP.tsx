@@ -1,3 +1,4 @@
+import React from 'react';
 import { useEffect, useState } from 'react';
 import './FPOTP.css'
 
@@ -6,7 +7,7 @@ const Fpotp = () => {
   const [email, setEmail] = useState('')
   const [error, setError] = useState('')
 
-  const handleSubmit = (e)=>{
+  const handleSubmit = (e:React.FormEvent)=>{
 
     e.preventDefault()
     let isValid = true

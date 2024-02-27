@@ -1,8 +1,9 @@
 import React, { useState } from 'react';
 import './login.css'
+import { toast } from 'react-toastify';
 import { Link } from 'react-router-dom';
 import { signInPayload } from '../../../types/payloadInterface';
-import { userLogin } from '../../../features/axios/api/user/userAuthentication';
+import { otpGenerate } from '../../../features/axios/api/user/userAuthentication';
 import { useNavigate } from 'react-router-dom';
 
 const UserLogin = () => {
@@ -92,24 +93,30 @@ const UserLogin = () => {
             if(isValid)
             {
               console.log("Everything is valid")
-                await userLogin(formData)
-                .then((response)=>{
-                  if(response.status == "success")
-                  {
-                    console.log(response)
-                    sessionStorage.setItem('UserData',JSON.stringify(response.checkUser))
-                    console.log("Going to OTP")
-                    navigate('/users/OTP')
-                  }
-                })
-                .catch((error:any)=>{
-                  console.log(error.message)
-                })
+              sessionStorage.setItem('user', JSON.stringify(formData));
+              await otpGenerate(formData)
+              .then((response) => {
+                if (response.status === "success") {
+                  console.log(response.OTP);
+                  toast.success(response.message);
+                  console.log("reading secret");
+                  console.log("read secret");
+                  sessionStorage.setItem('otp', JSON.stringify(response.OTP));
+                  setTimeout(() => {
+                    navigate('/users/OTP');
+                  }, 2000);
+                }
+              })
+              .catch((error) => {
+                console.log(error.message);
+                toast.error(error.message);
+              });
             }
 
       }
-      catch(error){
+      catch(error:any){
         console.log(error)
+        toast.error(error.message)
       }
 
     }

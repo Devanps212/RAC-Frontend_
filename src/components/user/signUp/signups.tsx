@@ -3,8 +3,9 @@ import './signup.css'
 import { useState} from 'react'
 import { Link } from 'react-router-dom'
 import { signUpPayload } from '../../../types/payloadInterface'
-import { userSignUp } from '../../../features/axios/api/user/userAuthentication'
+import { otpGenerate, userSignUp } from '../../../features/axios/api/user/userAuthentication'
 import { useNavigate } from 'react-router-dom'
+import { toast } from 'react-toastify'
 
 const SignUp = ()=>{
     
@@ -110,16 +111,41 @@ const SignUp = ()=>{
             }
             if(isValid)
             {
-            await userSignUp(formData)
-            .then((response:any)=>{
-              console.log("user registered successfully")
-              setTimeout(()=>{
-                navigate('/users/signIn')
-              }, 2000)
-            })
-            .catch((error:any)=>{
-              console.log("not successfull")
-            })
+              console.log("passing request for otp")
+              await otpGenerate(email)
+              .then((response:any)=>{
+                if(response.code == 200 )
+                {
+                  const userData = {
+                    name:name,
+                    email:email,
+                    mobile:mobile,
+                    password:password,
+                    otp:response.OTP
+                  }
+                  console.log(userData)
+                  console.log(response)
+                  sessionStorage.setItem('usersDetails', JSON.stringify(userData))
+                  toast.success(response.message)
+                  navigate('/users/signIn')
+                }
+              })
+              .catch((error:any)=>{
+                toast.error(error.message)
+                  console.log("not successfull")
+                })
+            // await userSignUp(formData)
+            // .then((response:any)=>{
+            //   console.log("user registered successfully")
+            //   console.log(response)
+            //   toast.success(response.message)
+            //   setTimeout(()=>{
+            //     navigate('/users/signIn')
+            //   }, 920)
+            // })
+            // .catch((error:any)=>{
+            //   console.log("not successfull")
+            // })
           }
 
           
@@ -180,7 +206,6 @@ const SignUp = ()=>{
                         className={`form-control rounded-md border ${errors.mobile ? 'border-danger' : 'border-gray-300'} focus:border-purple-700 focus:outline-none focus:ring-1 focus:ring-purple-700 py-1 px-1.5 text-gray-500`}
                         style={{ boxShadow: "inset 2px 2px 7px -3px grey" }}
                         onChange={(e) => setFormdata({ ...formData, mobile: parseInt(e.target.value) })}
-                        inputMode='numeric'
                       />
                       {errors.mobile && (
                         <p className="text-danger text-xs mt-2">{errors.mobile}</p>

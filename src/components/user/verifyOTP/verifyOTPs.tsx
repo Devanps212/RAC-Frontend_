@@ -2,71 +2,124 @@ import React from 'react';
 import { useEffect, useState } from 'react';
 import './verifyOTPs.css'
 import { otpGenerate, otpVer } from '../../../features/axios/api/user/userAuthentication';
-import { useNavigate } from 'react-router-dom'; 
-import { HttpStatusCode } from 'axios';
+import { useNavigate } from 'react-router-dom';
+import { userLogin } from '../../../features/axios/api/user/userAuthentication';
+import { toast } from 'react-toastify';
+import { setToken } from '../../../features/axios/redux/slices/user/tokenSlice';
+import { useDispatch, useSelector } from 'react-redux';
+import { RootState } from '../../../features/axios/redux/reducers/reducer';
+import { loginSuccess } from '../../../features/axios/redux/slices/user/userLoginAuthSlice';
 
 const Votp = () => {
   const navigate = useNavigate();
   const [otp, setOTP] = useState('');
+  const [totp, setTotp] = useState(sessionStorage.getItem('otp'));
   const [timer, setTimer] = useState(60);
   const [error, setError] = useState('');
-  const [isFormSubmitted, setIsFormSubmitted] = useState(false); // New state variable
+  const token = sessionStorage.getItem('token')
+  const dispatch = useDispatch()
+  const isLoggedIn = useSelector((state:RootState)=>state.userAuth.isLoggedIn)
 
-  const fetchOTP = async () => {
-    try {
-      await otpGenerate()
-      .then((response)=>{
-        console.log("generate response : ",response)
-        if(response.status == 'success')
-        {
-          sessionStorage.setItem('samp', JSON.stringify(response.result))
-          console.log("otp :",response.result)
-        }
-        else
-        {
-          console.log("otp fetch failed")
-        }
-      })
-    } catch (error) {
-      console.error('Error generating OTP:', error.message);
-    }
-  };
-
-  useEffect(() => {
-    console.log('otp fetched');
-
-    if (!isFormSubmitted) {
-      fetchOTP();
+    useEffect(() => {
       const intervalId = setInterval(() => {
-        setTimer((Sec: number) => (Sec > 0 ? Sec - 1 : 0));
+        setTimer((prevTimer) => (prevTimer > 0 ? prevTimer - 1 : 0));
       }, 1000);
 
-      return () => clearInterval(intervalId);
-    }
-  }, [isFormSubmitted]); 
-
-  const ResetTimer = () => {
-    setTimer(60);
-    setIsFormSubmitted(false);
-    fetchOTP() // Reset the form submission state
-  };
-
-  const otpVerify = async (e: React.FormEvent) => {
-    try {
-      e.preventDefault();
-      console.log("otp passing")
-      await otpVer(otp).then((response: any) => {
-        console.log(response);
-        if (response.OTPver === true) {
-          const token = response.token;
-          navigate('/users/home');
-          setIsFormSubmitted(true); // Set the form submission state to true
+      return () => {
+        clearInterval(intervalId);
+        if (timer === 0) {
+          setTotp(null);
         }
-      });
-    } catch (error) {
-      console.error('Error generating OTP:', error.message);
-    }
-  };
+      };
+    }, [timer]);
+    useEffect(()=>{
+      if(token)
+      {
+        dispatch(loginSuccess())
+      }
+      if(isLoggedIn == true)
+      {
+        navigate('/users/home')
+      }
+    }, [])
+
+    const storedData = sessionStorage.getItem('user');
+    const formData = storedData ? JSON.parse(storedData) : null;
+
+    const fetchNewOTP = async () => {
+      try {
+        const response = await otpGenerate(formData);
+        if (response.status === 'success') {
+          setTotp(response.OTP);
+          setTimer(60);
+          toast.success('New OTP generated successfully');
+        } else {
+          toast.error('Error generating OTP');
+        }
+      } catch (error:any) {
+        console.error('Error generating OTP:', error.message);
+        toast.error(error.message);
+      }
+    };
+
+    const ResetTimer = () => {
+      setTimer(60);
+      fetchNewOTP();
+    };
+
+    const otpVerify = async (e: React.FormEvent) => {
+      try {
+        
+        e.preventDefault();
+        console.log(timer)
+        if(timer == 0)
+        {
+          setTotp(null)
+          return toast.error('Otp is invalid')
+        }
+        console.log('otp passing');
+        console.log('otp', otp);
+        console.log('totp', totp)
+        if(totp != null)
+        {
+          console.log()
+          const onetime = totp.replace(/[^0-9]/g, '');
+
+          if (onetime === otp) 
+          {
+            //  find a way to pass otp for signup
+            toast.success('OTP is valid');
+            await userLogin(formData)
+            .then((response)=>{
+              console.log(response)
+              sessionStorage.removeItem('user')
+              sessionStorage.removeItem('otp')
+              if(response.status == 'success')
+              {
+                const token = response.token
+                dispatch(setToken(token))
+                dispatch(loginSuccess())
+                toast.success('login success')
+                setTimeout(()=>{
+                  navigate('/users/home')
+                }, 1000)
+              }
+              else
+              {
+                toast.error("otp validation failed")
+              }
+            })
+          } 
+          else 
+          {
+            toast.error('Incorrect OTP');
+          }
+        }
+      } catch (error:any) {
+        console.error('Error verifying OTP:', error.message);
+        toast.error(error.message);
+      }
+    };
 
   
 
@@ -99,11 +152,12 @@ const Votp = () => {
                   (<p className='text-center text-success'>OTP Timeout</p>)}
 
                 </div>
-
+                { timer == 0 &&
                 <div className="text-center">
                     <span className="text-xs text-gray-400 font-semibold">Didnt Get any OTP ?</span>
                     <a href="#" className="text-xs font-semibold text-purple-700" onClick={ResetTimer}>Resend OTP</a>
                 </div>
+                }
                 <br/>
                 {error && <p className="text-center text-danger">{error}</p>}
                 

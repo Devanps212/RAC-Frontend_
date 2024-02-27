@@ -1,6 +1,6 @@
 export interface signInPayload{
     email:string,
-    password:string
+    password:string,
 }
 
 export interface signUpPayload extends signInPayload{

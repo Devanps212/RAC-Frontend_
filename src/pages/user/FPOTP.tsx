@@ -1,3 +1,4 @@
+import React from "react";
 import Fpotp from "../../components/user/FPOTP/FPOTP";
 
 const FpOTP = ()=>{
