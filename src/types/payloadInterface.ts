@@ -5,7 +5,7 @@ export interface signInPayload{
 
 export interface signUpPayload extends signInPayload{
     name:string,
-    mobile:number
+    Cpassword?:string,
 }
 export interface userDetailPayload extends Address{
     name:string,

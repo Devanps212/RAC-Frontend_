@@ -9,6 +9,7 @@ import { setToken } from '../../../features/axios/redux/slices/user/tokenSlice';
 import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from '../../../features/axios/redux/reducers/reducer';
 import { loginSuccess } from '../../../features/axios/redux/slices/user/userLoginAuthSlice';
+import { CheckPurpose, fetchOTP } from '../../../services/otpService';
 
 const Votp = () => {
   const navigate = useNavigate();
@@ -42,19 +43,18 @@ const Votp = () => {
         navigate('/users/home')
       }
     }, [])
-
-    const storedData = sessionStorage.getItem('user');
-    const formData = storedData ? JSON.parse(storedData) : null;
+  
 
     const fetchNewOTP = async () => {
       try {
-        const response = await otpGenerate(formData);
-        if (response.status === 'success') {
-          setTotp(response.OTP);
-          setTimer(60);
-          toast.success('New OTP generated successfully');
-        } else {
-          toast.error('Error generating OTP');
+        const response = await fetchOTP()
+        console.log("response from fetchingOtp : ", response)
+        if(response.OTP)
+        {
+          console.log("otp : ",response.OTP)
+          setTotp(response.OTP)
+          console.log(typeof totp)
+          console.log(typeof otp)
         }
       } catch (error:any) {
         console.error('Error generating OTP:', error.message);
@@ -87,28 +87,39 @@ const Votp = () => {
 
           if (onetime === otp) 
           {
-            //  find a way to pass otp for signup
             toast.success('OTP is valid');
-            await userLogin(formData)
-            .then((response)=>{
-              console.log(response)
-              sessionStorage.removeItem('user')
-              sessionStorage.removeItem('otp')
-              if(response.status == 'success')
+
+            const result = await CheckPurpose()
+            console.log(result)
+            if(result)
+            {
+              if(result && 'token' in result)
               {
-                const token = response.token
-                dispatch(setToken(token))
-                dispatch(loginSuccess())
-                toast.success('login success')
-                setTimeout(()=>{
-                  navigate('/users/home')
-                }, 1000)
+                if(result.message == "Login success")
+                {
+                  sessionStorage.removeItem('otp')
+                  const token = result.token
+
+                  console.log("token : ", token)
+                  dispatch(setToken(token))
+                  dispatch(loginSuccess())
+                  toast.success('login success')
+                  setTimeout(()=>{
+                    navigate('/users/home')
+                  }, 1000)
+                }
+              }
+              else if (result.message === 'signUp success')
+              {
+                toast.success(result.message)
+                navigate('/users/signIn')
               }
               else
               {
-                toast.error("otp validation failed")
+                console.log(result.message)
+                toast.warning(result.error)
               }
-            })
+            }
           } 
           else 
           {

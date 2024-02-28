@@ -19,7 +19,8 @@ export const userSignUp = async(payload: signUpPayload) : Promise<any>=>{
     }
     catch(error:any)
     {
-        if(error.message === "Request failed with status code 409")
+        console.log("error message: ",error.message)
+        if(error.message === "Request failed with status code 500")
         {
             throw new Error("email already exist")
         }
@@ -42,18 +43,22 @@ export const userLogin = async(payload : signInPayload):Promise<any>=>
     }
     catch(error:any){
         console.log(error.message)
+        throw new  Error(error.message)
     }
 }
 export const otpGenerate = async(input : signInPayload | string)=>{
     try{
+        console.log("sending request")
         let payload : signInPayload
         if(typeof input === 'string')
         {
             payload = {email : input, password : ''}
+            console.log(payload)
         }
         else
         {
             payload = input
+            console.log(payload)
         }
         const otp: AxiosRequestConfig = {
             url:apiConfig.otpGenerate,
@@ -66,7 +71,9 @@ export const otpGenerate = async(input : signInPayload | string)=>{
     }
     catch(error:any)
     {
-        throw new Error(error.message)
+        console.log(error)
+        console.log("error : ",error.message)
+        throw new Error(error.response.data.message)
     }
 }
 export const otpVer = async(otp:string)=>{

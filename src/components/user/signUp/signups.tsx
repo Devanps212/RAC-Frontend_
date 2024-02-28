@@ -1,11 +1,12 @@
 import React from 'react'
 import './signup.css'
-import { useState} from 'react'
+import { useState } from 'react'
 import { Link } from 'react-router-dom'
-import { signUpPayload } from '../../../types/payloadInterface'
-import { otpGenerate, userSignUp } from '../../../features/axios/api/user/userAuthentication'
+import { otpGenerate } from '../../../features/axios/api/user/userAuthentication'
 import { useNavigate } from 'react-router-dom'
 import { toast } from 'react-toastify'
+import { SignUpValidator } from '../../../Validators/userValidator.ts/signupValidator'
+import { signUpPayload } from '../../../types/payloadInterface'
 
 const SignUp = ()=>{
     
@@ -13,139 +14,54 @@ const SignUp = ()=>{
     const [formData, setFormdata] = useState({
         name:'',
         email:'',
-        mobile:0,
+        Cpassword:'',
         password:'',
     })
-    const [errors, setErrors] = useState({
-        name:'',
-        email:'',
-        mobile:'',
-        password:''
-    })
+    const [errors, setErrors] = useState<Partial<Record<keyof signUpPayload , string>>>({})
+    
+    
 
     const handleSubmit = async(e : React.FormEvent)=>{
         try{
             console.log("checking form datas")
             e.preventDefault()
-            let isValid = true
-            const{name, email, mobile, password} = formData as signUpPayload
+            console.log(formData.Cpassword)
+            const validationErrors = await SignUpValidator(formData)
 
-            //Name Validation
-            if(!name || name.trim() == '')
+            if(Object.keys(validationErrors).length > 0 )
             {
-                isValid = false
-                setErrors((prevState)=>({
-                    ...prevState, name:"Please enter your name"
-                }))
-                console.log("failed name")
-                return
+              console.log("error found")
+              setErrors(validationErrors)
             }
-            
-            //email Validation
-            const emailRegexp = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
-            const pass = emailRegexp.test(email)
-            if(!pass || email.trim() == '')
+            else
             {
-                isValid = false
-                setErrors((prevState)=>({
-                    ...prevState,
-                    email:"Please enter a valid email"
-                }))
-                console.log("failed email")
-                return
-            }
-            const mobileRegexp = /^\d{10}$/;
-            const StringMobile = mobile.toString()
-            const isMobileValid = mobileRegexp.test(StringMobile);
-            if (!isMobileValid || StringMobile.trim() === '') {
-              isValid = false;
-              setErrors((prevState) => ({
-                ...prevState,
-                mobile: 'Please enter a valid mobile number'
-              }));
-              console.log('failed mobile');
-              return;
-            }
-
-
-            //Password Validation
-            const passRegexp = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*()_+{}[\]:;<>,.?~\\/-]).{8,}$/;
-            const passCheck = passRegexp.test(password)
-            
-            if(!password || password.trim() == '')
-            {
-                isValid = false
-                setErrors((prevState)=>({
-                    ...prevState,
-                    password:'Please enter a valid password'
-                }))
-                console.log("failed password")
-                return
-            }
-            else if(!passCheck)
-            {
-                isValid = false
-                const hasLowerCase = /[a-z]/.test(password)
-                const hasCapitalCase = /[A-Z]/.test(password)
-                const hasDigits = /\d/.test(password)
-                const hasValidDigits = password.length > 7
-                const hasSpecialCharacter = /[!@#$%^&*()_+{}[\]:;<>,.?~\\/-]/.test(password);
-
-                if(!hasLowerCase || !hasCapitalCase || !hasValidDigits || !hasDigits || !hasSpecialCharacter)
-                {
-                    let errorMessage = "Password must "
-
-                    errorMessage+= hasLowerCase?'': 'contain at least one lowercase letter, ';
-                    errorMessage+= hasCapitalCase? '' : 'contain at least one uppercase letter, ';
-                    errorMessage+= hasDigits?'' : 'contain at least one digit, ';
-                    errorMessage+= hasValidDigits? '' : 'be at least 8 characters long';
-                    errorMessage+= hasSpecialCharacter?'':'containt atleast one special character'
-                    
-                    setErrors((prevState)=>({
-                        ...prevState,
-                        password:errorMessage
-                    }))
-                    console.log("failed password")
-                    return
-                }
-            }
-            if(isValid)
-            {
+              console.log("Validation completed no error found")
+              const {name, email, password} = formData
               console.log("passing request for otp")
               await otpGenerate(email)
               .then((response:any)=>{
-                if(response.code == 200 )
+                if(response.code == 200 && response.purpose == 'signup')
                 {
+                  toast.success(response.message)
                   const userData = {
                     name:name,
                     email:email,
-                    mobile:mobile,
                     password:password,
-                    otp:response.OTP
+                    otp:response.OTP,
+                    purpose:'signup'
                   }
-                  console.log(userData)
-                  console.log(response)
+                  console.log("userData : ", userData)
+                  console.log("resposne : ", response)
+                  sessionStorage.setItem('otp', userData.otp)
                   sessionStorage.setItem('usersDetails', JSON.stringify(userData))
-                  toast.success(response.message)
-                  navigate('/users/signIn')
+                  navigate('/users/OTP')
                 }
               })
               .catch((error:any)=>{
+                console.log(error)
                 toast.error(error.message)
                   console.log("not successfull")
                 })
-            // await userSignUp(formData)
-            // .then((response:any)=>{
-            //   console.log("user registered successfully")
-            //   console.log(response)
-            //   toast.success(response.message)
-            //   setTimeout(()=>{
-            //     navigate('/users/signIn')
-            //   }, 920)
-            // })
-            // .catch((error:any)=>{
-            //   console.log("not successfull")
-            // })
           }
 
           
@@ -198,21 +114,6 @@ const SignUp = ()=>{
                     </div>
 
                     <div className="mb-3">
-                      <label className="mb-2 block text-xs font-semibold">Mobile</label>
-                      <input
-                        type="number"
-                        placeholder="Enter your number"
-                        value={formData.mobile}
-                        className={`form-control rounded-md border ${errors.mobile ? 'border-danger' : 'border-gray-300'} focus:border-purple-700 focus:outline-none focus:ring-1 focus:ring-purple-700 py-1 px-1.5 text-gray-500`}
-                        style={{ boxShadow: "inset 2px 2px 7px -3px grey" }}
-                        onChange={(e) => setFormdata({ ...formData, mobile: parseInt(e.target.value) })}
-                      />
-                      {errors.mobile && (
-                        <p className="text-danger text-xs mt-2">{errors.mobile}</p>
-                      )}
-                    </div>
-      
-                    <div className="mb-3">
                       <label className="mb-2 block text-xs font-semibold">Password</label>
                       <input
                         type="password"
@@ -224,6 +125,21 @@ const SignUp = ()=>{
                       />
                       {errors.password && (
                         <p className="text-danger text-xs mt-2">{errors.password}</p>
+                      )}
+                    </div>
+
+                    <div className="mb-3">
+                      <label className="mb-2 block text-xs font-semibold">Confirm Password</label>
+                      <input
+                        type="password"
+                        placeholder="****"
+                        value={formData.Cpassword}
+                        className={`form-control rounded-md border focus:border-purple-700 focus:outline-none focus:ring-1 focus:ring-purple-700 py-1 px-1.5 text-gray-500`}
+                        style={{ boxShadow: "inset 2px 2px 7px -3px grey" }}
+                        onChange={(e) => setFormdata({ ...formData, Cpassword: e.target.value })}
+                      />
+                      {errors.Cpassword && (
+                        <p className="text-danger text-xs mt-2">{errors.Cpassword}</p>
                       )}
                     </div>
       

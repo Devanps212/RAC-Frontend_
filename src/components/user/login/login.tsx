@@ -93,18 +93,21 @@ const UserLogin = () => {
             if(isValid)
             {
               console.log("Everything is valid")
-              sessionStorage.setItem('user', JSON.stringify(formData));
               await otpGenerate(formData)
               .then((response) => {
+                console.log("login response : ",response.data)
                 if (response.status === "success") {
                   console.log(response.OTP);
                   toast.success(response.message);
-                  console.log("reading secret");
-                  console.log("read secret");
+                  const updatedFormData = {
+                    ...formData,
+                    purpose: response.purpose,
+                  };
+                  sessionStorage.setItem('user', JSON.stringify(updatedFormData));
                   sessionStorage.setItem('otp', JSON.stringify(response.OTP));
                   setTimeout(() => {
                     navigate('/users/OTP');
-                  }, 2000);
+                  }, 1000);
                 }
               })
               .catch((error) => {
