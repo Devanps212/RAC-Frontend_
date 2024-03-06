@@ -25,7 +25,7 @@ const Login = () => {
 
     if(AdminLogin == true)
     {
-      console.log("admin is not logged out") ///here set the navigation to Admin home
+      console.log("admin is not logged out")
       navigate('/admin/home')
     }
   }, [])
@@ -74,7 +74,7 @@ const Login = () => {
   }
 
   return (
-    <div className="box bg-img">
+    <div className="box bg-img" style={{width:'100%'}}>
       <div className="content">
         <h2>
           Sign<span> In</span>

@@ -50,23 +50,17 @@ body {
   position: relative;
 }
 
-.user-input i {
-  position: absolute;
-  right: 4px;
-  top: 5px;
-  padding: 9px 8px;
-  color: #848484;
-  transition: 0.3s;
-}
 
 .pass-input {
   position: relative;
 }
 
+.user-input i,
 .pass-input i {
   position: absolute;
   right: 4px;
-  top: 5px;
+  top: 50%;
+  transform: translateY(-50%);
   padding: 9px 8px;
   color: #848484;
   transition: 0.3s;
