@@ -5,9 +5,15 @@ import { Link } from 'react-router-dom';
 import { signInPayload } from '../../../types/payloadInterface';
 import { otpGenerate } from '../../../features/axios/api/user/userAuthentication';
 import { useNavigate } from 'react-router-dom';
+import { Gverify } from '../../../services/googleAuthService';
+import { setToken } from '../../../features/axios/redux/slices/user/tokenSlice';
+import { loginSuccess } from '../../../features/axios/redux/slices/user/userLoginAuthSlice';
+import { useDispatch } from 'react-redux';
+
 
 const UserLogin = () => {
 
+  const dispacth = useDispatch()
   const navigate = useNavigate()
     const [formData, setFormdata] = useState({
         email:'',
@@ -123,6 +129,34 @@ const UserLogin = () => {
       }
 
     }
+    const googleVerification = async(e : React.FormEvent) =>{
+      e.preventDefault()
+      Gverify()
+      .then((response)=>{
+        if(response.message === "user SignIn success" || response.message === "user SignUp success")
+        {
+          console.log("response : ",response)
+          toast.success(response.message)
+          console.log(response.token)
+          dispacth(setToken(response.token))
+          dispacth(loginSuccess())
+          setTimeout(()=>{
+            navigate('/users/home')
+          }, 1000)
+        }
+        else
+        {
+          console.log(response.message)
+          toast.error("something went wrong")
+        }
+      })
+      .catch((error:any)=>{
+        console.log("error : ",error)
+        toast.error(error.message)
+      })
+
+
+    }
 
   return (
     <div className="container-fluid">
@@ -175,7 +209,7 @@ const UserLogin = () => {
                 <br/>
 
                 <div className="mb-3">
-                  <button className="buttn btn btn-block btn-outline-secondary d-flex justify-content-center align-items-center" style={{width:'53%'}}>
+                  <button onClick={googleVerification} className="buttn btn btn-block btn-outline-secondary d-flex justify-content-center align-items-center" style={{width:'53%'}}>
                     <img className="google w-5 mr-2" src="https://lh3.googleusercontent.com/COxitqgJr1sJnIDe8-jiKhxDx1FrYbtRHKJ9z_hELisAlapwE9LUPh6fcXIfb5vwpbMl4xl9H9TRFPc5NOO8Sb3VSgIBrfRYvW6cUA" alt="Google Icon" style={{width:'25%'}}/>
                     Sign in with Google
                   </button>
@@ -194,7 +228,7 @@ const UserLogin = () => {
                     className="h-100 object-cover rounded-r-md"
                     src="/src/assets/admin/login/Wallpapers World Cars Wallpapers Full HD 1080p (1).jpg"
                     alt="Login banner"
-                    style={{ objectFit: 'cover', width: '105%' }}
+                    style={{ objectFit: 'cover', width: '115%' }}
                 />
                 <div className="position-absolute top-0 start-50 translate-middle-x">
                     <p className="quote text-center py-3">Just Drive Your Dream</p>

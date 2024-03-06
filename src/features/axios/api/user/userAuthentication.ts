@@ -76,28 +76,27 @@ export const otpGenerate = async(input : signInPayload | string)=>{
         throw new Error(error.response.data.message)
     }
 }
-export const otpVer = async(otp:string)=>{
 
-        const storedSecret = sessionStorage.getItem('otpSecret');
-        const parsedSecret = storedSecret ? JSON.parse(storedSecret) : null;
+export const GoogleVerification = async(credentials : string)=>{
+    console.log("recieved credentials :", credentials)
+    
     try
     {
-        console.log("otp passing :", otp)
-        console.log("reached otpVer passing")
-        const otpConfig : AxiosRequestConfig = {
-            url:apiConfig.otpVerify,
-            method:'post',
-            data:{otp, secret: parsedSecret}
+        const gooogleConfig : AxiosRequestConfig ={
+            url: apiConfig.googleVerification,
+            method: "post",
+            data: {credentials}
         }
 
-        console.log(otpConfig)
-
-        const response:AxiosResponse = await axios(otpConfig)
-        console.log("Response reurns from otpver",response.data)
+        const response = await axios(gooogleConfig)
+        console.log("response recieved")
+        console.log(response.data)
         return response.data
     }
-    catch(error:any)
+    catch(error: any)
     {
+        console.log(error)
+        console.log("error occured : ",error.message)
         throw new Error(error.message)
     }
-}
+} 

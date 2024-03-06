@@ -7,10 +7,17 @@ import { useNavigate } from 'react-router-dom'
 import { toast } from 'react-toastify'
 import { SignUpValidator } from '../../../Validators/userValidator.ts/signupValidator'
 import { signUpPayload } from '../../../types/payloadInterface'
+import { Gverify } from '../../../services/googleAuthService'
+import { useDispatch } from 'react-redux'
+import { setToken } from '../../../features/axios/redux/slices/user/tokenSlice'
+import { loginSuccess } from '../../../features/axios/redux/slices/user/userLoginAuthSlice'
+import Loading from '../../loading/loading'
 
 const SignUp = ()=>{
     
+  const dispacth = useDispatch()
   const navigate = useNavigate()
+  const [load, setLoad] = useState(false)
     const [formData, setFormdata] = useState({
         name:'',
         email:'',
@@ -23,6 +30,7 @@ const SignUp = ()=>{
 
     const handleSubmit = async(e : React.FormEvent)=>{
         try{
+          setLoad(true)
             console.log("checking form datas")
             e.preventDefault()
             console.log(formData.Cpassword)
@@ -32,6 +40,7 @@ const SignUp = ()=>{
             {
               console.log("error found")
               setErrors(validationErrors)
+              setLoad(false)
             }
             else
             {
@@ -62,6 +71,9 @@ const SignUp = ()=>{
                 toast.error(error.message)
                   console.log("not successfull")
                 })
+                .finally(()=>{
+                  setLoad(false)
+                })
           }
 
           
@@ -69,11 +81,41 @@ const SignUp = ()=>{
        catch(error){
         console.log(error)
        }
+       
 
+    }
+
+    const googleVerification = (e: React.FormEvent)=>{
+      
+      e.preventDefault()
+      Gverify()
+      .then((response)=>{
+        if(response.message === "user SignIn success" || response.message === "user SignUp success")
+        {
+          console.log("response : ",response)
+          toast.success(response.message)
+          console.log(response.token)
+          dispacth(setToken(response.token))
+          dispacth(loginSuccess())
+          setTimeout(()=>{
+            navigate('/users/home')
+          }, 1000)
+        }
+        else
+        {
+          console.log(response.message)
+          toast.error("something went wrong")
+        }
+      })
+      .catch((error:any)=>{
+        console.log("error : ",error)
+        toast.error(error.message)
+      })
     }
 
     return (
         <div className="container-fluid">
+          {load && <Loading/>}
           <div className="row justify-content-center align-items-center min-vh-100 bg-gray-200 py-5 pt-5">
             <div className="col-md-8" style={{ backgroundColor: "#fff" }}>
               <div className="row shadow" style={{ marginRight: "-24px" }}>
@@ -144,12 +186,12 @@ const SignUp = ()=>{
                     </div>
       
                     <div className='text-center'>
-                      <button className='buttonSub' type='submit'>Submit</button>
+                      <button className='buttonSub' type='submit' disabled={load}>Submit</button>
                     </div>
                     <br />
       
                     <div className="mb-3">
-                      <button className="buttn btn btn-block btn-outline-secondary d-flex justify-content-center align-items-center" style={{ width: '53%' }}>
+                      <button onClick={googleVerification} className="buttn btn btn-block btn-outline-secondary d-flex justify-content-center align-items-center" style={{ width: '53%' }}>
                         <img className="google w-5 mr-2" src="https://lh3.googleusercontent.com/COxitqgJr1sJnIDe8-jiKhxDx1FrYbtRHKJ9z_hELisAlapwE9LUPh6fcXIfb5vwpbMl4xl9H9TRFPc5NOO8Sb3VSgIBrfRYvW6cUA" alt="Google Icon" style={{ width: '25%' }} />
                         SignUp with Google
                       </button>

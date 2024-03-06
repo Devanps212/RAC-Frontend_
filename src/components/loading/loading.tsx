@@ -23,8 +23,13 @@ const Loading = () => {
   return (
     loading && (
       <div className="loading-container">
-        <div className="loading-spinner"></div>
-        <div>Loading...</div>
+        <div className="car-container">
+          <div className="loading-car">
+            <div className="wheel left"></div>
+            <div className="wheel right"></div>
+          </div>
+          <div className="loading-text">Loading...</div>
+        </div>
       </div>
     )
   );

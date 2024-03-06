@@ -1,7 +1,8 @@
 /* loading.css */
 
 body.blur {
-  backdrop-filter: blur(5px); /* You can adjust the blur strength as needed */
+  backdrop-filter: blur(5px);
+  overflow: hidden;
 }
 
 .loading-container {
@@ -18,16 +19,53 @@ body.blur {
   z-index: 999;
 }
 
-.loading-spinner {
-  border: 8px solid #f3f3f3;
-  border-top: 8px solid #3498db;
-  border-radius: 50%;
-  width: 50px;
-  height: 50px;
-  animation: spin 1s linear infinite;
+.car-container {
+  display: flex;
+  align-items: center;
 }
 
-@keyframes spin {
-  0% { transform: rotate(0deg); }
-  100% { transform: rotate(360deg); }
+.loading-car {
+  width: 50px;
+  height: 25px;
+  background-color: #3498db;
+  border-radius: 8px;
+  position: relative;
+  animation: moveCar 1s linear infinite;
+}
+
+.wheel {
+  width: 15px;
+  height: 15px;
+  background-color: #2c3e50;
+  border-radius: 50%;
+  position: absolute;
+  top: 50%;
+  transform: translate(50%, -50%);
+}
+
+.wheel.left {
+  left: 5px;
+}
+
+.wheel.right {
+  right: 5px;
+}
+
+.loading-text {
+  font-size: 18px;
+  font-weight: bold;
+  color: #3498db;
+  margin-left: 10px;
+}
+
+@keyframes moveCar {
+  0% {
+    transform: translateX(0);
+  }
+  50% {
+    transform: translateX(50px);
+  }
+  100% {
+    transform: translateX(0);
+  }
 }

@@ -6,6 +6,7 @@ const UsersLogins = lazy(()=> import('../pages/user/login'))
 const UserSignUp = lazy(()=> import('../pages/user/signUp'))
 const VerifyOTP = lazy(()=> import('../pages/user/VOTP'))
 const HomePage = lazy(()=>import('../pages/user/Home'))
+import { UserRouteProtection } from '../utils/routeProtection';
 
 const UserRouter = () => {
   return (
@@ -15,7 +16,7 @@ const UserRouter = () => {
         <Route path="/signIn" element={<UsersLogins />} />
         <Route path="/signUp" element={<UserSignUp/>}/>
         <Route path="/OTP" element={<VerifyOTP/>}/>
-        <Route path="/home" element={<HomePage/>}/>
+        <Route path="/home" element={<UserRouteProtection><HomePage/></UserRouteProtection>}/>
       </Routes>
     </Suspense>
     </>

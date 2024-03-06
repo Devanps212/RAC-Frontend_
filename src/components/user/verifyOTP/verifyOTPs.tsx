@@ -1,7 +1,7 @@
 import React from 'react';
 import { useEffect, useState } from 'react';
 import './verifyOTPs.css'
-import { otpGenerate, otpVer } from '../../../features/axios/api/user/userAuthentication';
+import { otpGenerate } from '../../../features/axios/api/user/userAuthentication';
 import { useNavigate } from 'react-router-dom';
 import { userLogin } from '../../../features/axios/api/user/userAuthentication';
 import { toast } from 'react-toastify';

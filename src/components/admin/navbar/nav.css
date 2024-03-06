@@ -1,0 +1,106 @@
+/* nav.css */
+
+/* Style for the entire dropdown menu */
+.management .dropdown-menu {
+    border-radius: 0;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    opacity: 0; /* Initially set the opacity to 0 */
+    visibility: hidden; /* Initially hide the dropdown */
+    transition: opacity 0.3s ease-in-out, visibility 0.3s ease-in-out; /* Add smooth transitions */
+  }
+  
+  /* Show the dropdown when the parent is hovered */
+  .management:hover .dropdown-menu {
+    opacity: 1;
+    visibility: visible;
+  }
+  
+  /* Style for the dropdown items */
+  .management .dropdown-item {
+    color: #333;
+    padding: 8px 16px;
+    transition: background-color 0.3s;
+  }
+  
+  .management .dropdown-item:hover,
+  .management .dropdown-item:focus {
+    background-color: #4c96e1; /* Change the background color on hover/focus */
+    color: white;
+  }
+  
+  /* Optional: Style for the dropdown header (if needed) */
+  .management .dropdown-header {
+    font-weight: bold;
+    color: #007bff; /* Bootstrap primary color */
+  }
+
+  #logout{
+    display: flex;
+    justify-content: center;
+    border: solid 1px;
+    width: 110px;
+    border-radius: 3px;
+  }
+
+  #logout:hover{
+    border-color: white;
+    color: rgb(255, 255, 255);
+    background-color: rgba(47, 47, 48, 0.797);
+    transition: 0.2s ease-in;
+  }
+
+  .custom-dropdown .dropdown-menu {
+    right: auto;
+    left: 0;
+  }
+  
+  /* Style for the nested dropdown items */
+.nested-dropdown .nav-link {
+    transition: background-color 0.3s, color 0.3s, width 0.3s;
+  }
+  
+  /* Hover styles for the nested dropdown items */
+  .nested-dropdown .nav-link:hover {
+    background-color: #666362;
+    color: rgb(237, 237, 237);
+    width: 100%;
+  }
+  
+  /* Add a fade-in animation for the dropdown menu */
+  .nested-dropdown .dropdown-menu {
+    animation: fadeIn 0.3s ease-in-out;
+  }
+  
+  @keyframes fadeIn {
+    from {
+      opacity: 0;
+    }
+    to {
+      opacity: 1;
+    }
+  }
+
+  .nested-dropdown .dropdown-menu {
+    border-radius: 8px; /* Rounded corners */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Box shadow for a subtle lift */
+    background-color: #fff; /* Background color */
+  }
+  
+  
+  /* Hover effect for dropdown menu items */
+  .nested-dropdown .dropdown-menu a:hover {
+    background-color: #447bfc; /* Hover background color */
+  }
+
+  .header {
+    position: relative;
+    z-index: 3; /* Ensure the header has a higher z-index */
+}
+.navbar {
+  box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.1); /* Adjust values as needed */
+}
+  
+  
+  
+  
+  
