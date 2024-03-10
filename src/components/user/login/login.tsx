@@ -3,18 +3,20 @@ import './login.css'
 import { toast } from 'react-toastify';
 import { Link } from 'react-router-dom';
 import { signInPayload } from '../../../types/payloadInterface';
-import { otpGenerate } from '../../../features/axios/api/user/userAuthentication';
+import { otpGenerate, userLogin } from '../../../features/axios/api/user/userAuthentication';
 import { useNavigate } from 'react-router-dom';
 import { Gverify } from '../../../services/googleAuthService';
 import { setToken } from '../../../features/axios/redux/slices/user/tokenSlice';
 import { loginSuccess } from '../../../features/axios/redux/slices/user/userLoginAuthSlice';
 import { useDispatch } from 'react-redux';
+import Loading from '../../loading/loading';
 
 
 const UserLogin = () => {
 
-  const dispacth = useDispatch()
+  const dispatch = useDispatch()
   const navigate = useNavigate()
+  const [isLoading, setIsLoading] = useState(false)
     const [formData, setFormdata] = useState({
         email:'',
         password:'',
@@ -27,6 +29,7 @@ const UserLogin = () => {
         try{
             console.log("checking form datas")
             e.preventDefault()
+            
             let isValid = true
             console.log(isValid)
             const{email, password} = formData as signInPayload
@@ -98,27 +101,28 @@ const UserLogin = () => {
             console.log(isValid)
             if(isValid)
             {
+              setIsLoading(true)
               console.log("Everything is valid")
-              await otpGenerate(formData)
+              await userLogin(formData)
               .then((response) => {
-                console.log("login response : ",response.data)
-                if (response.status === "success") {
-                  console.log(response.OTP);
-                  toast.success(response.message);
-                  const updatedFormData = {
-                    ...formData,
-                    purpose: response.purpose,
-                  };
-                  sessionStorage.setItem('user', JSON.stringify(updatedFormData));
-                  sessionStorage.setItem('otp', JSON.stringify(response.OTP));
-                  setTimeout(() => {
-                    navigate('/users/OTP');
-                  }, 1000);
+                console.log(response)
+                if(response.message == "Login success")
+                {
+                  const token = response.token
+                  console.log("token : ", token)
+                  dispatch(setToken(token))
+                  dispatch(loginSuccess())
+                  toast.success('login success')
+                  setTimeout(()=>{
+                    navigate('/users/home')
+                  }, 1000)
+                  setIsLoading(false)
                 }
               })
               .catch((error) => {
                 console.log(error.message);
                 toast.error(error.message);
+                setIsLoading(false)
               });
             }
 
@@ -138,8 +142,8 @@ const UserLogin = () => {
           console.log("response : ",response)
           toast.success(response.message)
           console.log(response.token)
-          dispacth(setToken(response.token))
-          dispacth(loginSuccess())
+          dispatch(setToken(response.token))
+          dispatch(loginSuccess())
           setTimeout(()=>{
             navigate('/users/home')
           }, 1000)
@@ -160,6 +164,7 @@ const UserLogin = () => {
 
   return (
     <div className="container-fluid">
+      {isLoading && <Loading/>}
       <div className="row justify-content-center align-items-center min-vh-100 bg-gray-200 py-5 pt-5">
         <div className="col-md-8" style={{backgroundColor:"#fff"}}>
           <div className="row shadow" style={{marginRight:"-24px"}}>
@@ -204,7 +209,7 @@ const UserLogin = () => {
                 </div>
                 
                 <div className='text-center'>
-                  <button className='buttonSub' type='submit'>Sumbit</button>
+                  <button className='buttonSub' disabled={isLoading} type='submit'>Sumbit</button>
                 </div>
                 <br/>
 

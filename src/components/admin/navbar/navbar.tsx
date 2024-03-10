@@ -44,14 +44,14 @@ const Header = () => {
             <NavDropdown title="Management" id="basic-nav-dropdown" className='management'>
             {/* Nested NavDropdown for Car Management */}
             <NavDropdown title="Car Management" id="car-management-submenu" drop='start' className='nested-dropdown'>
-              <NavDropdown.Item href='#'>Add Car</NavDropdown.Item>
-              <NavDropdown.Item href='#'>Manage Car</NavDropdown.Item>
+              <NavDropdown.Item href='/admin/car/addCar'>Add Car</NavDropdown.Item>
+              <NavDropdown.Item href='/admin/car/carManagement'>Manage Car</NavDropdown.Item>
             </NavDropdown>
 
             {/* Other NavDropdown items */}
             <NavDropdown title="User Management" id="user-management-submenu" drop='start' className='nested-dropdown'>
               <NavDropdown.Item href='#'>Add User</NavDropdown.Item>
-              <NavDropdown.Item href='#'>Manage User</NavDropdown.Item>
+              <NavDropdown.Item href='/admin/user/userManagement'>Manage User</NavDropdown.Item>
             </NavDropdown>
 
             <NavDropdown title="Banner Management" id="banner-management-submenu" drop='start' className='nested-dropdown'>

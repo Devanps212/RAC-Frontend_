@@ -33,17 +33,19 @@ export const userSignUp = async(payload: signUpPayload) : Promise<any>=>{
 export const userLogin = async(payload : signInPayload):Promise<any>=>
 {
     try{
+        console.log("formData : ",payload)
         const config:AxiosRequestConfig={
             url: apiConfig.userSignIn,
             method:'post',
             data:payload
         }
         const response = await axios(config)
+        console.log("response recieved : ",response)
         return response.data
     }
     catch(error:any){
-        console.log(error.message)
-        throw new  Error(error.message)
+        console.log(error.response.data.message)
+        throw new  Error(error.response.data.message)
     }
 }
 export const otpGenerate = async(input : signInPayload | string)=>{

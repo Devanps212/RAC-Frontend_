@@ -7,6 +7,7 @@ import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { Provider } from 'react-redux';
 import store from './features/axios/redux/app/store';
+import 'react-confirm-alert/src/react-confirm-alert.css'; 
 
 
 
