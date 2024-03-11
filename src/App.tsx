@@ -1,16 +1,17 @@
 import React from 'react';
 import { Routes, Route, BrowserRouter as Router } from 'react-router-dom';
 import UserRouter from './routes/userRoute';
-import AdminLogin from './pages/admin/login';
 import AdminRoutes from './routes/adminRoute';
+import PartnerRoute from './routes/partner/partner';
+
 
 function App() {
   return (
     <Router>
       <Routes>
-        {/* Your other routes can go here */}
-        <Route path="/users/*" element={<UserRouter />} />
+        <Route path="/users/*" element={<UserRouter />}/>
         <Route path="/admin/*" element={<AdminRoutes/>}/>
+        <Route path="/partner/*" element={<PartnerRoute/>}/>
       </Routes>
     </Router>
   );

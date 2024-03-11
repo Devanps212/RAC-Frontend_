@@ -13,6 +13,7 @@ import { setToken } from '../../../features/axios/redux/slices/user/tokenSlice'
 import { loginSuccess } from '../../../features/axios/redux/slices/user/userLoginAuthSlice'
 import Loading from '../../loading/loading'
 
+
 const SignUp = ()=>{
     
   const dispacth = useDispatch()
@@ -114,7 +115,7 @@ const SignUp = ()=>{
     }
 
     return (
-        <div className="container-fluid">
+        <div className="container-fluid body-class">
           {load && <Loading/>}
           <div className="row justify-content-center align-items-center min-vh-100 bg-gray-200 py-5 pt-5">
             <div className="col-md-8" style={{ backgroundColor: "#fff" }}>

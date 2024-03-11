@@ -22,7 +22,10 @@ const apiConfig = {
 
     getAllUsers:`${configKeys.API_URL}admin/allUsers`,
     UBuser:`${configKeys.API_URL}admin/UBUser`,
-    findOneUser:`${configKeys.API_URL}admin/userFind`
+    findOneUser:`${configKeys.API_URL}admin/userFind`,
+
+    partnerLogin:`${configKeys.API_URL}partner/login`,
+    PartneraddCar:`${configKeys.API_URL}partner/addCar`
 
 }
 

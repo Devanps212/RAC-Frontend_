@@ -17,18 +17,28 @@ const Login = () => {
   const navigate = useNavigate()
 
 
-  useEffect(()=>{
-    if(token)
-    {
-      dispatch(isAdminLogin())
-    }
+  useEffect(() => {
+    const checkAdminLoginStatus = async () => {
+      if (token) 
+      {
+        try 
+        {
+          await dispatch(isAdminLogin());
 
-    if(AdminLogin == true)
-    {
-      console.log("admin is not logged out")
-      navigate('/admin/home')
-    }
-  }, [])
+          if (AdminLogin) {
+            console.log("Admin is not logged out");
+            navigate('/admin/home');
+          }
+        } 
+        catch (error) 
+        {
+          console.error("Error checking admin login status:", error);
+        }
+      }
+    };
+
+    checkAdminLoginStatus();
+  }, [token, dispatch, AdminLogin, navigate]);
 
   const [showPassword, setShowPassword] = useState(false);
   const [formData, setFormData] = useState({

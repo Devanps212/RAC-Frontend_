@@ -1,3 +1,4 @@
+import React from "react";
 import PartnerLogin from "../../components/drivePartner/login/login";
 
 const PartnersLogin = ()=>{

@@ -28,6 +28,7 @@ const AddCategoryPage = () => {
         if(response.status === "success")
         {
           toast.success(response.message)
+          setCategory({name:'', description:''})
         }
         else
         {

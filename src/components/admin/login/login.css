@@ -12,6 +12,7 @@ body {
   justify-content: center;
   align-items: center;
   min-height: 100vh;
+  background-color: white !important;
   color: #d0d0d0;
 }
 
@@ -96,10 +97,6 @@ body {
   border: none;
   cursor: pointer;
   margin-bottom: 32px;
-}
-
-span {
-  color: #ffce00;
 }
 
 .new-account a {
