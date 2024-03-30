@@ -50,7 +50,9 @@ const EditCategory = ()=>{
 
 
     return(
-        <Form className="edit-category-form" onSubmit={handleSubmit}>
+        <div>
+            <Form className="edit-category-form" onSubmit={handleSubmit}>
+            <h3 className="mb-5">Edit Category</h3>
             <Form.Group controlId="formCategoryName">
                 <Form.Label className="form-label">Category Name</Form.Label>
                 <Form.Control
@@ -80,6 +82,8 @@ const EditCategory = ()=>{
                 Save Changes
             </Button>
         </Form>
+        </div>
+        
     )
 }
 export default EditCategory

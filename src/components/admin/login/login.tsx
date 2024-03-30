@@ -6,6 +6,7 @@ import { setAdminToken } from '../../../features/axios/redux/slices/admin/tokenS
 import { isAdminLogin } from '../../../features/axios/redux/slices/admin/adminLogin';
 import { RootState } from '../../../features/axios/redux/reducers/reducer';
 import { adminLogin } from '../../../features/axios/api/admin/adminAuthentication';
+import Loading from '../../loading/loading';
 import { useNavigate } from 'react-router-dom';
 
 const Login = () => {
@@ -15,6 +16,8 @@ const Login = () => {
   const dispatch = useDispatch()
   const AdminLogin = useSelector((state: RootState)=>state.adminAuth.isLoggedIn)
   const navigate = useNavigate()
+
+  const [isLoading, setIsLoading] = useState(false)
 
 
   useEffect(() => {
@@ -64,6 +67,7 @@ const Login = () => {
       }
       else
       {
+        setIsLoading(true)
         const response = await adminLogin(formData)
         console.log("admin Response : ", response)
         if(response.status == 'success')
@@ -73,6 +77,7 @@ const Login = () => {
           dispatch(setAdminToken(response.token))
           dispatch(isAdminLogin())
           toast.success(response.message)
+          setIsLoading(false)
           navigate('/admin/home')
         }
       }
@@ -85,6 +90,7 @@ const Login = () => {
 
   return (
     <div className="box bg-img" style={{width:'100%'}}>
+      {isLoading && <Loading/>}
       <div className="content">
         <h2>
           Sign<span> In</span>

@@ -56,7 +56,7 @@
 
 @media only screen and (max-width: 768px) {
     #sidebar {
-        width: 86px; /* Adjust the collapsed width as needed */
+        width: 86px; 
     }
 
     .sidebar-list-item {
@@ -64,8 +64,12 @@
         text-align: center;
     }
 
+    #nameCompany{
+        display: none;
+    }
+
     .sidebar-list-item a span {
-        display: none; /* Hide the text content */
+        display: none; 
     }
 
     .sidebar-list-item:hover a span {
@@ -111,3 +115,5 @@
         opacity: 1; /* Set opacity to 1 on hover */
     }
 }
+
+

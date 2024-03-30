@@ -1,4 +1,5 @@
 import React from "react";
+import { NavDropdown } from "react-bootstrap";
 import { BsCart, BsGrid1X2Fill, BsBoundingBoxCircles, BsCardList, BsPerson, BsGrid3X3, BsFileText } from 'react-icons/bs';
 import './sidebar.css';
 
@@ -7,7 +8,7 @@ const Sidebar = () => {
         <aside id="sidebar" className="sidebar">
             <div className="sidebar-title">
                 <div className="sidebar-brand">
-                    <BsCart className="icons_header"/> <span>SHOP</span>
+                    <BsCart className="icons_header"/> <span id="nameCompany">SHOP</span>
                 </div>
             </div>
             <ul className="sidebar-list">
@@ -17,9 +18,20 @@ const Sidebar = () => {
                     </a>
                 </li>
                 <li className="sidebar-list-item">
-                    <a href="#">
+                    <NavDropdown 
+                    title={<span>
+                    <BsBoundingBoxCircles style={{ marginRight: '10px' }} />
+                    <span style={{ fontWeight: 600 }}>Users</span>
+                  </span>}
+                    drop="end"
+                    id="basic-nav-dropdown" 
+                    className="user" >
+                        <NavDropdown.Item className="drop-Item" style={{zIndex:'5'}}>Add User</NavDropdown.Item>
+                        <NavDropdown.Item className="drop-Item">Manage Users</NavDropdown.Item>
+                    </NavDropdown>
+                    {/* <a href="#">
                         <BsBoundingBoxCircles className="icon" /> <span>User</span>
-                    </a>
+                    </a> */}
                 </li>
                 <li className="sidebar-list-item">
                     <a href="#">

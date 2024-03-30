@@ -29,4 +29,18 @@ export const UserRouteProtection : React.FC<RouteProtectionProps> =({children})=
   }
 }
 
+export const UserSignInSignupProtection : React.FC<RouteProtectionProps> = ({children})=>{
+  if(!localStorage.getItem('token'))
+  {
+    return <>{children}</>
+  }
+  else
+  {
+    return <Navigate to={'/users/home'}/>
+  }
+}
+
+
+
+
 

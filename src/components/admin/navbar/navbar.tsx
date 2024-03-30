@@ -22,16 +22,8 @@ const Header = () => {
 
   }
   return (
-    <Navbar bg="light" expand="lg">
+    <Navbar className='navbar' bg="light" expand="lg" style={{position:'fixed', width:'100%'}}>
       <Container style={{ minHeight: '57px' }}>
-        <Navbar.Brand>
-          <img
-            src="./2a-b090-63d31c75e6a6-qcoku1709465106.svg"
-            height='30px'
-            width='25px'
-            alt="Logo"
-          />
-        </Navbar.Brand>
 
         <Navbar.Toggle id="navbar-contents" />
 

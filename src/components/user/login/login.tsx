@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import './login.css'
 import { toast } from 'react-toastify';
 import { Link } from 'react-router-dom';
@@ -26,6 +26,14 @@ const UserLogin = () => {
         email:'',
         password:''
     })
+
+    useEffect(()=>{
+      const token = localStorage.getItem('token')
+      if(token)
+      {
+        navigate('/users/home')
+      }
+    },[])
     const handleSubmit = async(e: React.FormEvent)=>{
         try{
             console.log("checking form datas")
@@ -114,10 +122,8 @@ const UserLogin = () => {
                   dispatch(setToken(token))
                   dispatch(loginSuccess())
                   toast.success('login success')
-                  setTimeout(()=>{
-                    navigate('/users/home')
-                  }, 1000)
                   setIsLoading(false)
+                  navigate('/users/home')
                 }
               })
               .catch((error) => {
@@ -164,7 +170,7 @@ const UserLogin = () => {
     }
 
   return (
-    <div className="container-fluid">
+    <div className="container-fluid backG">
       {isLoading && <Loading/>}
       <div className="row justify-content-center align-items-center min-vh-100 bg-gray-200 py-5 pt-5">
         <div className="col-md-8" style={{backgroundColor:"#fff"}}>

@@ -1,13 +1,15 @@
 import React from "react"
-import Home from "../../components/user/home/home"
+import PartnerUI from "../../components/drivePartner/partner/partner"
 import UserHeader from "../../components/user/header/header"
 
-function HomePage(){
+const UIpartner = ()=>{
+
     return(
         <>
         <UserHeader/>
-        <Home/>
+        <PartnerUI/>
         </>
     )
 }
-export default HomePage
+
+export default UIpartner

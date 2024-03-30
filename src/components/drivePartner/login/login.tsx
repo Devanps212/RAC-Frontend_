@@ -1,12 +1,13 @@
 import React, { useEffect } from 'react';
 import { useState } from 'react';
-import { Form, Button, Col, Row } from 'react-bootstrap';
+import { Form, Button, Col, Row, Container } from 'react-bootstrap';
 import { UseDispatch, useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import { isPartnerLogin } from '../../../features/axios/redux/slices/partner/partnerLogin';
 import { setPartnerToken } from '../../../features/axios/redux/slices/partner/tokenSlice';
 import { RootState } from '../../../features/axios/redux/reducers/reducer';
 import { partnerLogin } from '../../../features/axios/api/partner/partner';
+import Loading from '../../loading/loading';
 import './driverlogin.css'
 import { toast } from 'react-toastify';
 
@@ -16,6 +17,7 @@ const PartnerLogin = () => {
   const navigate = useNavigate()
   const token = localStorage.getItem('partnerToken')
   const state = useSelector((state:RootState)=>state.partnerLogin.isLoggedIn)
+  const [isLoading, setIsLoading] = useState(false)
 
   useEffect(() => {
     if (token) {
@@ -111,6 +113,7 @@ const PartnerLogin = () => {
             console.log(errors)
             if(isValid)
             {
+              setIsLoading(true)
                 console.log("form submitted")
                 partnerLogin(formData)
                 .then((response)=>{
@@ -118,10 +121,12 @@ const PartnerLogin = () => {
                   dispatch(setPartnerToken(response.token))
                   dispatch(isPartnerLogin())
                   toast.success(response.message)
+                  setIsLoading(false)
                   navigate('/partner/home')
                 })
                 .catch((error:any)=>{
                   console.log(error.message)
+                  setIsLoading(false)
                   toast.warning(error.message)
                 })
             }
@@ -134,7 +139,8 @@ const PartnerLogin = () => {
     }
 
   return (
-    <div className="container-fluid">
+    <div className="container-fluid backG">
+      {isLoading && <Loading/>}
     <Row className="justify-content-center align-items-center min-vh-100 bg-gray-200 py-5 pt-5">
       <Col md={8} style={{ backgroundColor: '#fff' }}>
         <Row className="shadow" style={{ marginRight: '-24px' }}>
@@ -183,28 +189,9 @@ const PartnerLogin = () => {
               </div>
               <br />
 
-              <div className="mb-3">
-                <Button variant='light'
-                  className="buttn btn btn-block btn-outline-secondary d-flex justify-content-center align-items-center"
-                  style={{ width: '53%' }}
-                >
-                  <img
-                    className="google w-5 mr-2"
-                    src="https://lh3.googleusercontent.com/COxitqgJr1sJnIDe8-jiKhxDx1FrYbtRHKJ9z_hELisAlapwE9LUPh6fcXIfb5vwpbMl4xl9H9TRFPc5NOO8Sb3VSgIBrfRYvW6cUA"
-                    alt="Google Icon"
-                    style={{ width: '25%' }}
-                  />
-                  Sign in with Google
-                </Button>
-              </div>
+              
             </Form>
 
-            <div className="text-center">
-              <span className="text-xs text-gray-400 font-semibold">Dont have an account?</span>
-              <a href="#" className="text-xs font-semibold text-purple-700">
-                Sign up
-              </a>
-            </div>
           </Col>
 
           {/* Login banner */}

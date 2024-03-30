@@ -52,9 +52,7 @@ const AddCar = ()=>{
             if(imageFiles)
             {
                 console.log(name, files)
-                const interiorFiles = Array.from(files).map((file) => file.name);
-                setFormData((prevState)=>({...prevState, [name] : interiorFiles}))
-                console.log("interior files: ",interiorFiles)
+                setFormData((prevState)=>({...prevState, [name] : Array.from(files)}))
             }
             else
             {
@@ -76,9 +74,7 @@ const AddCar = ()=>{
             if(imageFiles)
             {
                 console.log("name and files from exterior",name, files)
-                const exteriorFiles = Array.from(files).map((file) => file.name);
-                console.log("exterior files: ",exteriorFiles)
-                setFormData((prevState)=>({...prevState, [name]: exteriorFiles}))
+                setFormData((prevState)=>({...prevState, [name]: Array.from(files)}))
             }
             else
             {
@@ -111,8 +107,27 @@ const AddCar = ()=>{
         if(Object.keys(valid).length === 0)
         {
             try{
-                console.log(formData)
-                const response = await createCar(formData);
+                console.log("Datas appended to formData : ",formData)
+                const sendData = new FormData()
+                for(let [key, value] of Object.entries(formData))
+                {
+                    if(key ==='interior' || key=== 'exterior')
+                    {
+                        if(Array.isArray(value))
+                        {
+                            for(let item of value)
+                            {
+                                sendData.append(key, item)
+                            }
+                        }
+                    }
+                    else
+                    {
+                        sendData.append(key, value)
+                    }
+                }
+                console.log("sendData :",sendData)
+                const response = await createCar(sendData);
                 if (response) 
                 {
                     console.log(response);
@@ -124,8 +139,7 @@ const AddCar = ()=>{
                     console.log("error");
                     toast.error("Error uploading car")
                     return true
-                }
-                
+                }   
             }
             catch(error:any)
             {

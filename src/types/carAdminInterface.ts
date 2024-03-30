@@ -12,15 +12,15 @@ export interface carAdminInterface {
 
 export interface carInterface {
     name: string;
-    owner?: string;
-    category: Types.ObjectId | string;
+    owner: string;
+    category?: Types.ObjectId | string;
     price: number;
     mileage?: number;
     engine?: string;
     transmission?: string;
     fuelType?: string;
-    interior?: string[];
-    exterior?: string[];
+    interior?:File[];
+    exterior?: File[];
     status?: 'available' | 'maintenance' | 'booked' | 'not available';
     description?: string;
     vehicleNumber?: string;

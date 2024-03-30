@@ -2,7 +2,7 @@ import axios, {AxiosRequestConfig} from "axios";
 import { carInterface } from "../../../../types/carAdminInterface";
 import apiConfig from "../../../../utils/apiConfig";
 
-export const createCar = async(carData:carInterface)=>{
+export const createCar = async(carData:any)=>{
     try
     {
         console.log("formData in create Car: ", carData)
@@ -10,10 +10,7 @@ export const createCar = async(carData:carInterface)=>{
         const carCreateConfig : AxiosRequestConfig = {
             url:apiConfig.createCar,
             method:'post',
-            headers: {
-                'Content-Type': 'multipart/form-data',
-              },
-            data:{carData}
+            data:carData
         }
 
         const response = await axios(carCreateConfig)
