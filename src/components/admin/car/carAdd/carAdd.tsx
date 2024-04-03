@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Container, Button, Col, Row, Form } from "react-bootstrap";
+import { Container, Button, Col, Row, Form, Modal } from "react-bootstrap";
 import { carInterface } from "../../../../types/carAdminInterface";
 import { getCategory } from "../../../../features/axios/api/category/category";
 import { createCar } from "../../../../features/axios/api/car/carAxios";
@@ -13,7 +13,9 @@ const AddCar = ()=>{
     const [formData, setFormData] = useState<carInterface>({} as carInterface)
     const [category, setCategory] = useState<categoryInterface[]>([])
     const [validationErrors, setValidationErrors] = useState<Partial<Record<string, string>>>({})
+    const [SelectedImg, setSelectedImg] = useState<File | null>(null)
 
+    
     useEffect(() => {
         getCategory()
           .then((response) => {
@@ -36,9 +38,26 @@ const AddCar = ()=>{
           status: "available",
         });
       }, []);
-    
 
-
+      const handleDragStart = (e: React.DragEvent<HTMLDivElement>, index:number) => {
+        e.dataTransfer.setData("index", index.toString());
+      };
+      
+      const handleDragOver = (e:React.FormEvent) => {
+        e.preventDefault();
+      };
+      
+      const handleDrop = (e :React.DragEvent<HTMLDivElement>, newIndex:number) => {
+        e.preventDefault();
+        const oldIndex = parseInt(e.dataTransfer.getData("index"));
+        if (!isNaN(oldIndex) && formData.exterior) {
+            const updatedImages = [...formData.exterior];
+            const imageToMove = updatedImages.splice(oldIndex, 1)[0];
+            updatedImages.splice(newIndex, 0, imageToMove);
+            setFormData({ ...formData, exterior: updatedImages });
+          }
+      };
+ 
     const handleInterior = (e:React.ChangeEvent<HTMLInputElement>)=>{
         e.preventDefault()
 
@@ -84,6 +103,17 @@ const AddCar = ()=>{
         }
         
     }
+
+    const deleteImageInterior = (indexs:number)=>{
+        let updatedFormData = formData.interior?.filter((files, index)=>index !== indexs)
+        setFormData({...formData, interior:updatedFormData})
+    }
+
+    const deleteImageExterior = (indexs:number)=>{
+        let updatedFormData = formData.exterior?.filter((files, index)=>index !== indexs)
+        setFormData({...formData, exterior:updatedFormData})
+    }
+    
 
     const handleSubmit = async(e:React.FormEvent)=>{
         e.preventDefault()
@@ -178,10 +208,13 @@ const AddCar = ()=>{
                     <Form.Group controlId="Car Owner">
                         <Form.Label>Car Owner</Form.Label>
                         <Form.Control
-                        type="text"
-                        value={formData?.owner || ""} 
+                        as='select'
+                        value={formData.owner || ''} 
                         className="input-type"
-                        onChange={(e)=>setFormData({...formData, owner:e.target.value})}/>
+                        onChange={(e)=>setFormData({...formData, owner:e.target.value})}>
+                        <option value=''>---select Owner---</option>
+                        <option value='Admin'>Admin</option>
+                        </Form.Control>
                         <Form.Text className="text-danger">{validationErrors.owner}</Form.Text>
                     </Form.Group>
                     </Col>
@@ -191,8 +224,9 @@ const AddCar = ()=>{
                     <Form.Group controlId="Car category">
                         <Form.Label>Category</Form.Label>
                         <Form.Control as='select' 
-                        value={formData.category?formData.category.toString() : ''} 
+                        defaultValue=''
                         onChange={(e)=>setFormData({...formData, category:e.target.value})}>
+                            <option value=''>---select Category---</option>
                             { category.map((categ, index)=>(
                                 <option key={index + 1} value={categ._id}>{categ.name}</option>
                             ))    
@@ -240,12 +274,14 @@ const AddCar = ()=>{
                 <Col>
                     <Form.Group controlId="status">
                     <Form.Label>Status</Form.Label>
-                    <Form.Control as='select' onChange={(e)=>setFormData({...formData, status:e.target.value as "available" | "maintenance" | "booked" | "not available"})}>
+                    <Form.Control as='select' value={formData.status || ''} onChange={(e)=>setFormData({...formData, status:e.target.value as "available" | "maintenance" | "booked" | "not available"})}>
+                        <option value=''>---select Status---</option>
                         <option value="available">Available</option>
                         <option value="maintenance">Under Maintenance</option>
                         <option value="booked">Booked</option>
                         <option value="not available">Not available</option>
                     </Form.Control>
+                    <Form.Text className="text-danger">{validationErrors.status}</Form.Text>
                     </Form.Group>
                 </Col>
                 <Col>
@@ -346,9 +382,21 @@ const AddCar = ()=>{
                     type="file" 
                     name="interior"
                     multiple
-                    onChange={handleInterior}/>
+                    onChange={handleInterior}
+                    className="custom-file-input"/>
                     <Form.Text className="text-danger">{validationErrors.interior}</Form.Text>
                     </Form.Group>
+                    {formData.interior && 
+                    formData.interior.map((file, index)=>(
+                        <div key={index}>
+                            <img onClick={()=>setSelectedImg(file)}
+                        src={URL.createObjectURL(file)}
+                        alt={`Uploaded Image ${index}`} 
+                        style={{ width: '100px', height: 'auto', margin: '5px' }}/>
+                        <Button onClick={()=>deleteImageInterior(index)} variant="danger">Delete</Button>
+                        </div>
+                    ))
+                    }
                 </Col>
                 <Col>
                     <Form.Group controlId="exterior">
@@ -360,6 +408,26 @@ const AddCar = ()=>{
                     onChange={handleExterior}/>
                     <Form.Text className="text-danger">{validationErrors.exterior}</Form.Text>
                     </Form.Group>
+                    {formData.exterior && 
+                    formData.exterior.map((file, index)=>(
+                        <div key={index}>
+                        <img onClick={()=>setSelectedImg(file)}
+                        src={URL.createObjectURL(file)}
+                        alt={`Uploaded Image ${index}`} 
+                        style={{ width: '100px', height: 'auto', margin: '5px' }}
+                        onDragStart={(e) => handleDragStart(e, index)}
+                        onDragOver={handleDragOver}
+                        onDrop={(e) => handleDrop(e, index)}/>
+
+                        <Button onClick={()=>deleteImageExterior(index)} variant="danger">Delete</Button>
+                        </div>
+                    ))
+                    }
+                    {formData.exterior && formData.exterior.length > 0 && (
+                        <div style={{ marginBottom: '10px', fontWeight: 'bold' }}>
+                        Drag and drop the main image (e.g., car front view) to the first slot
+                    </div>
+                    )}
                 </Col>
                 </Row>
 
@@ -367,6 +435,11 @@ const AddCar = ()=>{
                     Submit
                 </Button>
             </Form>
+            <Modal show={!!SelectedImg} onHide={()=>setSelectedImg(null)}>
+                <Modal.Body>
+                <img alt="Selected Image" src={SelectedImg ?URL.createObjectURL(SelectedImg): "http://www.w3.org/2000/svg"} style={{ width: '100%', height: 'auto' }} />
+                </Modal.Body>
+            </Modal>
         </Container>
         </div>
     )

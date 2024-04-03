@@ -183,7 +183,7 @@ const Votp = () => {
             <div className="banner col-md-6 rounded-r-md position-relative">
                 <img
                     className="h-100 object-cover rounded-r-md"
-                    src="/src/assets/admin/verifyOTP/242954.jpg"
+                    src="/assets/admin/verifyOTP/242954.jpg"
                     alt="Login banner"
                     style={{ objectFit: 'cover', width: '109%' }}
                 />

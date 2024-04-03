@@ -71,7 +71,7 @@ const Fpotp = () => {
             <div className="banner col-md-6 rounded-r-md position-relative">
                 <img
                     className="h-100 object-cover rounded-r-md"
-                    src="/src/assets/admin/FPOTP/kahl-orr-ZdLFPE0AZBU-unsplash.jpg"
+                    src="/assets/admin/FPOTP/kahl-orr-ZdLFPE0AZBU-unsplash.jpg"
                     alt="Login banner"
                     style={{ objectFit: 'cover', width: '109%' }}
                 />

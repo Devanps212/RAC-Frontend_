@@ -9,17 +9,30 @@ export const carValidator = (formData: carInterface) => {
     isValid = false;
     errors.name = "Please enter the car name";
   }
-
-  if (formData.owner === "" || formData.owner === undefined) {
-    isValid = false;
-    errors.owner = "Please enter the car owner";
-  }
   
   console.log("entering engine")
   if (formData.engine == '' || formData.engine === undefined) {
     isValid = false
     console.log("engine is empty")
     errors.engine = "Please enter engine type"
+  }
+
+  if(formData.category === '')
+  {
+    isValid = false;
+    errors.category = "Please select a valid Category"
+  }
+
+  if(formData.status === undefined)
+  {
+    isValid = false
+    errors.status = 'Please select a status'
+  }
+
+  if(formData.owner === '---select Owner---')
+  {
+    isValid = false
+    errors.owner = 'Please select a owner'
   }
 
 

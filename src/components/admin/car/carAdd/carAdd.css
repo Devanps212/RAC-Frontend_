@@ -21,3 +21,43 @@ body {
   .input-type:focus {
     box-shadow: inset 0 4px 8px 2px rgba(0, 0, 0, 0.1); /* Increase shadow on focus */
   }
+
+  /* CSS for styling the file input */
+.custom-file-input input[type="file"] {
+  /* Hide the default file input */
+  display: none;
+}
+
+.custom-file-input label {
+  /* Style for the custom button */
+  background-color: #007bff; /* Blue background color */
+  color: #fff; /* White text color */
+  padding: 8px 12px; /* Padding around the button */
+  border-radius: 4px; /* Rounded corners */
+  cursor: pointer; /* Change cursor to pointer on hover */
+}
+
+/* Additional styles for file input label */
+.custom-file-input label:hover {
+  background-color: #0056b3; /* Darker blue on hover */
+}
+
+.custom-file-input label:active {
+  background-color: #003d6e; /* Dark blue when clicked */
+}
+
+/* Style for the file input text */
+.custom-file-input .custom-file-label {
+  /* Additional styles for the file input text */
+  font-size: 16px; /* Larger font size */
+  padding: 8px 12px; /* Padding around the text */
+  border: 2px solid #ccc; /* Border around the text */
+  border-radius: 4px; /* Rounded corners */
+  display: inline-block; /* Display as inline block */
+  cursor: pointer; /* Change cursor to pointer on hover */
+}
+
+/* Additional styles for file input text */
+.custom-file-input .custom-file-label:hover {
+  border-color: #007bff; /* Blue border on hover */
+}

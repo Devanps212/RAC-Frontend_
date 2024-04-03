@@ -1,8 +1,10 @@
-.admin-container {
+/* adminLayout.css */
+
+.admins-container {
   display: flex;
   flex-direction: column;
   min-height: 100vh;
-  width: 100vh;
+  width: 100vw;
 }
 
 .wrapper {
@@ -22,17 +24,17 @@
   overflow-y: auto;
 }
 
-.content-wrapper {
+.contents-wrapper {
   flex: 1;
   overflow-y: auto;
   padding: 0;
-  margin-top: calc(var(--header-height) + 0px);
+  margin-top: var(--header-height); /* Corrected margin-top value */
   margin-left: 20%;
-  padding-top: 56px;
 }
 
 .content {
   padding: 50px;
+  padding-top: 12%;
 }
 
 .header {

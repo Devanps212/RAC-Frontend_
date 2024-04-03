@@ -1,7 +1,10 @@
 import axios, {AxiosRequestConfig} from "axios";
 import { partnerLoginInterface } from "../../../../types/partnerInterface";
 import apiConfig from "../../../../utils/apiConfig";
+import { setPartnerInterceptor } from "../../axios_Interceptor/partner";
 
+
+setPartnerInterceptor()
 
 export const partnerLogin = async(formData: partnerLoginInterface)=>{
     try

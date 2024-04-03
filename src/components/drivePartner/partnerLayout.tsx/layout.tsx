@@ -9,11 +9,11 @@ interface PartnersLayout {
 
 const PartnerLayout: React.FC<PartnersLayout> = ({ children }) => {
   return (
-    <div className="admin-container">
+    <div className="admin-containers">
       <PartnerHeader />
-      <div className="content-wrapper">
+      <div className="content-wrappers">
         <PartnerSideBar />
-        <div className="content">
+        <div className="contents">
           {children}
         </div>
       </div>

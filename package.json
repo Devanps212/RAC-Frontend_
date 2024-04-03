@@ -18,6 +18,7 @@
     "bson": "^6.4.0",
     "connect-mongodb-session": "^5.0.0",
     "firebase": "^10.8.1",
+    "jsonwebtoken": "^9.0.2",
     "mongoose": "^8.2.0",
     "react": "^18.2.0",
     "react-alert": "^7.0.3",
@@ -39,6 +40,7 @@
   "devDependencies": {
     "@types/body-parser": "^1.19.5",
     "@types/connect-mongodb-session": "^2.4.7",
+    "@types/jsonwebtoken": "^9.0.6",
     "@types/react": "^18.2.55",
     "@types/react-alert": "^7.0.6",
     "@types/react-dom": "^18.2.19",

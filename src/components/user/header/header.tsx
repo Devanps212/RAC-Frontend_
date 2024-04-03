@@ -1,9 +1,33 @@
 import React from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { Navbar, Container, Nav, NavDropdown, Offcanvas, Button } from "react-bootstrap";
+import { useDispatch } from "react-redux";
+import { logout } from "../../../features/axios/redux/slices/user/userLoginAuthSlice";
+import { clearToken } from "../../../features/axios/redux/slices/user/tokenSlice";
+import { toast } from 'react-toastify'
+import { auth } from "../../../../firebase/firebase";
 import "./headers.css";
 
 const UserHeader = () => {
+
+  const token = localStorage.getItem('token')
+  const dispatch = useDispatch()
+  const navigate = useNavigate()
+
+  const handleLogout = ()=>{
+    dispatch(logout())
+    dispatch(clearToken())
+    auth.signOut()
+    .then(()=>{
+      console.log("signout success")
+      toast.success('signOut success')
+    })
+    .catch((error:any)=>{
+      console.log(error)
+      toast.error(error.message)
+    })
+  navigate('/users/signIn')
+  }
   return (
     <Navbar expand="lg" className="bg-body-tertiary" style={{position:"fixed", width:'100%', zIndex:'1'}}>
       <Container fluid>
@@ -29,7 +53,7 @@ const UserHeader = () => {
               </NavDropdown>
             </Nav>
             <img
-              src="/src/assets/Logos/CompanyLogo/[removal.ai]_4ca5cd5b-8c5e-4a2a-b090-63d31c75e6a6-qcoku1709465106.png"
+              src="/assets/Logos/CompanyLogo/[removal.ai]_4ca5cd5b-8c5e-4a2a-b090-63d31c75e6a6-qcoku1709465106.png"
               alt="Company Logo"
               style={{ height: "71px", width: "73px" }} // Adjust height as needed
             />
@@ -39,7 +63,14 @@ const UserHeader = () => {
             <Nav.Link className="custom-nav-link">Get In Touch</Nav.Link>
             </div>
             <div className="nav-link-container me-3">
-            <Nav.Link className="custom-nav-link">SignUp/SignIn</Nav.Link>
+              {
+                token ? (
+                  <Nav.Link className="custom-nav-link" onClick={handleLogout}>SignOut</Nav.Link>
+                )
+                :
+                <Nav.Link className="custom-nav-link">SignUp/SignIn</Nav.Link>
+              }
+              
             </div>
             </Nav>
 

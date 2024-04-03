@@ -209,7 +209,7 @@ const SignUp = ()=>{
                 <div className="banner col-md-6 rounded-r-md position-relative">
                   <img
                     className="h-100 object-cover rounded-r-md"
-                    src="/src/assets/admin/signUp/wp8326408-2021-aston-martin-dbx-wallpapers (3).jpg"
+                    src="/assets/admin/signUp/wp8326408-2021-aston-martin-dbx-wallpapers (3).jpg"
                     alt="Login banner"
                     style={{ objectFit: 'cover', width: '113%' }}
                   />

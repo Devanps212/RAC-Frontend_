@@ -1,10 +1,11 @@
 import React, { useEffect, useState } from "react";
-import { Container, Button, Col, Row, Form } from "react-bootstrap";
+import { Container, Button, Col, Row, Form, Modal } from "react-bootstrap";
 import { carInterface } from "../../../types/carAdminInterface";
 import { getCategory } from "../../../features/axios/api/category/category";
 import { carValidator } from "../../../Validators/adminValidators.ts/addCarValidator";
 import { categoryInterface } from "../../../types/categoryInterface";
 import { createCar } from "../../../features/axios/api/car/carAxios";
+import Loading from "../../loading/loading";
 import './carAdd.css'
 import { toast } from "react-toastify";
 
@@ -13,6 +14,8 @@ const PartnerAddCar = ()=>{
     const [formData, setFormData] = useState<carInterface>({} as carInterface)
     const [category, setCategory] = useState<categoryInterface[]>([])
     const [validationErrors, setValidationErrors] = useState<Partial<Record<string, string>>>({})
+    const [SelectedImg, setSelectedImg] = useState<File | null>(null)
+    const [isLoading, setIsLoading] = useState(false)
 
     useEffect(() => {
         getCategory()
@@ -34,10 +37,25 @@ const PartnerAddCar = ()=>{
         setFormData({
           ...formData,
           status: "available",
+          owner:'User'
         });
       }, []);
-    
 
+    const handleDrag = (e:React.DragEvent<HTMLDivElement>, index:number)=>
+    {
+        e.dataTransfer.setData("index", index.toString())
+    }
+    const handleDrop = (e:React.DragEvent<HTMLDivElement>, newIndex:number)=>{
+        e.preventDefault()
+        const oldIndex = parseInt(e.dataTransfer.getData("index"))
+        if(!isNaN(oldIndex) && formData.exterior)
+        {
+            const updateIndex = [...formData.exterior]
+            const imageToMove = updateIndex.splice(oldIndex, 1)[0]
+            updateIndex.splice(newIndex, 0, imageToMove)
+            setFormData({...formData, exterior:updateIndex})
+        }
+    }
 
     const handleInterior = (e:React.ChangeEvent<HTMLInputElement>)=>{
         e.preventDefault()
@@ -52,9 +70,7 @@ const PartnerAddCar = ()=>{
             if(imageFiles)
             {
                 console.log(name, files)
-                const interiorFiles = Array.from(files).map((file) => file.name);
-                setFormData((prevState)=>({...prevState, [name] : interiorFiles}))
-                console.log("interior files: ",interiorFiles)
+                setFormData((prevState)=>({...prevState, [name] : Array.from(files)}))
             }
             else
             {
@@ -76,9 +92,7 @@ const PartnerAddCar = ()=>{
             if(imageFiles)
             {
                 console.log("name and files from exterior",name, files)
-                const exteriorFiles = Array.from(files).map((file) => file.name);
-                console.log("exterior files: ",exteriorFiles)
-                setFormData((prevState)=>({...prevState, [name]: exteriorFiles}))
+                setFormData((prevState)=>({...prevState, [name]: Array.from(files)}))
             }
             else
             {
@@ -89,38 +103,75 @@ const PartnerAddCar = ()=>{
         
     }
 
+    const deleteImageInterior = (indexs:number)=>{
+        let updatedFormData = formData.interior?.filter((files, index)=>index !== indexs)
+        setFormData({...formData, interior:updatedFormData})
+    }
+
+    const deleteImageExterior = (indexs:number)=>{
+        let updatedFormData = formData.exterior?.filter((files, index)=>index !== indexs)
+        setFormData({...formData, exterior:updatedFormData})
+    }
+
     const handleSubmit = async(e:React.FormEvent)=>{
         e.preventDefault()
+        setIsLoading(true)
         console.log("formData before update:", formData)
 
-        if (!formData.status) 
-        {
-            setFormData({
-              ...formData,
-              status: 'available',
-            });
-        }
+        setFormData(prevFormdata=>{
+            if(!prevFormdata.status)
+            {
+                return {...prevFormdata, status:'available'}
+            }
+            return prevFormdata
+        })
         setFormData((prevFormData) => {
             console.log("form status : ", prevFormData.status);
             return prevFormData;
           });
-
+          console.log("owner of car :", formData.owner)
+          if(formData.status === undefined)
+          {
+            setFormData({...formData, owner:'User'})
+            console.log("owner setted")
+          }
+          
         console.log("form data after update : ",formData)
         console.log("creating car")
         const valid = await carValidator(formData)
         if(Object.keys(valid).length === 0)
         {
             try{
-                console.log(formData)
-                const response = await createCar(formData);
-                if (response) 
+                console.log("formData: ", formData)
+                const sendData = new FormData()
+                for(let [key, value] of Object.entries(formData))
                 {
+                    if(key ==='interior' || key=== 'exterior')
+                    {
+                        if(Array.isArray(value))
+                        {
+                            for(let item of value)
+                            {
+                                sendData.append(key, item)
+                            }
+                        }
+                    }
+                    else
+                    {
+                        sendData.append(key, value)
+                    }
+                }
+                const response = await createCar(sendData);
+                if (response)
+                {
+                    setIsLoading(false)
                     console.log(response);
                     toast.success(response.message)
                     return true
                 } 
                 else 
                 {
+                    setIsLoading(false)
                     console.log("error");
                     toast.error("Error uploading car")
                     return true
@@ -129,12 +180,14 @@ const PartnerAddCar = ()=>{
             }
             catch(error:any)
             {
+                setIsLoading(false)
                 console.log("error : ", error.message);
                 toast.error(error.message);
             }
         }
         else
         {
+            setIsLoading(false)
             console.log("error found")
             console.log(valid) 
             setValidationErrors(valid)
@@ -145,6 +198,7 @@ const PartnerAddCar = ()=>{
 
     return(
         <div className="addCar-body">
+            {isLoading && <Loading/>}
         <Container className="custom-container">
             <h3 className="mb-5">Add Car</h3>
             <Form onSubmit={handleSubmit} encType="multipart/form-data">
@@ -164,10 +218,13 @@ const PartnerAddCar = ()=>{
                     <Form.Group controlId="Car Owner">
                         <Form.Label>Car Owner</Form.Label>
                         <Form.Control
-                        type="text"
-                        value={formData?.owner || ""} 
+                        as='select'
+                        defaultValue={formData.owner || ''}
                         className="input-type"
-                        onChange={(e)=>setFormData({...formData, owner:e.target.value})}/>
+                        onChange={(e)=>setFormData({...formData, owner:e.target.value})}>
+                            <option value=''>---select Owner---</option>
+                            <option value='User'>User</option>
+                        </Form.Control>
                         <Form.Text className="text-danger">{validationErrors.owner}</Form.Text>
                     </Form.Group>
                     </Col>
@@ -176,14 +233,16 @@ const PartnerAddCar = ()=>{
                     <Col>
                     <Form.Group controlId="Car category">
                         <Form.Label>Category</Form.Label>
-                        <Form.Control as='select' 
-                        value={formData.category?formData.category.toString() : ''} 
+                        <Form.Control as='select'
+                        defaultValue=''
                         onChange={(e)=>setFormData({...formData, category:e.target.value})}>
+                            <option value="">---select Category---</option>
                             { category.map((categ, index)=>(
                                 <option key={index + 1} value={categ._id}>{categ.name}</option>
                             ))    
                             }
                         </Form.Control>
+                        <Form.Text className="text-danger">{validationErrors.category}</Form.Text>
                     </Form.Group>
                     </Col>
                     <Col>
@@ -226,12 +285,14 @@ const PartnerAddCar = ()=>{
                 <Col>
                     <Form.Group controlId="status">
                     <Form.Label>Status</Form.Label>
-                    <Form.Control as='select' onChange={(e)=>setFormData({...formData, status:e.target.value as "available" | "maintenance" | "booked" | "not available"})}>
+                    <Form.Control as='select' value={formData.status?formData.status : ''} onChange={(e)=>setFormData({...formData, status:e.target.value as "available" | "maintenance" | "booked" | "not available"})}>
+                        <option value="">---select Status---</option>
                         <option value="available">Available</option>
                         <option value="maintenance">Under Maintenance</option>
                         <option value="booked">Booked</option>
                         <option value="not available">Not available</option>
                     </Form.Control>
+                    <Form.Text className="text-danger">{validationErrors.status}</Form.Text>
                     </Form.Group>
                 </Col>
                 <Col>
@@ -335,6 +396,17 @@ const PartnerAddCar = ()=>{
                     onChange={handleInterior}/>
                     <Form.Text className="text-danger">{validationErrors.interior}</Form.Text>
                     </Form.Group>
+                    {formData.interior && 
+                    formData.interior.map((file, index)=>(
+                        <div key={index}>
+                        <img onClick={()=>setSelectedImg(file)}
+                        src={URL.createObjectURL(file)}
+                        alt={`Uploaded Image ${index}`} 
+                        style={{ width: '100px', height: 'auto', margin: '5px' }}/>
+                        <Button onClick={()=>deleteImageInterior(index)} variant="danger">Delete</Button>
+                        </div>
+                    ))
+                    }
                 </Col>
                 <Col>
                     <Form.Group controlId="exterior">
@@ -346,6 +418,20 @@ const PartnerAddCar = ()=>{
                     onChange={handleExterior}/>
                     <Form.Text className="text-danger">{validationErrors.exterior}</Form.Text>
                     </Form.Group>
+                    {formData.exterior && 
+                    formData.exterior.map((file, index)=>(
+                        <div key={index}>
+                        <img onClick={()=>setSelectedImg(file)}
+                        src={URL.createObjectURL(file)}
+                        alt={`Uploaded Image ${index}`} 
+                        style={{ width: '100px', height: 'auto', margin: '5px' }}
+                        onDragStart={(e)=>handleDrag(e,index)}
+                        onDragOver={(e)=>e.preventDefault()}
+                        onDrop={(e)=>handleDrop(e, index)}/>
+                        <Button onClick={()=>deleteImageExterior(index)} variant="danger">Delete</Button>
+                        </div>
+                    ))
+                    }
                 </Col>
                 </Row>
 
@@ -353,6 +439,11 @@ const PartnerAddCar = ()=>{
                     Submit
                 </Button>
             </Form>
+            <Modal show={!!SelectedImg} onHide={()=>setSelectedImg(null)}>
+                <Modal.Body>
+                <img alt="Selected Image" src={SelectedImg ?URL.createObjectURL(SelectedImg): "http://www.w3.org/2000/svg"} style={{ width: '100%', height: 'auto' }} />
+                </Modal.Body>
+            </Modal>
         </Container>
         </div>
     )

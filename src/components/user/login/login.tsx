@@ -238,7 +238,7 @@ const UserLogin = () => {
             <div className="banner col-md-6 rounded-r-md position-relative">
                 <img
                     className="h-100 object-cover rounded-r-md"
-                    src="/src/assets/admin/login/Wallpapers World Cars Wallpapers Full HD 1080p (1).jpg"
+                    src="/assets/admin/login/Wallpapers World Cars Wallpapers Full HD 1080p (1).jpg"
                     alt="Login banner"
                     style={{ objectFit: 'cover', width: '115%' }}
                 />

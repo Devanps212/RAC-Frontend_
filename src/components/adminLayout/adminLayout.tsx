@@ -9,11 +9,11 @@ interface AdminLayoutProps {
 
 const AdminLayout: React.FC<AdminLayoutProps> = ({ children }) => {
   return (
-    <div className="admin-container">
+    <div className="admins-container">
       <Header />
       <div className="wrapper">
         <Sidebar />
-        <div className="content-wrapper">
+        <div className="contents-wrapper">
           <div className="content">{children}</div>
         </div>
       </div>
