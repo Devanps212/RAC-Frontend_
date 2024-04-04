@@ -157,7 +157,7 @@ const AddCar = ()=>{
                     }
                 }
                 console.log("sendData :",sendData)
-                const response = await createCar(sendData);
+                const response = await createCar(sendData, 'admin');
                 if (response) 
                 {
                     console.log(response);

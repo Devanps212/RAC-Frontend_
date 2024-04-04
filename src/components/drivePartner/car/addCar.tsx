@@ -161,7 +161,7 @@ const PartnerAddCar = ()=>{
                         sendData.append(key, value)
                     }
                 }
-                const response = await createCar(sendData);
+                const response = await createCar(sendData, 'partner');
                 if (response)
                 {
                     setIsLoading(false)

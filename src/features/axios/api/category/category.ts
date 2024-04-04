@@ -1,12 +1,16 @@
 import axios, {AxiosRequestConfig} from "axios";
 import apiConfig from "../../../../utils/apiConfig";
-import { Types } from "mongoose";
+import { setAdminInterceptor } from "../../axios_Interceptor/Interceptor";
 import { categoryInterface } from "../../../../types/categoryInterface";
 import { toast } from "react-toastify";
+
+
+
 
 export const createCategory = async(name: string, description : string)=>{
     try
     {
+        setAdminInterceptor()
         const categConfig: AxiosRequestConfig= {
             url:apiConfig.createCategory,
             method:"post",
@@ -26,6 +30,7 @@ export const createCategory = async(name: string, description : string)=>{
 export const getCategory = async()=>{
     try
     {
+        setAdminInterceptor()
         const categConfig:AxiosRequestConfig = {
             url:apiConfig.getCategories,
             method:"get"
@@ -45,6 +50,7 @@ export const getCategory = async()=>{
 export const unList = async(categoryId : string)=>{
     try
     {
+        setAdminInterceptor()
         console.log("categoryId : ", categoryId)
 
         const listConfig : AxiosRequestConfig = {
@@ -66,6 +72,7 @@ export const unList = async(categoryId : string)=>{
 export const List = async(categoryId :string)=>{
     try
     {
+        setAdminInterceptor()
         console.log("categoryId : ", categoryId)
 
         const listConfig : AxiosRequestConfig = {
@@ -87,6 +94,7 @@ export const List = async(categoryId :string)=>{
 export const categorySingle = async(name?:string, categoryId?:string)=>{
     try
     {
+        setAdminInterceptor()
         console.log("name :",name,"categoryId :", categoryId)
 
         const categConfig : AxiosRequestConfig = {
@@ -110,6 +118,7 @@ export const categorySingle = async(name?:string, categoryId?:string)=>{
 export const editCategory = async(formData: categoryInterface)=>{
     try
     {
+        setAdminInterceptor()
         console.log("formdata :", formData)
 
         const editConfig : AxiosRequestConfig = {

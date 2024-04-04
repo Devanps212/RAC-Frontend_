@@ -1,10 +1,30 @@
 import axios, {AxiosRequestConfig} from "axios";
 import { carInterface } from "../../../../types/carAdminInterface";
 import apiConfig from "../../../../utils/apiConfig";
+import { setAdminInterceptor, setPartnerInterceptor } from "../../axios_Interceptor/Interceptor";
 
-export const createCar = async(carData:any)=>{
+const setInterceptor = (role:string)=>{
+    if(role === 'admin')
+    {
+        console.log("passing to toadminInterceptor")
+        setAdminInterceptor()
+    }
+    else if(role ==='partner')
+    {
+        console.log("passing to toadminInterceptor")
+        setPartnerInterceptor()
+    }
+    else
+    {
+        throw new Error('Un-Recognized role')
+    }
+}
+
+
+export const createCar = async(carData:any, role:string)=>{
     try
     {
+        setInterceptor(role)
         console.log("formData in create Car: ", carData)
 
         const carCreateConfig : AxiosRequestConfig = {
@@ -25,9 +45,10 @@ export const createCar = async(carData:any)=>{
     }
 }
 
-export const findAllCars = async(carData:string)=>{
+export const findAllCars = async(carData:string, role:string)=>{
     try
     {
+        setInterceptor(role)
         console.log("carData : ", carData)
         
         const findConfig: AxiosRequestConfig = {
@@ -41,14 +62,16 @@ export const findAllCars = async(carData:string)=>{
     }
     catch(error:any)
     {
-        console.log(error.message)
-        throw new Error(error.message)
+        console.log("error: ",error.response.data.message)
+        throw new Error(error.response.data.message)
     }
 }
 
-export const deleteCar = async(carId: string)=>{
+export const deleteCar = async(carId: string, role: string)=>{
     try
     {
+        setInterceptor(role)
+        console.log(role)
         console.log("carId :", carId)
         
         const carDeleteConfig: AxiosRequestConfig = {

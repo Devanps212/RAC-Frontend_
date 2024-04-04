@@ -15,21 +15,35 @@ const CarManagement = ()=>{
     const [formData, setFormData] = useState<carAdminInterface[]>([])
     const [load, setLoad] = useState(true)
 
-    const data = 'all'
-    useEffect(()=>{
-        findAllCars(data)
-        .then((response)=>{
-            console.log("data recieved :",response)
-            setFormData(response)
-            console.log(formData)
-        })
-        .catch((error)=>{
-            console.log(error.message)
-        })
-        .finally(()=>{
-            setLoad(false)
-        })
-    }, [data])
+
+    useEffect(() => {
+        let mounted = true;
+      
+        const fetchData = async () => {
+          try {
+            const response = await findAllCars('all', 'admin');
+            if (mounted) {
+              console.log('data received:', response);
+              setFormData(response);
+              setLoad(false);
+            }
+          } 
+          catch(error:any) 
+          {
+            if (mounted)
+            {
+              toast.error(error.message);
+              setLoad(false);
+            }
+          }
+        };
+      
+        fetchData();
+      
+        return () => {
+          mounted = false;
+        };
+      }, []);
 
     const handleDelete = (carId:string, index:number)=> (event:React.MouseEvent<HTMLButtonElement>)=>{
         confirmAlert({
@@ -41,7 +55,7 @@ const CarManagement = ()=>{
                 onClick: async () => {
                   try {
                     console.log('delete id:', carId);
-                    const response = await deleteCar(carId);
+                    const response = await deleteCar(carId, 'admin');
                     console.log('delete response:', response.message);
         
                     setFormData((prevState) => prevState.filter((car, i) => i !== index));

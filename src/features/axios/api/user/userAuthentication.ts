@@ -98,7 +98,7 @@ export const GoogleVerification = async(credentials : string)=>{
     catch(error: any)
     {
         console.log(error)
-        console.log("error occured : ",error.message)
-        throw new Error(error.message)
+        console.log("error occured : ",error.response.data.message)
+        throw new Error(error.response.data.message)
     }
 } 

@@ -1,9 +1,13 @@
 import axios, {AxiosRequestConfig} from "axios";
 import apiConfig from "../../../../utils/apiConfig";
+import { setAdminInterceptor } from "../../axios_Interceptor/Interceptor";
+
+
 
 export const getAllUsers = async()=>{
     try
     {
+        setAdminInterceptor()
         const allUsersConfig : AxiosRequestConfig = {
             url:apiConfig.getAllUsers,
             method:'get',
@@ -21,6 +25,7 @@ export const getAllUsers = async()=>{
 export const blockUnblockUser = async(userId: string)=>{
     try
     {
+        setAdminInterceptor()
         console.log("userId :", userId)
 
         const UBuserConfig : AxiosRequestConfig = {
@@ -46,6 +51,7 @@ export const blockUnblockUser = async(userId: string)=>{
 export const findOneUser = async(userId:string)=>{
     try
     {
+        setAdminInterceptor()
         const userFindConfig : AxiosRequestConfig = {
             url:apiConfig.findOneUser,
             method:'get',

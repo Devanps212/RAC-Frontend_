@@ -1,6 +1,7 @@
 import { auth } from "../../firebase/firebase";
 import { GoogleAuthProvider, signInWithPopup } from "firebase/auth";
-import { GoogleVerification } from "../features/axios/api/user/userAuthentication";import { toast } from "react-toastify";
+import { GoogleVerification } from "../features/axios/api/user/userAuthentication";
+import { toast } from "react-toastify";
 
 
 export const Gverify = async() =>{
@@ -23,7 +24,7 @@ export const Gverify = async() =>{
     }
     catch(error:any)
     {
-        console.log("error :", error.message)
+        console.log("error in gverify:", error.message)
         throw new Error(error.message)
     }
 }

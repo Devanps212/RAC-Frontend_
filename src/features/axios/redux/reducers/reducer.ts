@@ -5,6 +5,7 @@ import adminTokenReducer from '../slices/admin/tokenSlice'
 import adminLoginReducer from '../slices/admin/adminLogin'
 import partnerLoginReducer from '../slices/partner/partnerLogin'
 import partnertTokenReducer from '../slices/partner/tokenSlice'
+import BlockUnBlockUser from '../slices/user/BlockUnblockuser'
 
 const rootReducer = combineReducers({
     token : tokenReducer,
@@ -13,6 +14,7 @@ const rootReducer = combineReducers({
     adminAuth : adminLoginReducer,
     partnerToken : partnertTokenReducer,
     partnerLogin : partnerLoginReducer,
+    UBUser : BlockUnBlockUser
 })
 
 export type RootState = ReturnType<typeof rootReducer>
