@@ -8,9 +8,8 @@ import { useNavigate } from 'react-router-dom';
 import { Gverify } from '../../../services/googleAuthService';
 import { setToken } from '../../../features/axios/redux/slices/user/tokenSlice';
 import { loginSuccess } from '../../../features/axios/redux/slices/user/userLoginAuthSlice';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import Loading from '../../loading/loading';
-
 
 
 const UserLogin = () => {
@@ -27,13 +26,15 @@ const UserLogin = () => {
         password:''
     })
 
-    useEffect(()=>{
-      const token = localStorage.getItem('token')
-      if(token)
-      {
-        navigate('/users/home')
-      }
-    },[])
+    // useEffect(()=>{
+    //   // const token = localStorage.getItem('token')
+    //   // const userId = decodeToken(token).payload
+    //   // if(blockedUser.includes())
+    //   // {
+    //   //   navigate('/users/home')
+    //   // }
+    //   const 
+    // },[])
     const handleSubmit = async(e: React.FormEvent)=>{
         try{
             console.log("checking form datas")

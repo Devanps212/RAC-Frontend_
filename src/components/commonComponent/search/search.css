@@ -1,0 +1,48 @@
+/* SearchComponent.css */
+
+.search-form {
+    position: relative;
+    animation: slideInUp 0.5s ease-in-out;
+  }
+  
+  .search-input {
+    width: 300px;
+    border-radius: 20px;
+    padding: 10px;
+    border: 2px solid #ccc;
+    transition: all 0.3s ease-in-out;
+  }
+  
+  .search-input:focus {
+    outline: none;
+    border-color: #66afe9;
+    box-shadow: 0 0 10px #66afe9;
+  }
+  
+  @keyframes slideInUp {
+    0% {
+      transform: translateY(50px);
+      opacity: 0;
+    }
+    100% {
+      transform: translateY(0);
+      opacity: 1;
+    }
+  }
+
+  .loading-spinner {
+    border: 2px solid #f3f3f3;
+    border-top: 2px solid #3498db;
+    border-radius: 50%;
+    width: 20px;
+    height: 20px;
+    animation: spin 1s linear infinite;
+    margin: 0 auto;
+    display: none;
+  }
+
+  @keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+  }
+  

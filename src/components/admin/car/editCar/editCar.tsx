@@ -1,22 +1,55 @@
 import React, { useEffect, useState } from "react";
 import { Container, Button, Col, Row, Form, Modal } from "react-bootstrap";
-import { carInterface } from "../../../types/carAdminInterface";
-import { getCategory } from "../../../features/axios/api/category/category";
-import { carValidator } from "../../../Validators/adminValidators.ts/addCarValidator";
-import { categoryInterface } from "../../../types/categoryInterface";
-import { createCar } from "../../../features/axios/api/car/carAxios";
-import Loading from "../../loading/loading";
+import { carInterface } from "../../../../types/carAdminInterface";
+import { getCategory } from "../../../../features/axios/api/category/category";
+import { findAllCars, editCar } from "../../../../features/axios/api/car/carAxios";
+import { carValidator } from "../../../../Validators/adminValidators.ts/addCarValidator";
 import './carAdd.css'
+import { categoryInterface } from "../../../../types/categoryInterface";
 import { toast } from "react-toastify";
+import { useLocation } from "react-router-dom";
 
-const PartnerAddCar = ()=>{
+
+const AddCar = ()=>{
 
     const [formData, setFormData] = useState<carInterface>({} as carInterface)
     const [category, setCategory] = useState<categoryInterface[]>([])
     const [validationErrors, setValidationErrors] = useState<Partial<Record<string, string>>>({})
     const [SelectedImg, setSelectedImg] = useState<File | null>(null)
-    const [isLoading, setIsLoading] = useState(false)
+    const [createdCar, setCreatedCar] = useState<Partial<carInterface>>({})
+    const [showModal, setShowModal] = useState(false)
+    const location = useLocation()
+    const {id} = location.state
+    console.log("id recieved : ", id)
 
+    let imagePath = '';
+    if(createdCar && createdCar.exterior)
+    {
+        imagePath = `/Cars/${createdCar.name}/exterior/${createdCar.exterior[0]}`
+    }
+    else if(createdCar && createdCar.interior)
+    {
+        imagePath = `${createdCar.name}/interior/${createdCar.interior[0]}`
+    }
+    else
+    {
+        imagePath = ''
+    }
+
+    useEffect(()=>{
+
+    })
+
+    const findCar = async()=>{
+        console.log("id from state :", id)
+        const response = await findAllCars(id,'admin')
+
+        console.log(response)
+
+    }
+    
+
+    
     useEffect(() => {
         getCategory()
           .then((response) => {
@@ -37,26 +70,28 @@ const PartnerAddCar = ()=>{
         setFormData({
           ...formData,
           status: "available",
-          owner:'User'
         });
       }, []);
 
-    const handleDrag = (e:React.DragEvent<HTMLDivElement>, index:number)=>
-    {
-        e.dataTransfer.setData("index", index.toString())
-    }
-    const handleDrop = (e:React.DragEvent<HTMLDivElement>, newIndex:number)=>{
-        e.preventDefault()
-        const oldIndex = parseInt(e.dataTransfer.getData("index"))
-        if(!isNaN(oldIndex) && formData.exterior)
-        {
-            const updateIndex = [...formData.exterior]
-            const imageToMove = updateIndex.splice(oldIndex, 1)[0]
-            updateIndex.splice(newIndex, 0, imageToMove)
-            setFormData({...formData, exterior:updateIndex})
-        }
-    }
-
+      const handleDragStart = (e: React.DragEvent<HTMLDivElement>, index:number) => {
+        e.dataTransfer.setData("index", index.toString());
+      };
+      
+      const handleDragOver = (e:React.FormEvent) => {
+        e.preventDefault();
+      };
+      
+      const handleDrop = (e :React.DragEvent<HTMLDivElement>, newIndex:number) => {
+        e.preventDefault();
+        const oldIndex = parseInt(e.dataTransfer.getData("index"));
+        if (!isNaN(oldIndex) && formData.exterior) {
+            const updatedImages = [...formData.exterior];
+            const imageToMove = updatedImages.splice(oldIndex, 1)[0];
+            updatedImages.splice(newIndex, 0, imageToMove);
+            setFormData({ ...formData, exterior: updatedImages });
+          }
+      };
+ 
     const handleInterior = (e:React.ChangeEvent<HTMLInputElement>)=>{
         e.preventDefault()
 
@@ -112,37 +147,31 @@ const PartnerAddCar = ()=>{
         let updatedFormData = formData.exterior?.filter((files, index)=>index !== indexs)
         setFormData({...formData, exterior:updatedFormData})
     }
+    
 
     const handleSubmit = async(e:React.FormEvent)=>{
         e.preventDefault()
-        setIsLoading(true)
         console.log("formData before update:", formData)
 
-        setFormData(prevFormdata=>{
-            if(!prevFormdata.status)
-            {
-                return {...prevFormdata, status:'available'}
-            }
-            return prevFormdata
-        })
+        if (!formData.status) 
+        {
+            setFormData({
+              ...formData,
+              status: 'available',
+            });
+        }
         setFormData((prevFormData) => {
             console.log("form status : ", prevFormData.status);
             return prevFormData;
           });
-          console.log("owner of car :", formData.owner)
-          if(formData.status === undefined)
-          {
-            setFormData({...formData, owner:'User'})
-            console.log("owner setted")
-          }
-          
+
         console.log("form data after update : ",formData)
         console.log("creating car")
         const valid = await carValidator(formData)
         if(Object.keys(valid).length === 0)
         {
             try{
-                console.log("formData: ", formData)
+                console.log("Datas appended to formData : ",formData)
                 const sendData = new FormData()
                 for(let [key, value] of Object.entries(formData))
                 {
@@ -161,33 +190,33 @@ const PartnerAddCar = ()=>{
                         sendData.append(key, value)
                     }
                 }
-                const response = await createCar(sendData, 'partner');
-                if (response)
+                console.log("sendData :",sendData)
+                const response = await editCar(sendData, 'admin');///do here 
+                if (response) 
                 {
-                    setIsLoading(false)
                     console.log(response);
+                    setFormData({} as carInterface)
+                    setCreatedCar(response.carCreate)
+                    setShowModal(true)
+                    console.log(response.carCreate)
                     toast.success(response.message)
                     return true
                 } 
                 else 
                 {
-                    setIsLoading(false)
                     console.log("error");
                     toast.error("Error uploading car")
                     return true
-                }
-                
+                }   
             }
             catch(error:any)
             {
-                setIsLoading(false)
                 console.log("error : ", error.message);
                 toast.error(error.message);
             }
         }
         else
         {
-            setIsLoading(false)
             console.log("error found")
             console.log(valid) 
             setValidationErrors(valid)
@@ -198,7 +227,6 @@ const PartnerAddCar = ()=>{
 
     return(
         <div className="addCar-body">
-            {isLoading && <Loading/>}
         <Container className="custom-container">
             <h3 className="mb-5">Add Car</h3>
             <Form onSubmit={handleSubmit} encType="multipart/form-data">
@@ -219,11 +247,11 @@ const PartnerAddCar = ()=>{
                         <Form.Label>Car Owner</Form.Label>
                         <Form.Control
                         as='select'
-                        defaultValue={formData.owner || ''}
+                        value={formData.owner || ''} 
                         className="input-type"
                         onChange={(e)=>setFormData({...formData, owner:e.target.value})}>
-                            <option value=''>---select Owner---</option>
-                            <option value='Partner'>Partner</option>
+                        <option value=''>---select Owner---</option>
+                        <option value='Admin'>Admin</option>
                         </Form.Control>
                         <Form.Text className="text-danger">{validationErrors.owner}</Form.Text>
                     </Form.Group>
@@ -233,16 +261,15 @@ const PartnerAddCar = ()=>{
                     <Col>
                     <Form.Group controlId="Car category">
                         <Form.Label>Category</Form.Label>
-                        <Form.Control as='select'
+                        <Form.Control as='select' 
                         defaultValue=''
                         onChange={(e)=>setFormData({...formData, category:e.target.value})}>
-                            <option value="">---select Category---</option>
+                            <option value=''>---select Category---</option>
                             { category.map((categ, index)=>(
                                 <option key={index + 1} value={categ._id}>{categ.name}</option>
                             ))    
                             }
                         </Form.Control>
-                        <Form.Text className="text-danger">{validationErrors.category}</Form.Text>
                     </Form.Group>
                     </Col>
                     <Col>
@@ -285,8 +312,8 @@ const PartnerAddCar = ()=>{
                 <Col>
                     <Form.Group controlId="status">
                     <Form.Label>Status</Form.Label>
-                    <Form.Control as='select' value={formData.status?formData.status : ''} onChange={(e)=>setFormData({...formData, status:e.target.value as "available" | "maintenance" | "booked" | "not available"})}>
-                        <option value="">---select Status---</option>
+                    <Form.Control as='select' value={formData.status || ''} onChange={(e)=>setFormData({...formData, status:e.target.value as "available" | "maintenance" | "booked" | "not available"})}>
+                        <option value=''>---select Status---</option>
                         <option value="available">Available</option>
                         <option value="maintenance">Under Maintenance</option>
                         <option value="booked">Booked</option>
@@ -393,13 +420,14 @@ const PartnerAddCar = ()=>{
                     type="file" 
                     name="interior"
                     multiple
-                    onChange={handleInterior}/>
+                    onChange={handleInterior}
+                    className="custom-file-input"/>
                     <Form.Text className="text-danger">{validationErrors.interior}</Form.Text>
                     </Form.Group>
                     {formData.interior && 
                     formData.interior.map((file, index)=>(
                         <div key={index}>
-                        <img onClick={()=>setSelectedImg(file)}
+                            <img onClick={()=>setSelectedImg(file)}
                         src={URL.createObjectURL(file)}
                         alt={`Uploaded Image ${index}`} 
                         style={{ width: '100px', height: 'auto', margin: '5px' }}/>
@@ -425,13 +453,19 @@ const PartnerAddCar = ()=>{
                         src={URL.createObjectURL(file)}
                         alt={`Uploaded Image ${index}`} 
                         style={{ width: '100px', height: 'auto', margin: '5px' }}
-                        onDragStart={(e)=>handleDrag(e,index)}
-                        onDragOver={(e)=>e.preventDefault()}
-                        onDrop={(e)=>handleDrop(e, index)}/>
+                        onDragStart={(e) => handleDragStart(e, index)}
+                        onDragOver={handleDragOver}
+                        onDrop={(e) => handleDrop(e, index)}/>
+
                         <Button onClick={()=>deleteImageExterior(index)} variant="danger">Delete</Button>
                         </div>
                     ))
                     }
+                    {formData.exterior && formData.exterior.length > 0 && (
+                        <div style={{ marginBottom: '10px', fontWeight: 'bold' }}>
+                        Drag and drop the main image (e.g., car front view) to the first slot
+                    </div>
+                    )}
                 </Col>
                 </Row>
 
@@ -449,4 +483,4 @@ const PartnerAddCar = ()=>{
     )
 }
 
-export default PartnerAddCar
+export default AddCar

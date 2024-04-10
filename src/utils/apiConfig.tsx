@@ -19,6 +19,7 @@ const apiConfig = {
     createCar: `${configKeys.API_URL}cars/addCar`,
     findCars:`${configKeys.API_URL}cars/getCars`,
     deleteCar: `${configKeys.API_URL}cars/deleteCar`,
+    editCar : `${configKeys.API_URL}cars/editCar`,
 
     getAllUsers:`${configKeys.API_URL}admin/allUsers`,
     UBuser:`${configKeys.API_URL}admin/UBUser`,

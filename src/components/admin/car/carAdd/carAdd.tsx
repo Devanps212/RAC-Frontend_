@@ -1,12 +1,16 @@
 import React, { useEffect, useState } from "react";
 import { Container, Button, Col, Row, Form, Modal } from "react-bootstrap";
-import { carInterface } from "../../../../types/carAdminInterface";
+import { carInterface, showCarInterface } from "../../../../types/carAdminInterface";
 import { getCategory } from "../../../../features/axios/api/category/category";
 import { createCar } from "../../../../features/axios/api/car/carAxios";
 import { carValidator } from "../../../../Validators/adminValidators.ts/addCarValidator";
 import './carAdd.css'
 import { categoryInterface } from "../../../../types/categoryInterface";
+import Loading from "../../../loading/loading";
+
 import { toast } from "react-toastify";
+import CarImageComponent from "../../../commonComponent/carImage/carImage";
+import { decodeToken } from "../../../../utils/tokenUtil";
 
 const AddCar = ()=>{
 
@@ -14,6 +18,15 @@ const AddCar = ()=>{
     const [category, setCategory] = useState<categoryInterface[]>([])
     const [validationErrors, setValidationErrors] = useState<Partial<Record<string, string>>>({})
     const [SelectedImg, setSelectedImg] = useState<File | null>(null)
+    const [createdCar, setCreatedCar] = useState<Partial<showCarInterface>>({})
+    const [isLoading, setIsLoading] = useState(false)
+    const [showModal, setShowModal] = useState(false)
+
+    const adminToken = localStorage.getItem('admintoken') ?? ''
+    const adminId = decodeToken(adminToken).payload
+    
+
+    
 
     
     useEffect(() => {
@@ -117,6 +130,7 @@ const AddCar = ()=>{
 
     const handleSubmit = async(e:React.FormEvent)=>{
         e.preventDefault()
+        setIsLoading(true)
         console.log("formData before update:", formData)
 
         if (!formData.status) 
@@ -130,6 +144,8 @@ const AddCar = ()=>{
             console.log("form status : ", prevFormData.status);
             return prevFormData;
           });
+          console.log("admin :", adminId)
+          setFormData({...formData, addedById : adminId})
 
         console.log("form data after update : ",formData)
         console.log("creating car")
@@ -161,13 +177,19 @@ const AddCar = ()=>{
                 if (response) 
                 {
                     console.log(response);
+                    setFormData({} as carInterface)
+                    setCreatedCar(response.carCreate)
+                    setShowModal(true)
+                    console.log(response.carCreate)
                     toast.success(response.message)
+                    setIsLoading(false)
                     return true
                 } 
                 else 
                 {
                     console.log("error");
                     toast.error("Error uploading car")
+                    setIsLoading(false)
                     return true
                 }   
             }
@@ -175,12 +197,14 @@ const AddCar = ()=>{
             {
                 console.log("error : ", error.message);
                 toast.error(error.message);
+                setIsLoading(false)
             }
         }
         else
         {
             console.log("error found")
             console.log(valid) 
+            setIsLoading(false)
             setValidationErrors(valid)
             console.log("validation errors :",validationErrors)
         }
@@ -190,6 +214,7 @@ const AddCar = ()=>{
     return(
         <div className="addCar-body">
         <Container className="custom-container">
+        {isLoading && <Loading/>}
             <h3 className="mb-5">Add Car</h3>
             <Form onSubmit={handleSubmit} encType="multipart/form-data">
                 <Row className="mb-3">
@@ -441,6 +466,35 @@ const AddCar = ()=>{
                 </Modal.Body>
             </Modal>
         </Container>
+
+        <Modal show={showModal} onHide={() => setShowModal(false)}>
+            <Modal.Header closeButton>
+                <h4>Car Added successfully</h4>
+            </Modal.Header>
+            <Modal.Body>
+                <Row>
+                    <CarImageComponent pathImage={createdCar.exterior}/>
+                    <Col className="text-right">
+                        <div className="d-flex justify-content-center align-items-center">
+                            <h3 className="mb-5">{createdCar.name}</h3>
+                        </div>
+                        <ul className="list-unstyled">
+                            {Object.entries(createdCar)
+                            .filter(([key]) => key !== "interior" && key !== "exterior")
+                            .map(([key, value], index) => (
+                                <li key={index} className="d-flex justify-content-between">
+                                    <span className="font-weight-bold">{key}</span>
+                                    <span>{String(value)}</span>
+                                </li>
+                            ))}
+                        </ul>
+                    </Col>
+                </Row>
+            </Modal.Body>
+        </Modal>
+
+        
+        
         </div>
     )
 }

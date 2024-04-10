@@ -28,4 +28,25 @@ export interface carInterface {
     rentPricePerDay?: number;
     insuranceDetails?: string;
     addedBy?: string;
+    addedById?:Types.ObjectId
+}
+
+export interface showCarInterface {
+    name: string;
+    owner: string;
+    category?: Types.ObjectId | string;
+    price: number;
+    mileage?: number;
+    engine?: string;
+    transmission?: string;
+    fuelType?: string;
+    interior?:string[];
+    exterior?: string[];
+    status?: 'available' | 'maintenance' | 'booked' | 'not available';
+    description?: string;
+    vehicleNumber?: string;
+    rentPricePerWeek?: number;
+    rentPricePerDay?: number;
+    insuranceDetails?: string;
+    addedBy?: string;
 }

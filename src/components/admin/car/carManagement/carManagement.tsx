@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react"
 import { confirmAlert } from 'react-confirm-alert';
-import { Table, Button } from "react-bootstrap"
+import { Table, Button, FormControl, Form, Modal, Row, Col } from "react-bootstrap"
 import { FaTrash, FaEdit, FaInfoCircle } from 'react-icons/fa';
 import { carAdminInterface } from "../../../../types/carAdminInterface";
 import { findAllCars } from "../../../../features/axios/api/car/carAxios";
@@ -9,12 +9,22 @@ import { deleteCar } from "../../../../features/axios/api/car/carAxios";
 import { getStatus } from "../../../../utils/statuUtils";
 import Loading from "../../../loading/loading";
 import { toast } from "react-toastify";
+import SearchOne from "../../../commonComponent/search/search";
+import Pagination from "../../../commonComponent/pagination/pagination";
+import { useNavigate } from "react-router-dom";
+
 
 const CarManagement = ()=>{
 
     const [formData, setFormData] = useState<carAdminInterface[]>([])
     const [load, setLoad] = useState(true)
-
+    const [search, setSearch] = useState('')
+    const [filteredData, setFilteredData]= useState<carAdminInterface[]>([])
+    const [currentPage, setCurrentPage] = useState(1)
+    const ItemsperPage = 5
+    const totalPages = Math.ceil(filteredData.length/ ItemsperPage)
+    console.log("filtered data length : ", totalPages)
+    const navigate = useNavigate()
 
     useEffect(() => {
         let mounted = true;
@@ -25,6 +35,8 @@ const CarManagement = ()=>{
             if (mounted) {
               console.log('data received:', response);
               setFormData(response);
+              setFilteredData(response)
+              
               setLoad(false);
             }
           } 
@@ -44,6 +56,34 @@ const CarManagement = ()=>{
           mounted = false;
         };
       }, []);
+
+      useEffect(()=>{
+        handleSearch(search)
+      }, [search])
+
+      const onPageChange = (page: number)=>{
+        setCurrentPage(page)
+        console.log("page number recieved :", page)
+        console.log(currentPage)
+      }
+
+      const handleSearch = (value:string)=>{
+        console.log("filtered Data : ", filteredData)
+        if(value.trim() !== "")
+          {
+            console.log(value)
+            setSearch(value)
+            const regexp = new RegExp(`^${value}`, "i")
+            const data = filteredData.filter(data=> regexp.test(data.name))
+           console.log("data found : ", data)
+           setFilteredData(data)
+           console.log("filtered Data : ", filteredData)
+          }
+          else
+          {
+            setFilteredData(formData)
+          }
+      }
 
     const handleDelete = (carId:string, index:number)=> (event:React.MouseEvent<HTMLButtonElement>)=>{
         confirmAlert({
@@ -79,10 +119,20 @@ const CarManagement = ()=>{
 
     }
 
+    const handleEdit = (id:string)=>{
+      navigate(`/admin/cars/editCars`, {state:{id}})
+    }
+
+    const lastIndexOfItems = currentPage * ItemsperPage
+    const firstIndexOfItems = lastIndexOfItems - ItemsperPage
+    const currentItems = filteredData.slice(firstIndexOfItems, lastIndexOfItems)
+    console.log("last:", lastIndexOfItems, "first:", firstIndexOfItems, "current:", currentItems)
+
     return(
         <div className="table-body">
             <h3 className="mb-5">Car Management</h3>
             {load && <Loading/>}
+            <SearchOne onSearch={handleSearch}/>
             <Table responsive striped hover className="custom-table">
                 <thead className="thead-dark">
                     <tr>
@@ -96,7 +146,7 @@ const CarManagement = ()=>{
                     </tr>
                 </thead>
                 <tbody>
-                    { formData.map((carData, index)=>(
+                    {currentItems.length > 0 ? (currentItems.map((carData, index)=>(
                         <tr key={index}>
                         <td>{index + 1}</td>
                         <td>{carData.name}</td>
@@ -110,7 +160,7 @@ const CarManagement = ()=>{
                         </Button>
                         {' '}
                         {' '}
-                        <Button variant="primary" size="sm">
+                        <Button onClick={()=>handleEdit(carData._id)} variant="primary" size="sm">
                             <FaEdit /> Edit
                         </Button>
                         {' '}
@@ -120,10 +170,16 @@ const CarManagement = ()=>{
                         </Button>
                         </td>
                     </tr>
-                    ))
-                    }
+                    )))
+                    : (<tr>
+                      <td colSpan={7} className="no-data-cell">No data Found</td>
+                    </tr>)}
                 </tbody>
             </Table>
+            <div className="d-flex justify-content-center align-items-center">
+               <Pagination currentPage={currentPage} totalPages={totalPages} onPageChange={onPageChange}/>
+            </div>
+            
         </div>
     )
 }

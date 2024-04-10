@@ -4,11 +4,14 @@ import { FaInfoCircle, FaLock, FaTrash, FaUnlock } from "react-icons/fa";
 import { getAllUsers, blockUnblockUser, findOneUser} from "../../../features/axios/api/admin/adminUser";
 import { userAdminInterface, userInterface } from "../../../types/userInterface";
 import { confirmAlert } from "react-confirm-alert";
+import { block, unBlock } from "../../../features/axios/redux/slices/user/BlockUnblockuser";
+import { useDispatch } from "react-redux";
 import './userManagement.css'
 import { toast } from "react-toastify";
 
 const UserManagement = ()=>{
 
+    const dispatch = useDispatch()
     const [userData, setUserData] = useState<userAdminInterface[]>([])
     const [showModal, setShowModal] = useState(false)
     const [selectedUser, setSelectedUser] = useState<userInterface | null>(null)
@@ -26,6 +29,7 @@ const UserManagement = ()=>{
     
     const handleBlock = (e:React.FormEvent ,userId: string, Username:string, status: boolean | undefined)=>{
         e.preventDefault()
+        let actions = status ? block(userId) : unBlock(userId)
         confirmAlert({
             title: (status === true) ? 'Blocking User': 'Unblocking user',
             message:`Are you sure you want to ${status ? 'block':'unblock'} ${Username}`,
@@ -41,8 +45,8 @@ const UserManagement = ()=>{
                             setUserData((prevData) =>
                             prevData.map((user) =>
                             user._id.toString() === userId ? { ...user, isActive: !status } : user
-                             )
-                            );
+                             ));
+                            dispatch(actions)
                             toast.success(`User ${Username} has been ${status ? 'blocked' : 'unblocked'}`);
                         } 
                           catch (error:any) 

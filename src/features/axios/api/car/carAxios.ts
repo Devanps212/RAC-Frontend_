@@ -88,3 +88,23 @@ export const deleteCar = async(carId: string, role: string)=>{
         throw new Error(error.message)
     }
 }
+
+export const editCar = async(carData: any, carId: string)=>{
+    try
+    {
+        console.log(carData)
+        const editCarConfig : AxiosRequestConfig = {
+            url: `${apiConfig.editCar}/${carId}`,
+            method:"patch",
+            data : carData,
+        } 
+        const response  = await axios(editCarConfig)
+        console.log(response)
+        return response.data
+    }
+    catch(error: any)
+    {
+        console.log(error)
+        throw new Error(error.message)
+    }
+}

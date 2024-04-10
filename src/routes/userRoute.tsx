@@ -6,7 +6,8 @@ const UsersLogins = lazy(()=> import('../pages/user/login'))
 const UserSignUp = lazy(()=> import('../pages/user/signUp'))
 const VerifyOTP = lazy(()=> import('../pages/user/VOTP'))
 const HomePage = lazy(()=>import('../pages/user/Home'))
-import { UserRouteProtection, UserSignInSignupProtection } from '../utils/routeProtection';
+import BlockedPage from '../components/commonComponent/blocked';
+import { UserRouteProtection, UserSignInSignupProtection, BlockedRoutes } from './protectedRoutes/routeProtection';
 
 const UserRouter = () => {
   return (
@@ -17,6 +18,7 @@ const UserRouter = () => {
         <Route path="/signUp" element={<UserSignInSignupProtection><UserSignUp/></UserSignInSignupProtection>}/>
         <Route path="/OTP" element={<VerifyOTP/>}/>
         <Route path="/home" element={<UserRouteProtection><HomePage/></UserRouteProtection>}/>
+        <Route path="/UserBlocked" element={<BlockedRoutes><BlockedPage/></BlockedRoutes>}/>
       </Routes>
     </Suspense>
     </>
