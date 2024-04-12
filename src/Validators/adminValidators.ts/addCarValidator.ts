@@ -1,10 +1,11 @@
-import { carInterface } from "../../types/carAdminInterface";
+import { carInterface, showCarInterface } from "../../types/carAdminInterface";
 
-export const carValidator = (formData: carInterface) => {
+export const carValidator = (formData: carInterface, currentData?: showCarInterface) => {
   const errors: Record<string, string> = {};
 
   let isValid = true;
 
+  console.log("formData in car Validation : ",formData)
   if (formData.name === "" || formData.name === undefined) {
     isValid = false;
     errors.name = "Please enter the car name";
@@ -13,7 +14,6 @@ export const carValidator = (formData: carInterface) => {
   console.log("entering engine")
   if (formData.engine == '' || formData.engine === undefined) {
     isValid = false
-    console.log("engine is empty")
     errors.engine = "Please enter engine type"
   }
 
@@ -78,23 +78,34 @@ export const carValidator = (formData: carInterface) => {
     errors.fuelType = "Please enter the fuel type";
   }
 
-  console.log("interior :",formData.interior)
-  if (!formData.interior || formData.interior.length === 0) {
-    isValid = false;
-    errors.interior = "Please select at least one interior feature";
-  }
-
   if (formData.insuranceDetails === "" || formData.insuranceDetails === undefined ) {
     isValid = false
     errors.insuranceDetails = "Please enter a valid insurance number"
   }
 
-  console.log("exterior :",formData.exterior)
-  if (!formData.exterior || formData.exterior.length === 0) {
-    isValid = false;
-    errors.exterior = "Please select at least one exterior feature";
-  }
+  if (currentData) {
+    if (!currentData.interior || currentData.interior.length === 0) {
+      isValid = false;
+      errors.interior = "Please select at least one interior feature in the current data";
+    }
 
+    if (!currentData.exterior || currentData.exterior.length === 0) {
+      isValid = false;
+      errors.exterior = "Please select at least one exterior feature in the current data";
+    }
+  } 
+  else 
+  {
+    if (!formData.interior || formData.interior.length === 0) {
+      isValid = false;
+      errors.interior = "Please select at least one interior feature in the form data";
+    }
+
+    if (!formData.exterior || formData.exterior.length === 0) {
+      isValid = false;
+      errors.exterior = "Please select at least one exterior feature in the form data";
+    }
+  }
   return errors;
 };
 

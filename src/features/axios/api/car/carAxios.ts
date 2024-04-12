@@ -6,12 +6,10 @@ import { setAdminInterceptor, setPartnerInterceptor } from "../../axios_Intercep
 const setInterceptor = (role:string)=>{
     if(role === 'admin')
     {
-        console.log("passing to toadminInterceptor")
         setAdminInterceptor()
     }
     else if(role ==='partner')
     {
-        console.log("passing to toadminInterceptor")
         setPartnerInterceptor()
     }
     else

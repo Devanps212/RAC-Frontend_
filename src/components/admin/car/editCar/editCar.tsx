@@ -1,96 +1,146 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import { Container, Button, Col, Row, Form, Modal } from "react-bootstrap";
-import { carInterface } from "../../../../types/carAdminInterface";
+import { carInterface,showCarInterface } from "../../../../types/carAdminInterface";
 import { getCategory } from "../../../../features/axios/api/category/category";
 import { findAllCars, editCar } from "../../../../features/axios/api/car/carAxios";
 import { carValidator } from "../../../../Validators/adminValidators.ts/addCarValidator";
-import './carAdd.css'
+
 import { categoryInterface } from "../../../../types/categoryInterface";
 import { toast } from "react-toastify";
 import { useLocation } from "react-router-dom";
 
 
-const AddCar = ()=>{
+const EditCar = ()=>{
 
+    const exteriorImagesContainerRef = useRef(null);
     const [formData, setFormData] = useState<carInterface>({} as carInterface)
+    const [currentData, setCurrentData] = useState<showCarInterface>({} as showCarInterface)
     const [category, setCategory] = useState<categoryInterface[]>([])
     const [validationErrors, setValidationErrors] = useState<Partial<Record<string, string>>>({})
-    const [SelectedImg, setSelectedImg] = useState<File | null>(null)
+    const [SelectedImg, setSelectedImg] = useState<File | string | null>(null)
     const [createdCar, setCreatedCar] = useState<Partial<carInterface>>({})
+    const [deletedIndex, setDeletedIndex] = useState<{ index: number[]; type: 'interior' | 'exterior' }[]>([]);
     const [showModal, setShowModal] = useState(false)
+    const [exteriorImg, setImg] = useState<File[]>([])
+    const [interiorImg, setIntImg] = useState<File[]>([])
     const location = useLocation()
     const {id} = location.state
-    console.log("id recieved : ", id)
 
-    let imagePath = '';
-    if(createdCar && createdCar.exterior)
-    {
-        imagePath = `/Cars/${createdCar.name}/exterior/${createdCar.exterior[0]}`
-    }
-    else if(createdCar && createdCar.interior)
-    {
-        imagePath = `${createdCar.name}/interior/${createdCar.interior[0]}`
-    }
-    else
-    {
-        imagePath = ''
-    }
+    let mergedExteriorImages = currentData.exterior ? [...currentData.exterior, ...exteriorImg] : [...exteriorImg];
+    const mergedInteriorImages = currentData.interior ? [...currentData.interior, ...interiorImg] : [...interiorImg]
 
-    useEffect(()=>{
 
-    })
 
-    const findCar = async()=>{
-        console.log("id from state :", id)
-        const response = await findAllCars(id,'admin')
-
-        console.log(response)
-
-    }
+    useEffect(() => {
+        console.log("Updated formData:", formData);
+      }, [formData]);
+      
     
+    useEffect(()=>{
+        const findCar = async()=>{
+        
+            try
+            {
+                const response = await findAllCars(id,'admin')
+    
+                if(response)
+                {
+                    console.log(response)
+                    setCurrentData(response)
+                }
+                else
+                {
+                    console.log("no response found")
+                }
+            }
+            catch(error:any)
+            {
+                console.log(error.message)
+            }
+        }
+        findCar()
+    }, [id])
 
     
     useEffect(() => {
-        getCategory()
-          .then((response) => {
-            const categories: categoryInterface[] = response.allData;
-            console.log(response);
-            setCategory(categories);
-            if (categories.length > 0) {
-              setFormData({
-                ...formData,
-                category: categories[0]._id,
-              });
+        const fetchData = async () => {
+            try {
+                const response = await getCategory();
+                const categories: categoryInterface[] = response.allData;
+                console.log(response);
+                setCategory(categories);
+                // if (categories.length > 0) {
+                //     setFormData({
+                //         ...formData,
+                //         category: categories[0]._id,
+                //     });
+                // }
+            } catch (error) {
+                console.log(error);
             }
-          })
-          .catch((error) => {
-            console.log(error);
-          });
+        };
     
-        setFormData({
-          ...formData,
-          status: "available",
-        });
-      }, []);
+        fetchData();
+    }, []);
 
-      const handleDragStart = (e: React.DragEvent<HTMLDivElement>, index:number) => {
-        e.dataTransfer.setData("index", index.toString());
-      };
+
+    //   const handleDragStart = (e: React.DragEvent<HTMLDivElement>, index:number) => {
+    //     e.dataTransfer.setData("index", index.toString());
+    //   };
       
-      const handleDragOver = (e:React.FormEvent) => {
-        e.preventDefault();
-      };
+    //   const handleDragOver = (e:React.FormEvent) => {
+    //     e.preventDefault();
+    //   };
       
-      const handleDrop = (e :React.DragEvent<HTMLDivElement>, newIndex:number) => {
-        e.preventDefault();
-        const oldIndex = parseInt(e.dataTransfer.getData("index"));
-        if (!isNaN(oldIndex) && formData.exterior) {
-            const updatedImages = [...formData.exterior];
-            const imageToMove = updatedImages.splice(oldIndex, 1)[0];
-            updatedImages.splice(newIndex, 0, imageToMove);
-            setFormData({ ...formData, exterior: updatedImages });
-          }
-      };
+    //   const handleDrop = (e: React.DragEvent<HTMLDivElement>, newIndex: number) => {
+    //     e.preventDefault();
+    //     const oldIndex = parseInt(e.dataTransfer.getData("index"));
+      
+    //     if (!isNaN(oldIndex)) {
+    //       const updatedImages = [...mergedExteriorImages];
+    //       const imageToMove = updatedImages.splice(oldIndex, 1)[0];
+    //       updatedImages.splice(newIndex, 0, imageToMove);
+    //       mergedExteriorImages = updatedImages;
+          
+    //       console.log("Updated Images:");
+    //       mergedExteriorImages.forEach((file, index) => {
+    //         console.log(`Index: ${index}, Name: ${(file instanceof File) ? file.name : file}`);
+    //       });
+
+    //       setUpdatedImageIndices((prevIndices) => {
+    //         const updatedIndices = [...prevIndices];
+    //         updatedIndices[newIndex] = { index: newIndex, name: (imageToMove instanceof File) ? imageToMove.name : imageToMove };
+    //         return updatedIndices;
+    //       });
+
+    //       console.log("updated images state :", updatedImages)
+          
+    //       const container = exteriorImagesContainerRef.current as HTMLDivElement | null;
+    //       if (container) {
+    //         container.innerHTML = "";
+      
+    //         const heading = document.createElement('h4')
+    //         heading.innerHTML = "Updated Images"
+    //         container.appendChild(heading)
+    //         mergedExteriorImages.forEach((file, index) => {
+    //           const div = document.createElement("div");
+      
+    //           const img = document.createElement("img");
+    //           img.src = typeof file === "object" ? URL.createObjectURL(file) : file;
+    //           img.alt = `Uploaded Image ${index}`;
+    //           img.style.width = "100px";
+    //           img.style.height = "auto";
+    //           img.style.margin = "5px";
+    //           img.addEventListener("click", () => setSelectedImg(file));
+      
+    //           div.appendChild(img);
+    //           container.appendChild(div);
+    //         });
+    //       }
+    //     }
+    //   };
+      
+    
  
     const handleInterior = (e:React.ChangeEvent<HTMLInputElement>)=>{
         e.preventDefault()
@@ -98,14 +148,14 @@ const AddCar = ()=>{
 
         const{name, files} = e.currentTarget
 
-        if(files && files.length > 0)
+        if(files && files.length <= 3)
         {
             const imageFiles = Array.from(files).every((file)=>
             file.type.startsWith('image/'))
             if(imageFiles)
             {
                 console.log(name, files)
-                setFormData((prevState)=>({...prevState, [name] : Array.from(files)}))
+                setIntImg((prevState)=>[...prevState, ...Array.from(files)])
             }
             else
             {
@@ -113,8 +163,14 @@ const AddCar = ()=>{
                 e.currentTarget.value = '';
             }
         }
+        else
+        {
+            window.alert('Please select a maximum of three image files')
+            e.currentTarget.value = '';
+        }
     }
 
+    
     const handleExterior = (e:React.ChangeEvent<HTMLInputElement>)=>{
         e.preventDefault()
 
@@ -127,7 +183,9 @@ const AddCar = ()=>{
             if(imageFiles)
             {
                 console.log("name and files from exterior",name, files)
-                setFormData((prevState)=>({...prevState, [name]: Array.from(files)}))
+                console.log(formData.exterior)
+                setImg((prevState)=>[...prevState, ...Array.from(files)])
+                
             }
             else
             {
@@ -138,97 +196,117 @@ const AddCar = ()=>{
         
     }
 
-    const deleteImageInterior = (indexs:number)=>{
-        let updatedFormData = formData.interior?.filter((files, index)=>index !== indexs)
-        setFormData({...formData, interior:updatedFormData})
-    }
+    const deleteImageInterior = (indexs:number, deletecurrentData :boolean)=>{
 
-    const deleteImageExterior = (indexs:number)=>{
-        let updatedFormData = formData.exterior?.filter((files, index)=>index !== indexs)
-        setFormData({...formData, exterior:updatedFormData})
-    }
-    
-
-    const handleSubmit = async(e:React.FormEvent)=>{
-        e.preventDefault()
-        console.log("formData before update:", formData)
-
-        if (!formData.status) 
+        if(deletecurrentData)
         {
-            setFormData({
-              ...formData,
-              status: 'available',
-            });
-        }
-        setFormData((prevFormData) => {
-            console.log("form status : ", prevFormData.status);
-            return prevFormData;
-          });
-
-        console.log("form data after update : ",formData)
-        console.log("creating car")
-        const valid = await carValidator(formData)
-        if(Object.keys(valid).length === 0)
-        {
-            try{
-                console.log("Datas appended to formData : ",formData)
-                const sendData = new FormData()
-                for(let [key, value] of Object.entries(formData))
-                {
-                    if(key ==='interior' || key=== 'exterior')
-                    {
-                        if(Array.isArray(value))
-                        {
-                            for(let item of value)
-                            {
-                                sendData.append(key, item)
-                            }
-                        }
-                    }
-                    else
-                    {
-                        sendData.append(key, value)
-                    }
-                }
-                console.log("sendData :",sendData)
-                const response = await editCar(sendData, 'admin');///do here 
-                if (response) 
-                {
-                    console.log(response);
-                    setFormData({} as carInterface)
-                    setCreatedCar(response.carCreate)
-                    setShowModal(true)
-                    console.log(response.carCreate)
-                    toast.success(response.message)
-                    return true
-                } 
-                else 
-                {
-                    console.log("error");
-                    toast.error("Error uploading car")
-                    return true
-                }   
-            }
-            catch(error:any)
+            if(currentData && currentData.interior)
             {
-                console.log("error : ", error.message);
-                toast.error(error.message);
+                setDeletedIndex(prevState=> [...prevState, {index:[indexs], type: "interior"}])
+                console.log("deleted Index :",deletedIndex)
+                let updatedInterior = currentData.interior.filter((file, index)=> index !== indexs)
+                setCurrentData({...currentData, interior: updatedInterior})
             }
         }
         else
         {
-            console.log("error found")
-            console.log(valid) 
-            setValidationErrors(valid)
-            console.log("validation errors :",validationErrors)
+            if(formData && formData.interior)
+            {
+                let adjustedIndex = indexs - (currentData.interior ? currentData.interior.length : 0)
+                let updatedInterior = formData.interior.filter((file, index)=> index !== adjustedIndex)
+                setFormData({...formData, interior : updatedInterior})
+            }
         }
     }
 
+    const deleteImageExterior = (indexs:number, deleteCurrentData :boolean)=>{
+        console.log(indexs, deleteCurrentData)
+        if(deleteCurrentData)
+        {
+            if(currentData && currentData.exterior)
+            {
+                setDeletedIndex(prevState=> [...prevState, {index:[indexs], type: "exterior"}])
+                console.log("deleted Index :",deletedIndex)
+                console.log("deleteing currentData image")
+                let updatedCurrentData = currentData.exterior?.filter((files, index)=>index !== indexs)
+                setCurrentData({...currentData, exterior : updatedCurrentData })
+            }
+        }
+        else
+        {
+            if(formData && formData.exterior)
+            {
+                console.log(formData.exterior)
+                console.log("deleteing formData image")
+                let AdjustedIndex = indexs - (currentData.exterior ? currentData.exterior.length : 0)
+                let updatedFormData = formData.exterior?.filter((files, index)=>index !== AdjustedIndex)
+                setFormData({...formData, exterior:updatedFormData})
+            }
+        }
+    }
+
+   
+
+    const handleSubmit = async (e: React.FormEvent) => {
+        e.preventDefault();
+        setValidationErrors({});
+        setFormData(prevFormData => ({
+            ...prevFormData,
+            ...currentData,
+            interior: interiorImg,
+            exterior: exteriorImg
+        }));
+    };
+    
+    useEffect(() => {
+        const validateFormData = async () => {
+            try {
+                console.log("validation starting")
+                const valid = await carValidator(formData, currentData);
+                if (Object.keys(valid).length === 0) {
+                    const sendData = new FormData();
+                    for (let [key, value] of Object.entries(formData)) {
+                        if (key === 'interior' || key === 'exterior') {
+                            if (Array.isArray(value)) {
+                                for (let item of value) {
+                                    sendData.append(key, item);
+                                }
+                            }
+                        } else {
+                            sendData.append(key, value);
+                        }
+                    }
+                    const response = await editCar(sendData, 'admin');
+                    if (response) {
+                        setFormData({} as carInterface);
+                        setCreatedCar(response.carCreate);
+                        setShowModal(true);
+                        toast.success(response.message);
+                    } else {
+                        toast.error("Error uploading car");
+                    }
+                } else {
+                    setValidationErrors(valid);
+                }
+            } catch (error:any) {
+                console.log("Error:", error.message);
+                toast.error(error.message);
+            }
+        };
+    
+        if (Object.keys(formData).length > 0) {
+            validateFormData();
+        }
+    }, [formData]);
+    
+    
+
+    
 
     return(
         <div className="addCar-body">
         <Container className="custom-container">
-            <h3 className="mb-5">Add Car</h3>
+            <h3 className="mb-5">Edit Car</h3>
             <Form onSubmit={handleSubmit} encType="multipart/form-data">
                 <Row className="mb-3">
                     <Col>
@@ -236,9 +314,9 @@ const AddCar = ()=>{
                         <Form.Label>Car name</Form.Label>
                         <Form.Control
                         type="text" 
-                        value={formData.name || ""}
+                        value={currentData.name || ""}
                         className="input-type"
-                        onChange={(e)=>setFormData({...formData, name:e.target.value})}/>
+                        onChange={(e)=>setCurrentData({...currentData, name:e.target.value})}/>
                         <Form.Text className="text-danger">{validationErrors.name}</Form.Text>
                     </Form.Group>
                     </Col>
@@ -247,9 +325,9 @@ const AddCar = ()=>{
                         <Form.Label>Car Owner</Form.Label>
                         <Form.Control
                         as='select'
-                        value={formData.owner || ''} 
+                        value={currentData.owner || ''} 
                         className="input-type"
-                        onChange={(e)=>setFormData({...formData, owner:e.target.value})}>
+                        onChange={(e)=>setCurrentData({...currentData, owner:e.target.value})}>
                         <option value=''>---select Owner---</option>
                         <option value='Admin'>Admin</option>
                         </Form.Control>
@@ -262,8 +340,8 @@ const AddCar = ()=>{
                     <Form.Group controlId="Car category">
                         <Form.Label>Category</Form.Label>
                         <Form.Control as='select' 
-                        defaultValue=''
-                        onChange={(e)=>setFormData({...formData, category:e.target.value})}>
+                        value={currentData.category?.toString()}
+                        onChange={(e)=>setCurrentData({...currentData, category:(e.target.value)})}>
                             <option value=''>---select Category---</option>
                             { category.map((categ, index)=>(
                                 <option key={index + 1} value={categ._id}>{categ.name}</option>
@@ -277,9 +355,9 @@ const AddCar = ()=>{
                         <Form.Label>Engine Type</Form.Label>
                         <Form.Control
                         type="text" 
-                        value={formData?.engine || ""} 
+                        value={currentData?.engine || ""} 
                         className="input-type"
-                        onChange={(e)=>setFormData({...formData, engine:e.target.value})}/>
+                        onChange={(e)=>setCurrentData({...currentData, engine:e.target.value})}/>
                         <Form.Text className="text-danger">{validationErrors.engine}</Form.Text>
                     </Form.Group>
                     </Col>
@@ -290,9 +368,9 @@ const AddCar = ()=>{
                     <Form.Label>Transmission</Form.Label>
                     <Form.Control 
                     type="text"
-                    value={formData.transmission || ""} 
+                    value={currentData.transmission || ""} 
                     className="input-type" 
-                    onChange={(e)=>setFormData({...formData, transmission:e.target.value})}/>
+                    onChange={(e)=>setCurrentData({...currentData, transmission:e.target.value})}/>
                     <Form.Text className="text-danger">{validationErrors.transmission}</Form.Text>
                     </Form.Group>
                 </Col>
@@ -301,9 +379,9 @@ const AddCar = ()=>{
                     <Form.Label>Fuel Type</Form.Label>
                     <Form.Control 
                     type="text"
-                    value={formData.fuelType || ""} 
+                    value={currentData.fuelType || ""} 
                     className="input-type"
-                    onChange={(e)=>setFormData({...formData, fuelType:e.target.value})}/>
+                    onChange={(e)=>setCurrentData({...currentData, fuelType:e.target.value})}/>
                     <Form.Text className="text-danger">{validationErrors.fuelType}</Form.Text>
                     </Form.Group>
                 </Col>
@@ -312,7 +390,7 @@ const AddCar = ()=>{
                 <Col>
                     <Form.Group controlId="status">
                     <Form.Label>Status</Form.Label>
-                    <Form.Control as='select' value={formData.status || ''} onChange={(e)=>setFormData({...formData, status:e.target.value as "available" | "maintenance" | "booked" | "not available"})}>
+                    <Form.Control as='select' value={currentData.status || ''} onChange={(e)=>setCurrentData({...currentData, status:e.target.value as "available" | "maintenance" | "booked" | "not available"})}>
                         <option value=''>---select Status---</option>
                         <option value="available">Available</option>
                         <option value="maintenance">Under Maintenance</option>
@@ -327,9 +405,9 @@ const AddCar = ()=>{
                     <Form.Label>Added By</Form.Label>
                         <Form.Control 
                         type="text"
-                        value={formData.addedBy || ""} 
+                        value={currentData.addedBy || ""} 
                         className="input-type"
-                        onChange={(e)=>setFormData({...formData, addedBy:e.target.value})}/>
+                        onChange={(e)=>setCurrentData({...currentData, addedBy:e.target.value})}/>
                         <Form.Text className="text-danger">{validationErrors.addedBy}</Form.Text>
                     </Form.Group>
                     </Col>
@@ -344,8 +422,8 @@ const AddCar = ()=>{
                     rows={3} 
                     placeholder="Enter description" 
                     className="input-type"
-                    value={formData.description || ""} 
-                    onChange={(e)=>setFormData({...formData, description: e.target.value})}/>
+                    value={currentData.description || ""} 
+                    onChange={(e)=>setCurrentData({...currentData, description: e.target.value})}/>
                     </Form.Group>
                     </Col>
                     <Col>
@@ -353,9 +431,9 @@ const AddCar = ()=>{
                         <Form.Label>Mileage</Form.Label>
                         <Form.Control
                         type="number" 
-                        value={formData?.mileage || ""} 
+                        value={currentData?.mileage || ""} 
                         className="input-type"
-                        onChange={(e)=>setFormData({...formData, mileage:parseInt(e.target.value)})}/>
+                        onChange={(e)=>setCurrentData({...currentData, mileage:parseInt(e.target.value)})}/>
                         <Form.Text className="text-danger">{validationErrors.mileage}</Form.Text>
                     </Form.Group>
                     </Col>
@@ -367,9 +445,9 @@ const AddCar = ()=>{
                     <Form.Label>Vehicle Number</Form.Label>
                     <Form.Control 
                     type="text"
-                    value={formData.vehicleNumber || ""} 
+                    value={currentData.vehicleNumber || ""} 
                     className="input-type" 
-                    onChange={(e)=>setFormData({...formData, vehicleNumber:e.target.value})}/>
+                    onChange={(e)=>setCurrentData({...currentData, vehicleNumber:e.target.value})}/>
                     <Form.Text className="text-danger">{validationErrors.vehicleNumber}</Form.Text>
                     </Form.Group>
                 </Col>
@@ -378,9 +456,9 @@ const AddCar = ()=>{
                     <Form.Label>Rent Price (Per Week)</Form.Label>
                     <Form.Control 
                     type="number"
-                    value={formData.rentPricePerWeek || 0} 
+                    value={currentData.rentPricePerWeek || 0} 
                     className="input-type"
-                    onChange={(e)=>setFormData({...formData, rentPricePerWeek:parseInt(e.target.value)})}
+                    onChange={(e)=>setCurrentData({...currentData, rentPricePerWeek:parseInt(e.target.value)})}
                      />
                      <Form.Text className="text-danger">{validationErrors.rentPricePerWeek}</Form.Text>
                     </Form.Group>
@@ -393,9 +471,9 @@ const AddCar = ()=>{
                     <Form.Label>Rent Price (Per Day)</Form.Label>
                     <Form.Control 
                     type="number"
-                    value={formData.rentPricePerDay || 0} 
+                    value={currentData.rentPricePerDay || 0} 
                     className="input-type"
-                    onChange={(e)=>setFormData({...formData, rentPricePerDay:parseInt(e.target.value)})}/>
+                    onChange={(e)=>setCurrentData({...currentData, rentPricePerDay:parseInt(e.target.value)})}/>
                     <Form.Text className="text-danger">{validationErrors.rentPricePerDay}</Form.Text>
                     </Form.Group>
                 </Col>
@@ -404,9 +482,9 @@ const AddCar = ()=>{
                     <Form.Label>Insurance Number</Form.Label>
                     <Form.Control 
                     type="text"
-                    value={formData.insuranceDetails || ""} 
+                    value={currentData.insuranceDetails || ""} 
                     className="input-type"
-                    onChange={(e)=>setFormData({...formData, insuranceDetails:e.target.value})}/>
+                    onChange={(e)=>setCurrentData({...currentData, insuranceDetails:e.target.value})}/>
                     <Form.Text className="text-danger">{validationErrors.insuranceDetails}</Form.Text>
                     </Form.Group>
                 </Col>
@@ -424,14 +502,35 @@ const AddCar = ()=>{
                     className="custom-file-input"/>
                     <Form.Text className="text-danger">{validationErrors.interior}</Form.Text>
                     </Form.Group>
-                    {formData.interior && 
-                    formData.interior.map((file, index)=>(
+                    {mergedInteriorImages && 
+                    mergedInteriorImages.map((file, index)=>(
                         <div key={index}>
-                            <img onClick={()=>setSelectedImg(file)}
-                        src={URL.createObjectURL(file)}
-                        alt={`Uploaded Image ${index}`} 
-                        style={{ width: '100px', height: 'auto', margin: '5px' }}/>
-                        <Button onClick={()=>deleteImageInterior(index)} variant="danger">Delete</Button>
+                            {
+                                typeof file === 'object'?
+                                (
+                                    <>
+                                    <img onClick={()=>setSelectedImg(file)}
+                                    src={URL.createObjectURL(file)}
+                                    alt={`Uploaded Image ${index}`} 
+                                    style={{ width: '100px', height: 'auto', margin: '5px' }}
+                                    />
+
+                                    <Button onClick={()=>deleteImageInterior(index, false)} variant="danger">Delete</Button>
+                                    </>
+                                ) : 
+                                (
+                                    <>
+                                    <img onClick={()=>setSelectedImg(file)}
+                                    src={file}
+                                    alt={`Uploaded Image ${index}`} 
+                                    style={{ width: '100px', height: 'auto', margin: '5px' }}/>
+
+                                    <Button onClick={()=>deleteImageInterior(index, true)} variant="danger">Delete</Button>
+                                    </>
+                                )
+                            }
+                            
+                        
                         </div>
                     ))
                     }
@@ -446,26 +545,51 @@ const AddCar = ()=>{
                     onChange={handleExterior}/>
                     <Form.Text className="text-danger">{validationErrors.exterior}</Form.Text>
                     </Form.Group>
-                    {formData.exterior && 
-                    formData.exterior.map((file, index)=>(
+                    {mergedExteriorImages && 
+                    mergedExteriorImages.map((file, index)=>(
                         <div key={index}>
-                        <img onClick={()=>setSelectedImg(file)}
-                        src={URL.createObjectURL(file)}
-                        alt={`Uploaded Image ${index}`} 
-                        style={{ width: '100px', height: 'auto', margin: '5px' }}
-                        onDragStart={(e) => handleDragStart(e, index)}
-                        onDragOver={handleDragOver}
-                        onDrop={(e) => handleDrop(e, index)}/>
 
-                        <Button onClick={()=>deleteImageExterior(index)} variant="danger">Delete</Button>
+                            {
+                                typeof file === 'object' ? (
+                                    <>
+                                    <img onClick={()=>setSelectedImg(file)}
+                                    src={URL.createObjectURL(file)}
+                                    alt={`Uploaded Image ${index}`} 
+                                    style={{ width: '100px', height: 'auto', margin: '5px' }}
+                                    // onDragStart={(e) => handleDragStart(e, index)}
+                                    // onDragOver={handleDragOver}
+                                    // onDrop={(e) => handleDrop(e, index)}
+                                    />
+
+                                    <Button onClick={()=>deleteImageExterior(index, false)} variant="danger">Delete</Button>
+                                    </>
+                                ) :
+                                (
+                                    <>
+                                    <img onClick={()=>setSelectedImg(file)}
+                                    src={file}
+                                    alt={`Uploaded Image ${index}`} 
+                                    style={{ width: '100px', height: 'auto', margin: '5px' }}
+                                    // onDragStart={(e) => handleDragStart(e, index)}
+                                    // onDragOver={handleDragOver}
+                                    // onDrop={(e) => handleDrop(e, index)}
+                                    />
+                                    
+                                    <Button onClick={()=>deleteImageExterior(index, true)} variant="danger">Delete</Button>
+                                    </>
+                                )
+                            }
+                        
+
+                        
                         </div>
                     ))
                     }
-                    {formData.exterior && formData.exterior.length > 0 && (
-                        <div style={{ marginBottom: '10px', fontWeight: 'bold' }}>
-                        Drag and drop the main image (e.g., car front view) to the first slot
+                    {
+                        
+                    }
+                    <div ref={exteriorImagesContainerRef} id="exterior-images-container">
                     </div>
-                    )}
                 </Col>
                 </Row>
 
@@ -475,7 +599,15 @@ const AddCar = ()=>{
             </Form>
             <Modal show={!!SelectedImg} onHide={()=>setSelectedImg(null)}>
                 <Modal.Body>
-                <img alt="Selected Image" src={SelectedImg ?URL.createObjectURL(SelectedImg): "http://www.w3.org/2000/svg"} style={{ width: '100%', height: 'auto' }} />
+                    {
+                        typeof SelectedImg === 'string' ? (
+                            <img alt="Selected Image" src={SelectedImg} style={{ width: '100%', height: 'auto' }} />
+                        ) : 
+                        (
+                            <img src={SelectedImg ? URL.createObjectURL(SelectedImg) : "http://www.w3.org/2000/svg"} style={{ width: '100%', height: 'auto' }}/>
+                        )
+                    }
+                        
                 </Modal.Body>
             </Modal>
         </Container>
@@ -483,4 +615,4 @@ const AddCar = ()=>{
     )
 }
 
-export default AddCar
+export default EditCar

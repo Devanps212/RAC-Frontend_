@@ -3,7 +3,7 @@ import { categoryInterface } from "./categoryInterface";
 export interface carAdminInterface {
     _id:string,
     name:string,
-    // image?:string,
+    exterior?: string[],
     owner:string,
     category?:categoryInterface,
     status:string,

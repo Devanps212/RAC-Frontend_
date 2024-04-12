@@ -21,6 +21,9 @@ const CarManagement = ()=>{
     const [search, setSearch] = useState('')
     const [filteredData, setFilteredData]= useState<carAdminInterface[]>([])
     const [currentPage, setCurrentPage] = useState(1)
+    
+
+
     const ItemsperPage = 5
     const totalPages = Math.ceil(filteredData.length/ ItemsperPage)
     console.log("filtered data length : ", totalPages)
@@ -119,8 +122,9 @@ const CarManagement = ()=>{
 
     }
 
+
     const handleEdit = (id:string)=>{
-      navigate(`/admin/cars/editCars`, {state:{id}})
+      navigate(`/admin/car/editCars`, {state:{id}})
     }
 
     const lastIndexOfItems = currentPage * ItemsperPage
@@ -150,7 +154,7 @@ const CarManagement = ()=>{
                         <tr key={index}>
                         <td>{index + 1}</td>
                         <td>{carData.name}</td>
-                        <td>give image here </td>
+                        <td>{carData.exterior && (<img src={carData.exterior[0]} style={{width:'70px', height:'70px'}}/>)}</td>
                         <td>{carData.owner}</td>
                         <td>{carData.category?.name}</td>
                         <td className={getStatus(carData.status)}>{carData.status}</td>
@@ -179,6 +183,12 @@ const CarManagement = ()=>{
             <div className="d-flex justify-content-center align-items-center">
                <Pagination currentPage={currentPage} totalPages={totalPages} onPageChange={onPageChange}/>
             </div>
+
+            <Modal>
+              <Modal.Body>
+                
+              </Modal.Body>
+            </Modal>
             
         </div>
     )
