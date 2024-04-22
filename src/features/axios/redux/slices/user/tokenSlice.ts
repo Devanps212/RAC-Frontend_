@@ -36,6 +36,7 @@ const tokenSlice =  createSlice({
             state.token = null
             try{
                 localStorage.removeItem('token')
+                console.log("token removed")
             }
             catch(error){
                 console.log("error removing token from localstorage")

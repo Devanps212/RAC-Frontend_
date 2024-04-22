@@ -42,3 +42,25 @@ export const setPartnerInterceptor = ()=>{
         }
     )
 }
+
+export const setUserInterceptor = ()=>{
+
+    const token = localStorage.getItem("token")
+    axios.interceptors.request.use(
+        (config: InternalAxiosRequestConfig<any>)=>{
+            if(token)
+            {
+                console.log("passing userToken")
+                config.headers.Authorization = `Bearer ${token}`
+            }
+            else
+            {
+                console.log("no token found")
+            }
+            return config
+        },
+        (error:any)=>{
+            throw new Error(error.message)
+        }
+    )
+}

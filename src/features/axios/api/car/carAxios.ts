@@ -1,7 +1,7 @@
 import axios, {AxiosRequestConfig} from "axios";
 import { carInterface } from "../../../../types/carAdminInterface";
 import apiConfig from "../../../../utils/apiConfig";
-import { setAdminInterceptor, setPartnerInterceptor } from "../../axios_Interceptor/Interceptor";
+import { setAdminInterceptor, setPartnerInterceptor, setUserInterceptor } from "../../axios_Interceptor/Interceptor";
 
 const setInterceptor = (role:string)=>{
     if(role === 'admin')
@@ -11,6 +11,10 @@ const setInterceptor = (role:string)=>{
     else if(role ==='partner')
     {
         setPartnerInterceptor()
+    }
+    else if(role ==='user')
+    {
+        setUserInterceptor()
     }
     else
     {
@@ -46,6 +50,7 @@ export const createCar = async(carData:any, role:string)=>{
 export const findAllCars = async(carData:string, role:string)=>{
     try
     {
+        console.log(role)
         setInterceptor(role)
         console.log("carData : ", carData)
         
@@ -87,12 +92,13 @@ export const deleteCar = async(carId: string, role: string)=>{
     }
 }
 
-export const editCar = async(carData: any, carId: string)=>{
+export const editCar = async(carData: any, role: string)=>{
     try
     {
-        console.log(carData)
+        setInterceptor(role)
+        console.log("formData in edit car :",carData)
         const editCarConfig : AxiosRequestConfig = {
-            url: `${apiConfig.editCar}/${carId}`,
+            url: `${apiConfig.editCar}`,
             method:"patch",
             data : carData,
         } 

@@ -1,7 +1,8 @@
 import React, { ReactNode } from "react";
 import { Navigate } from "react-router-dom";
 import { decodeToken } from "../../utils/tokenUtil";
-
+import { tokenInterface } from "../../types/payloadInterface";
+import { string } from "prop-types";
 
 interface RouteProtectionProps {
   children: ReactNode;
@@ -22,6 +23,7 @@ export const AdminRouteProtection: React.FC<RouteProtectionProps> = ({ children 
 export const UserRouteProtection : React.FC<RouteProtectionProps> =({children})=>{
 
   const token = localStorage.getItem('token')
+  console.log("token found for user : ", token)
   if(token)
   {
     const userId = decodeToken(token).payload
@@ -51,25 +53,37 @@ export const UserSignInSignupProtection : React.FC<RouteProtectionProps> = ({chi
   const token = localStorage.getItem('token')
   if(token)
   {
-    const userId = decodeToken(token).payload
-    const Buser = localStorage.getItem('BlockedUsers')
-    if(Buser)
+    const decodedToken : tokenInterface = decodeToken(token)
+    if(decodedToken)
     {
-      const parseData = JSON.parse(Buser)
-      if(parseData.includes(userId))
+      console.log("Token decoded", decodedToken)
+      const {exp, payload} = decodedToken
+      const userId = payload
+
+      if(Date.now() >= exp * 1000)
+        {
+          console.log("token exopired message from middleware")
+          return <Navigate to="/login" />
+        }
+      const Buser = localStorage.getItem('BlockedUsers')
+      if(Buser)
       {
-        console.log("returning child aka signIn")
-        return <>{children}</>
+        const parseData = JSON.parse(Buser)
+        if(parseData.includes(userId))
+        {
+          console.log("returning child aka signIn")
+          return <>{children}</>
+        }
+        console.log("user not blocked")
+          return <Navigate to={'/users/home'}/>
       }
-      console.log("user not blocked")
-        return <Navigate to={'/users/home'}/>
     }
     console.log("no blocked user found")
     return <Navigate to={'/users/home'}/>
   }
   else
   {
-    console.log("no token found")
+    console.log("no token found in middleware")
     return <>{children}</>
   }
 }

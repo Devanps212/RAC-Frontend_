@@ -11,12 +11,14 @@ export interface carAdminInterface {
 
 
 export interface carInterface {
+    _id?:string
     name: string;
     owner: string;
-    category?: Types.ObjectId | string;
+    category?: Types.ObjectId | string | category;
     price: number;
     mileage?: number;
     engine?: string;
+    rating?: number;
     transmission?: string;
     fuelType?: string;
     interior?:File[];
@@ -28,16 +30,18 @@ export interface carInterface {
     rentPricePerDay?: number;
     insuranceDetails?: string;
     addedBy?: string;
-    addedById?:Types.ObjectId
+    addedById?:Types.ObjectId | string
 }
 
 export interface showCarInterface {
+    _id?:string;
     name: string;
     owner: string;
-    category?: Types.ObjectId | string;
+    category?: Types.ObjectId | category | string;
     price: number;
     mileage?: number;
     engine?: string;
+    rating?: number;
     transmission?: string;
     fuelType?: string;
     interior?:string[];
@@ -49,4 +53,10 @@ export interface showCarInterface {
     rentPricePerDay?: number;
     insuranceDetails?: string;
     addedBy?: string;
+}
+
+export interface category {
+    _id?:Types.ObjectId,
+    name:string,
+    description:string,
 }

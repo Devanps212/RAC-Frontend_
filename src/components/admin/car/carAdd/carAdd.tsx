@@ -21,9 +21,6 @@ const AddCar = ()=>{
     const [createdCar, setCreatedCar] = useState<Partial<showCarInterface>>({})
     const [isLoading, setIsLoading] = useState(false)
     const [showModal, setShowModal] = useState(false)
-
-    const adminToken = localStorage.getItem('admintoken') ?? ''
-    const adminId = decodeToken(adminToken).payload
     
 
     
@@ -77,20 +74,43 @@ const AddCar = ()=>{
 
         const{name, files} = e.currentTarget
 
-        if(files && files.length > 0)
+        if(files && files.length > 1 && files.length < 3)
         {
             const imageFiles = Array.from(files).every((file)=>
             file.type.startsWith('image/'))
             if(imageFiles)
             {
+                const fileSizeMb = 1
                 console.log(name, files)
+
+                const isSizeValid = Array.from(files).every((file)=>file.size <= fileSizeMb * 1024 * 1024)
+
+                if(!isSizeValid)
+                {
+                    window.alert(`File size should be up to ${fileSizeMb}MB`)
+                    e.currentTarget.value = ''
+                    return
+                }
+
+                if(files.length < 2)
+                    {
+                        window.alert("Please select 2 Images in interior")
+                        return
+                    }
                 setFormData((prevState)=>({...prevState, [name] : Array.from(files)}))
             }
             else
             {
                 window.alert("Please select image files")
                 e.currentTarget.value = '';
+                return 
             }
+        }
+        else
+        {
+            window.alert("2 images should upload")
+            e.currentTarget.value = ''; 
+            return  
         }
     }
 
@@ -99,13 +119,29 @@ const AddCar = ()=>{
 
         const{name, files} = e.currentTarget
 
-        if(files && files.length > 0)
+        if(files && files.length > 1 && files.length <3)
         {
+            console.log("file length : ",files.length)
             const imageFiles = Array.from(files).every((file)=>
             file.type.startsWith('image/'))
             if(imageFiles)
             {
                 console.log("name and files from exterior",name, files)
+                const fileSizeMb = 1;
+                const isSizeValid = Array.from(files).every((file)=> file.size <= fileSizeMb * 1024 * 1024)
+
+                if(!isSizeValid)
+                    {
+                        window.alert(`File size should be up to ${fileSizeMb}MB`)
+                        e.currentTarget.value = ''
+                        return
+                    }
+
+                if(files.length < 2)
+                    {
+                        window.alert("Please select 2 Images in exterior")
+                        return
+                    }
                 setFormData((prevState)=>({...prevState, [name]: Array.from(files)}))
             }
             else
@@ -113,6 +149,12 @@ const AddCar = ()=>{
                 window.alert("Please select image files")
                 e.currentTarget.value = '';
             }
+        }
+        else
+        {
+            window.alert("2 images should upload")
+            e.currentTarget.value = ''
+            return
         }
         
     }
@@ -140,12 +182,15 @@ const AddCar = ()=>{
               status: 'available',
             });
         }
-        setFormData((prevFormData) => {
-            console.log("form status : ", prevFormData.status);
+        
+          const adminToken = localStorage.getItem('admintoken') ?? ''
+          console.log("admin Toke found :", adminToken)
+          setFormData({...formData, addedById : adminToken})
+
+          setFormData((prevFormData) => {
+            console.log("form status : ", prevFormData.status, {...prevFormData});
             return prevFormData;
           });
-          console.log("admin :", adminId)
-          setFormData({...formData, addedById : adminId})
 
         console.log("form data after update : ",formData)
         console.log("creating car")
@@ -172,6 +217,7 @@ const AddCar = ()=>{
                         sendData.append(key, value)
                     }
                 }
+                
                 console.log("sendData :",sendData)
                 const response = await createCar(sendData, 'admin');
                 if (response) 
@@ -183,6 +229,7 @@ const AddCar = ()=>{
                     console.log(response.carCreate)
                     toast.success(response.message)
                     setIsLoading(false)
+                    setValidationErrors({})
                     return true
                 } 
                 else 

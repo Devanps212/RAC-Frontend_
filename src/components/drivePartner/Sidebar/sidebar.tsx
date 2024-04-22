@@ -25,6 +25,7 @@ const PartnerSideBar = () => {
                 <li className="sidebar-list-item">
                     <NavDropdown title={<span><BsCardList className="icon" /> <span>Products</span></span>}>
                         <NavDropdown.Item href="/partner/addCar">Add Car</NavDropdown.Item>
+                        <NavDropdown.Item href="/partner/manageCar">Manage Car</NavDropdown.Item>
                     </NavDropdown>
                     
                 </li>

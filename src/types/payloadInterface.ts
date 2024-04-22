@@ -31,3 +31,8 @@ export interface Address{
     alternateNumber?: string;
     landmark?: string;
 }
+
+export interface tokenInterface {
+    payload: string,
+    exp: number,
+}

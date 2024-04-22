@@ -7,7 +7,7 @@ interface tokenState {
 const loadTokenFromLocalStorage = () : string | null=>{
     try
     {
-        const token = localStorage.getItem('partnerToken')
+        const token = localStorage.getItem('Token')
         return token ? token : ''
     }
     catch(error)

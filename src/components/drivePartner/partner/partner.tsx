@@ -4,14 +4,41 @@ import './partners.css';
 import { Link } from "react-router-dom";
 import { Button, Col, Row, Container, Modal } from "react-bootstrap";
 import { FaInfoCircle } from "react-icons/fa";
+import { partnerSignUpPayment } from "../../../features/axios/api/partner/partner";
+import { partnerData } from "../../../types/partnerInterface";
 
 const PartnerUI = () => {
     const [showModal, setShowModal] = useState(false);
     const [subModal, setSubModal] = useState(false)
+    const [partnerData, setPartnerData] = useState<partnerData | null>()
+
 
     const hideModal = () => setShowModal(false);
     const ShowModal = () => setShowModal(true);
-    const handlePayment = () => console.log('hi');
+
+    const handlePayment = async() => {
+
+        const token = localStorage.getItem('token')
+        console.log(token)
+        setPartnerData((PrevState)=>({
+            ...PrevState,
+        amount:250,
+        token:token??'',
+        role:"partner"}))
+
+        const partnerDataToSend = {
+            ...partnerData,
+            amount: 250,
+            token: token ?? '',
+            role:"partner"
+        };
+        if(partnerDataToSend)
+            {
+                const response = await partnerSignUpPayment(partnerDataToSend)
+                console.log("response recieved : ", response.data.data)
+                window.location.href = response.data.data  
+            }
+    }
 
     return (
         <Container fluid className="FContainer" style={{ margin: '0px', padding: '0px', paddingTop: '7rem' }}>

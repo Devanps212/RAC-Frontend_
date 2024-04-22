@@ -27,3 +27,9 @@ interface Address {
     alternateNumber?: string;
     landmark?: string;
 }
+
+export interface partnerData {
+    token:string,
+    amount:number,
+    role:string
+}

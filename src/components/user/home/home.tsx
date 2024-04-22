@@ -1,44 +1,63 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import './home.css';
-import { useDispatch, useSelector } from 'react-redux';
-import { logout } from '../../../features/axios/redux/slices/user/userLoginAuthSlice';
-import { clearToken } from '../../../features/axios/redux/slices/user/tokenSlice';
-import { useNavigate } from 'react-router-dom';
-import { auth } from '../../../../firebase/firebase';
+import Banner from '../../commonComponent/banner/banner';
+import Cards from '../../commonComponent/cards/cards';
+import { findAllCars } from '../../../features/axios/api/car/carAxios';
 import { toast } from 'react-toastify';
+import { showCarInterface } from '../../../types/carAdminInterface';
 
 function Home() {
 
-  const navigate = useNavigate()
+  const [cars, setCars] = useState<{[key:string] : showCarInterface[]}>({})
 
+  useEffect(()=>{
+    const findCars = async()=>{
+      try
+      {
+        const response = await findAllCars('all', 'user')
+        if(response)
+          {
+            const groupCars = response.reduce((acc:{[key:string]: showCarInterface[]}, car:showCarInterface)=>{
+              let categoryName : string;
+              if(car.category && typeof car.category === 'object' && 'name' in car.category)
+                {
+                  categoryName = car.category.name
+                }
+                else
+                {
+                  categoryName = 'Unrecognized'
+                }
+          
+                if(!acc[categoryName])
+                  {
+                    acc[categoryName] = []
+                  }
+                  acc[categoryName].push(car)
+          
+                  return acc
+          
+            },{})
 
-  const dispatch = useDispatch()
-  const handleLogout = ()=>{
-    dispatch(logout())
-    dispatch(clearToken())
-    auth.signOut()
-      .then(()=>{
-        console.log("signout success")
-        toast.success('signOut success')
-      })
-      .catch((error:any)=>{
-        console.log(error)
+            setCars(groupCars)
+          } 
+      }
+      catch(error:any)
+      {
+        console.log(error.message)
         toast.error(error.message)
-      })
-    navigate('/users/signIn')
-  }
+      }
+    }
+    findCars()
+  }, [])
+
+  
+  
 
   return (
     <div className="home">
-      <header className="App-header">
-        <button onClick={handleLogout}>
-          Logout
-        </button>
-        <h1>Welcome to My React Homepage</h1>
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-      </header>
+      <Banner/>
+      <h1 className='text-center mt-5 mb-3'>Cars</h1>
+      <Cards cars={cars}/>
     </div>
   );
 }

@@ -1,4 +1,6 @@
-export function decodeToken(token:string) {
+import { tokenInterface } from "../types/payloadInterface";
+
+export function decodeToken(token:string) : tokenInterface{
     
     const parts = token.split('.');
     

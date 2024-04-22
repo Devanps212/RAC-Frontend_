@@ -30,10 +30,6 @@ const EditCar = ()=>{
     const mergedInteriorImages = currentData.interior ? [...currentData.interior, ...interiorImg] : [...interiorImg]
 
 
-
-    useEffect(() => {
-        console.log("Updated formData:", formData);
-      }, [formData]);
       
     
     useEffect(()=>{
@@ -69,12 +65,6 @@ const EditCar = ()=>{
                 const categories: categoryInterface[] = response.allData;
                 console.log(response);
                 setCategory(categories);
-                // if (categories.length > 0) {
-                //     setFormData({
-                //         ...formData,
-                //         category: categories[0]._id,
-                //     });
-                // }
             } catch (error) {
                 console.log(error);
             }
@@ -82,63 +72,6 @@ const EditCar = ()=>{
     
         fetchData();
     }, []);
-
-
-    //   const handleDragStart = (e: React.DragEvent<HTMLDivElement>, index:number) => {
-    //     e.dataTransfer.setData("index", index.toString());
-    //   };
-      
-    //   const handleDragOver = (e:React.FormEvent) => {
-    //     e.preventDefault();
-    //   };
-      
-    //   const handleDrop = (e: React.DragEvent<HTMLDivElement>, newIndex: number) => {
-    //     e.preventDefault();
-    //     const oldIndex = parseInt(e.dataTransfer.getData("index"));
-      
-    //     if (!isNaN(oldIndex)) {
-    //       const updatedImages = [...mergedExteriorImages];
-    //       const imageToMove = updatedImages.splice(oldIndex, 1)[0];
-    //       updatedImages.splice(newIndex, 0, imageToMove);
-    //       mergedExteriorImages = updatedImages;
-          
-    //       console.log("Updated Images:");
-    //       mergedExteriorImages.forEach((file, index) => {
-    //         console.log(`Index: ${index}, Name: ${(file instanceof File) ? file.name : file}`);
-    //       });
-
-    //       setUpdatedImageIndices((prevIndices) => {
-    //         const updatedIndices = [...prevIndices];
-    //         updatedIndices[newIndex] = { index: newIndex, name: (imageToMove instanceof File) ? imageToMove.name : imageToMove };
-    //         return updatedIndices;
-    //       });
-
-    //       console.log("updated images state :", updatedImages)
-          
-    //       const container = exteriorImagesContainerRef.current as HTMLDivElement | null;
-    //       if (container) {
-    //         container.innerHTML = "";
-      
-    //         const heading = document.createElement('h4')
-    //         heading.innerHTML = "Updated Images"
-    //         container.appendChild(heading)
-    //         mergedExteriorImages.forEach((file, index) => {
-    //           const div = document.createElement("div");
-      
-    //           const img = document.createElement("img");
-    //           img.src = typeof file === "object" ? URL.createObjectURL(file) : file;
-    //           img.alt = `Uploaded Image ${index}`;
-    //           img.style.width = "100px";
-    //           img.style.height = "auto";
-    //           img.style.margin = "5px";
-    //           img.addEventListener("click", () => setSelectedImg(file));
-      
-    //           div.appendChild(img);
-    //           container.appendChild(div);
-    //         });
-    //       }
-    //     }
-    //   };
       
     
  
@@ -276,6 +209,12 @@ const EditCar = ()=>{
                             sendData.append(key, value);
                         }
                     }
+                    deletedIndex.forEach(({ index, type }) => {
+                        sendData.append(`deleted${type.charAt(0).toUpperCase() + type.slice(1)}Index`, index.toString());
+                    });                    
+
+                    console.log("send Data  :", sendData)
+                
                     const response = await editCar(sendData, 'admin');
                     if (response) {
                         setFormData({} as carInterface);

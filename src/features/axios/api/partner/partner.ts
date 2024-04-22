@@ -1,5 +1,5 @@
 import axios, {AxiosRequestConfig} from "axios";
-import { partnerLoginInterface } from "../../../../types/partnerInterface";
+import { partnerLoginInterface, partnerData } from "../../../../types/partnerInterface";
 import apiConfig from "../../../../utils/apiConfig";
 
 
@@ -22,4 +22,25 @@ export const partnerLogin = async(formData: partnerLoginInterface)=>{
         console.log(error)
         throw new Error(error.response.data.message)
     }
+}
+
+export const partnerSignUpPayment = async(partnerData: partnerData)=>{
+    try
+    {
+        console.log("partnerData passing : ", partnerData)
+        const phonePayConfig : AxiosRequestConfig = {
+            url: `${apiConfig.PartnerSignUp}?partnerData=${JSON.stringify(partnerData)}`,
+            method:'get',
+        }
+
+        const response = axios(phonePayConfig)
+        console.log("response recieved frontend : ",response)
+        return response
+    }
+    catch(error:any)
+    {
+        console.log(error.message)
+        throw new Error(error.response.data.message)
+    }
+    
 }

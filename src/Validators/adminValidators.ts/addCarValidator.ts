@@ -83,29 +83,22 @@ export const carValidator = (formData: carInterface, currentData?: showCarInterf
     errors.insuranceDetails = "Please enter a valid insurance number"
   }
 
-  if (currentData) {
-    if (!currentData.interior || currentData.interior.length === 0) {
-      isValid = false;
-      errors.interior = "Please select at least one interior feature in the current data";
-    }
-
-    if (!currentData.exterior || currentData.exterior.length === 0) {
-      isValid = false;
-      errors.exterior = "Please select at least one exterior feature in the current data";
-    }
-  } 
-  else 
-  {
-    if (!formData.interior || formData.interior.length === 0) {
-      isValid = false;
-      errors.interior = "Please select at least one interior feature in the form data";
-    }
-
-    if (!formData.exterior || formData.exterior.length === 0) {
-      isValid = false;
-      errors.exterior = "Please select at least one exterior feature in the form data";
-    }
+  if ((currentData && currentData.exterior) || (formData && formData.exterior)) {
+    console.log("Exterior data found");
+  } else {
+    isValid = false;
+    errors.exterior = "Please select at least one exterior feature.";
   }
+  
+  if ((currentData && currentData.interior) || (formData && formData.interior)) {
+    console.log("Interior data found");
+  } else {
+    isValid = false;
+    errors.interior = "Please select at least one interior feature.";
+  }
+  
+  return errors;
+  
   return errors;
 };
 
