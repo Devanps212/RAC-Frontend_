@@ -29,7 +29,7 @@ const UserHeader = () => {
   navigate('/users/signIn')
   }
   return (
-    <Navbar expand="lg" className="bg-body-tertiary" style={{position:"fixed", width:'100%', zIndex:'1'}}>
+    <Navbar expand="lg" className="bg-body-tertiary" style={{position:"fixed", width:'100%', zIndex:'1000'}}>
       <Container fluid>
         <Navbar.Toggle aria-controls="offcanvasNavbar-expand-lg" className="custom-toggle" style={{ color: 'transparent' }}>
           <span></span>

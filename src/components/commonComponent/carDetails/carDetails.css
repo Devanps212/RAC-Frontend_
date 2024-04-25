@@ -1,0 +1,83 @@
+.book-now{
+    background: rgb(189,203,210);
+    background: linear-gradient(232deg, rgba(189,203,210,1) 0%, rgba(236,236,236,1) 100%);
+    border-color: rgb(172, 172, 172);
+    box-shadow: 2px 2px 4px rgb(186, 186, 186);
+}
+
+.negotiate{
+    background: rgb(189,203,210);
+    background: linear-gradient(232deg, rgba(189,203,210,1) 0%, rgba(236,236,236,1) 100%);
+    border-color: rgb(172, 172, 172);
+    box-shadow: 2px 2px 4px rgb(186, 186, 186);
+}
+
+.hover-border-7 {
+    position: relative;
+    overflow: hidden;
+    border: none;
+    background-color: transparent;
+    color: inherit;
+    cursor: pointer;
+  }
+  
+  .hover-border-7::before,
+  .hover-border-7::after {
+    content: "";
+    position: absolute;
+    width: 0;
+    height: 1px;
+    background-color: black;
+    transition: width 0.3s;
+  }
+  
+  .hover-border-7::before {
+    top: 0;
+    left: 0;
+  }
+  
+  .hover-border-7::after {
+    bottom: 0;
+    right: 0;
+  }
+  
+  .hover-border-7:hover::before,
+  .hover-border-7:hover::after {
+    width: 100%;
+  }
+  
+  .star-rating{
+    border-style: groove;
+    text-align: center;
+    border-radius: 19px;
+    font-size: larger;
+    color: yellow;
+    text-shadow: 1px 1px #000, -1px -1px #000, 1px -1px #000, -1px 1px #000; /* Add a dark border around the star */
+  }
+
+  .tags{
+    border: solid 1px rgb(198, 198, 198);
+    text-align: center;
+    padding: 1px;
+  }
+  
+  .review-wrapper{
+    border: solid 1px yellow;
+    border-radius: 4px;
+    background-color: antiquewhite;
+    padding: 12px;
+  }
+  
+  .RPW{
+    font-size: x-large;
+    font-family: 'Archivo', sans-serif;
+  }
+  .RPD{
+    font-size: xx-large;
+    font-family: 'Archivo', sans-serif;
+  }
+
+  .Detail-List{
+    font-family: 'Kanit';
+    /* font-family: 'Proza Libre'; */
+  }

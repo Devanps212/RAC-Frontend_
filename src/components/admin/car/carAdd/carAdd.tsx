@@ -23,7 +23,9 @@ const AddCar = ()=>{
     const [showModal, setShowModal] = useState(false)
     
 
-    
+    useEffect(()=>{
+        console.log("formData : ", formData)
+    },[formData])
 
     
     useEffect(() => {
@@ -113,6 +115,38 @@ const AddCar = ()=>{
             return  
         }
     }
+    const handleThumbnail = (e:React.ChangeEvent<HTMLInputElement>)=>{
+        e.preventDefault()
+        const {name, files} = e.currentTarget
+
+        console.log("name : ", name, "file : ", files)
+        if(files)
+        {
+            const file = files[0]
+            const fileSizeMb = 1
+            if(!file.type.startsWith('image/'))
+            {
+                window.alert('Selected file should be an image')
+                e.currentTarget.value = ''
+                return
+            }
+
+            console.log("files size : ", file.size)
+            if(file.size > fileSizeMb * 1024 * 1024)
+            {
+                window.alert(`Selected file should have the size less than ${fileSizeMb}MB`)
+                e.currentTarget.value = ''
+                return
+            }
+            setFormData({...formData, [name]: Array.from(files)})
+            setFormData((prevFormData) => {
+                console.log(formData);
+                return prevFormData;
+              });
+            
+        }
+        
+    }
 
     const handleExterior = (e:React.ChangeEvent<HTMLInputElement>)=>{
         e.preventDefault()
@@ -168,6 +202,14 @@ const AddCar = ()=>{
         let updatedFormData = formData.exterior?.filter((files, index)=>index !== indexs)
         setFormData({...formData, exterior:updatedFormData})
     }
+
+    const deleteImageThumbnail = (index: number) => {
+        setFormData(prevFormData => ({
+            ...prevFormData,
+            thumbnail: prevFormData.thumbnailImg ? prevFormData.thumbnailImg.filter((_, idx) => idx !== index) : []
+        }));
+    };
+    
     
 
     const handleSubmit = async(e:React.FormEvent)=>{
@@ -202,7 +244,7 @@ const AddCar = ()=>{
                 const sendData = new FormData()
                 for(let [key, value] of Object.entries(formData))
                 {
-                    if(key ==='interior' || key=== 'exterior')
+                    if(key ==='interior' || key=== 'exterior' ||key=== 'thumbnailImg')
                     {
                         if(Array.isArray(value))
                         {
@@ -444,6 +486,47 @@ const AddCar = ()=>{
                     <Form.Text className="text-danger">{validationErrors.insuranceDetails}</Form.Text>
                     </Form.Group>
                 </Col>
+                </Row>
+                <Row className="mb-3">
+                    <Col>
+                    <Form.Group controlId="Seats">
+                        <Form.Label>Seats</Form.Label>
+                        <Form.Control 
+                        as='select' 
+                        value={formData.seats || ''} 
+                        onChange={(e)=>setFormData({...formData, seats :parseInt(e.target.value)})}>
+                            <option value="">---select seats</option>
+                            <option value="2">2 seater</option>
+                            <option value="4">4 seater</option>
+                            <option value="5">5 seater</option>
+                            <option value="6">6 seater</option>
+                            <option value="7">7 seater</option>
+                        </Form.Control>
+                        <Form.Text className="text-danger">{validationErrors.seats}</Form.Text>
+                    </Form.Group>
+                    </Col>
+                    <Col>
+                    <Form.Group controlId="Thumbnail">
+                        <Form.Label>Thumbnail</Form.Label>
+                        <Form.Control
+                        type="file"
+                        name="thumbnailImg"
+                        onChange={handleThumbnail}/>
+                        <Form.Text>{validationErrors.thumbnail}</Form.Text>
+                    </Form.Group>
+                    {formData.thumbnailImg && 
+                    formData.thumbnailImg.map((file, index)=>(
+                        <div key={index}>
+                        <img onClick={()=>setSelectedImg(file)}
+                        src={URL.createObjectURL(file)}
+                        alt={`Uploaded Image ${index}`} 
+                        style={{ width: '100px', height: 'auto', margin: '5px' }}/>
+                        <Button onClick={()=>deleteImageThumbnail(index)} variant="danger">Delete</Button>
+                        </div>
+                    ))
+                    }
+
+                    </Col>
                 </Row>
 
                 <Row className="mb-3">

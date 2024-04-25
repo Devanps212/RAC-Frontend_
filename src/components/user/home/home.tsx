@@ -5,10 +5,16 @@ import Cards from '../../commonComponent/cards/cards';
 import { findAllCars } from '../../../features/axios/api/car/carAxios';
 import { toast } from 'react-toastify';
 import { showCarInterface } from '../../../types/carAdminInterface';
+import { useNavigate } from 'react-router-dom';
+
 
 function Home() {
 
   const [cars, setCars] = useState<{[key:string] : showCarInterface[]}>({})
+  const [selectedCar, setSelectedCar] = useState<string | undefined>()
+
+  const navigate = useNavigate()
+
 
   useEffect(()=>{
     const findCars = async()=>{
@@ -50,6 +56,14 @@ function Home() {
     findCars()
   }, [])
 
+
+  useEffect(()=>{
+    if(selectedCar)
+    {
+      navigate(`/users/carDetail?carId=${selectedCar}`)
+    }
+  }, [selectedCar])
+
   
   
 
@@ -57,7 +71,9 @@ function Home() {
     <div className="home">
       <Banner/>
       <h1 className='text-center mt-5 mb-3'>Cars</h1>
-      <Cards cars={cars}/>
+      <Cards 
+      cars={cars}
+      setSelectedCar={setSelectedCar}/>
     </div>
   );
 }

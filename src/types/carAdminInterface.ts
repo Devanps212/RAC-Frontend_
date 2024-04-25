@@ -1,5 +1,7 @@
 import { Types } from "mongoose";
 import { categoryInterface } from "./categoryInterface";
+import { userAdminInterface } from "./userInterface";
+
 export interface carAdminInterface {
     _id:string,
     name:string,
@@ -29,8 +31,11 @@ export interface carInterface {
     rentPricePerWeek?: number;
     rentPricePerDay?: number;
     insuranceDetails?: string;
-    addedBy?: string;
-    addedById?:Types.ObjectId | string
+    addedBy?: string | undefined;
+    addedById?:Types.ObjectId | string;
+    comments?:commentsInterface[];
+    thumbnailImg?:File[];
+    seats?:number
 }
 
 export interface showCarInterface {
@@ -53,10 +58,19 @@ export interface showCarInterface {
     rentPricePerDay?: number;
     insuranceDetails?: string;
     addedBy?: string;
+    comments?:commentsInterface[]
+    thumbnailImg?:string;
+    seats?:number
 }
 
 export interface category {
     _id?:Types.ObjectId,
     name:string,
     description:string,
+}
+
+interface commentsInterface {
+    userId: userAdminInterface,
+    comment: string,
+    userRating: number
 }

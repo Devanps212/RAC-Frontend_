@@ -6,6 +6,7 @@ import { Button, Col, Row, Container, Modal } from "react-bootstrap";
 import { FaInfoCircle } from "react-icons/fa";
 import { partnerSignUpPayment } from "../../../features/axios/api/partner/partner";
 import { partnerData } from "../../../types/partnerInterface";
+import { toast } from "react-toastify";
 
 const PartnerUI = () => {
     const [showModal, setShowModal] = useState(false);
@@ -35,8 +36,16 @@ const PartnerUI = () => {
         if(partnerDataToSend)
             {
                 const response = await partnerSignUpPayment(partnerDataToSend)
+                console.log("response : ", response)
                 console.log("response recieved : ", response.data.data)
-                window.location.href = response.data.data  
+                if(response.data.data === null)
+                {
+                    toast.warning(response.data.message)
+                }
+                else
+                {
+                    window.location.href = response.data.data 
+                }     
             }
     }
 

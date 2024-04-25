@@ -87,3 +87,11 @@
   font-weight: 500;
   padding-left: 20px;
 }
+
+.react-multiple-carousel__arrow--left{
+  z-index: auto !important;
+}
+
+.react-multiple-carousel__arrow--right{
+  z-index: auto !important;
+}
