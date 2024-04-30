@@ -74,3 +74,14 @@ interface commentsInterface {
     comment: string,
     userRating: number
 }
+
+export interface imageInterface{
+    thumbnailImg?: string
+    exterior: string[]
+    interior: string[]
+}
+
+export interface images{
+    bigImg:string
+    smallImg: string[]
+}

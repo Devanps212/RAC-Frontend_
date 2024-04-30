@@ -25,12 +25,13 @@ const PartnerEditCar = ()=>{
     const [showModal, setShowModal] = useState(false)
     const [exteriorImg, setImg] = useState<File[]>([])
     const [interiorImg, setIntImg] = useState<File[]>([])
+    const [thumbnail, setThumbnail] = useState<File[]>([])
     const location = useLocation()
     const {id} = location.state
 
     let mergedExteriorImages = currentData.exterior ? [...currentData.exterior, ...exteriorImg] : [...exteriorImg];
     const mergedInteriorImages = currentData.interior ? [...currentData.interior, ...interiorImg] : [...interiorImg]
-
+    const mergedThumbnailImages = currentData.thumbnailImg ? [currentData.thumbnailImg, ...thumbnail] : [...thumbnail]
     
     // const partnerToken = localStorage.getItem('partnerToken')
     // console.log("Partner Id is : ",partnerToken)
@@ -131,6 +132,44 @@ const PartnerEditCar = ()=>{
         }
         
     }
+
+    const handleThumbnail = (e:React.ChangeEvent<HTMLInputElement>)=>{
+        e.preventDefault()
+        const {name, files} = e.currentTarget
+
+        console.log("name : ", name, "file : ", files)
+        if(files)
+        {
+            const file = files[0]
+            const fileSizeMb = 1
+            if(!file.type.startsWith('image/'))
+            {
+                window.alert('Selected file should be an image')
+                e.currentTarget.value = ''
+                return
+            }
+
+            console.log("files size : ", file.size)
+            if(file.size > fileSizeMb * 1024 * 1024)
+            {
+                window.alert(`Selected file should have the size less than ${fileSizeMb}MB`)
+                e.currentTarget.value = ''
+                return
+            }
+            console.log("file length : ", e.target.files?.length)
+            if(e.target.files && e.target.files.length > 1)
+                {
+                    window.alert(`Only single file allowed to upload`)
+                    e.currentTarget.value = ''
+                    return
+                }
+                
+            setThumbnail((prevState)=>[...prevState, ...Array.from(files)])
+            console.log("merged thumbnail : ", mergedThumbnailImages)
+            
+        }
+        
+    }
     
 
     const deleteImageInterior = (indexs:number, deletecurrentData :boolean)=>{
@@ -184,6 +223,34 @@ const PartnerEditCar = ()=>{
         }
     }
 
+    const deleteImageThumbnail = (index: number, deleteCurrentData: boolean)=>{
+        console.log("reached delete thumbnails")
+        console.log(deleteCurrentData)
+        if(deleteCurrentData)
+        {
+            setThumbnail([])   
+            if(currentData && currentData.thumbnailImg)
+            {
+                setCurrentData({...currentData, thumbnailImg:undefined})
+                console.log("deleted thumnbail")
+                
+                
+            }
+        }
+        else
+        {
+            console.log("formData  : ", formData.thumbnailImg)
+            setThumbnail([])
+            if(formData && formData.thumbnailImg)
+                {
+                    console.log("formData  : ", formData.thumbnailImg)
+                    setFormData({...formData, thumbnailImg: []})
+                    console.log("deleted formData")
+                    
+                }
+        }
+    }
+
    
 
     const handleSubmit = async (e: React.FormEvent) => {
@@ -194,6 +261,7 @@ const PartnerEditCar = ()=>{
             ...currentData,
             interior: interiorImg,
             exterior: exteriorImg,
+            thumbnailImg: thumbnail
         }));
     };
     
@@ -206,12 +274,15 @@ const PartnerEditCar = ()=>{
                 if (Object.keys(valid).length === 0) {
                     const sendData = new FormData();
                     for (let [key, value] of Object.entries(formData)) {
-                        if (key === 'interior' || key === 'exterior') {
+                        if (key === 'interior' || key === 'exterior' || key ==='thumbnailImg') {
                             if (Array.isArray(value)) {
                                 for (let item of value) {
                                     sendData.append(key, item);
                                 }
                             }
+                        }
+                        else if (key === 'category' && typeof value === 'object' && value._id){
+                            sendData.append('category', value._id);
                         } else {
                             sendData.append(key, value);
                         }
@@ -439,6 +510,64 @@ const PartnerEditCar = ()=>{
                     <Form.Text className="text-danger">{validationErrors.insuranceDetails}</Form.Text>
                     </Form.Group>
                 </Col>
+                </Row>
+                <Row className="mb-3">
+                    <Col>
+                    <Form.Group controlId="Seats">
+                        <Form.Label>Seats</Form.Label>
+                        <Form.Control 
+                        as='select' 
+                        value={currentData.seats || ''} 
+                        onChange={(e)=>setCurrentData({...currentData, seats :parseInt(e.target.value)})}>
+                            <option value="">---select seats</option>
+                            <option value="2">2 seater</option>
+                            <option value="4">4 seater</option>
+                            <option value="5">5 seater</option>
+                            <option value="6">6 seater</option>
+                            <option value="7">7 seater</option>
+                        </Form.Control>
+                        <Form.Text className="text-danger">{validationErrors.seats}</Form.Text>
+                    </Form.Group>
+                    </Col>
+                    <Col>
+                    <Form.Group controlId="Thumbnail">
+                        <Form.Label>Thumbnail</Form.Label>
+                        <Form.Control
+                        type="file"
+                        name="thumbnailImg"
+                        onChange={handleThumbnail}/>
+                        <Form.Text>{validationErrors.thumbnail}</Form.Text>
+                    </Form.Group>
+                    {mergedThumbnailImages &&
+                    mergedThumbnailImages.map((file, index)=>(
+                        <div key={index}>
+                            {
+                                typeof file === 'object' ? (
+                                    <>
+                                    <img onClick={()=>setSelectedImg(file)}
+                                    src={URL.createObjectURL(file)}
+                                    alt={`Uploaded Image ${index}`} 
+                                    style={{ width: '100px', height: 'auto', margin: '5px' }}
+                                    />
+
+                                    <Button onClick={()=>deleteImageThumbnail(index, false)} variant="danger">Delete</Button>
+                                    </>
+                                ) : (
+                                    <>
+                                    <img onClick={()=>setSelectedImg(file)}
+                                    src={file}
+                                    alt={`Uploaded Image ${index}`} 
+                                    style={{ width: '100px', height: 'auto', margin: '5px' }}/>
+
+                                    <Button onClick={()=>deleteImageThumbnail(index, true)} variant="danger">Delete</Button>
+                                    </>
+                                )
+                            }
+                        </div>
+                    ))
+                    }
+
+                    </Col>
                 </Row>
 
                 <Row className="mb-3">

@@ -108,7 +108,7 @@ export const editCar = async(carData: any, role: string)=>{
     }
     catch(error: any)
     {
-        console.log(error)
-        throw new Error(error.message)
+        console.log(error.response.data.message)
+        throw new Error(error.response.data.message)
     }
 }

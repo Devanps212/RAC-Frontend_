@@ -1,0 +1,82 @@
+.T-container{
+    width: 100vw;
+    height: 100vh;
+
+}
+
+.scrollable-menu {
+    max-height: 200px; /* Adjust the max height according to your needs */
+    overflow-y: auto;
+}
+
+.Starting-Time{
+    width: 7rem;
+    text-align: center;
+    border: solid 1px grey;
+    border-radius: 3px;
+    padding-bottom: 3px;
+    background: rgb(198,255,248);
+    background: linear-gradient(232deg, rgba(198,255,248,1) 0%, rgba(117,250,255,1) 48%, rgba(198,236,241,1) 100%);
+    transition: all 0.3s ease;
+    text-shadow: 1px 1px 1px rgba(0, 0, 0, 0.3);
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+}
+
+.Starting-Time:hover {
+    transform: scale(1.05);
+    box-shadow: 0 0 15px rgba(0, 0, 0, 0.3);
+}
+
+.Ending-Time{
+    width: 7rem;
+    background: rgb(255,129,129);
+    background: linear-gradient(232deg, rgba(255,129,129,1) 0%, rgba(254,188,188,1) 49%, rgba(255,137,137,1) 100%);
+    text-align: center;
+    border: solid 1px grey;
+    border-radius: 3px;
+    padding-bottom: 3px;
+    transition: all 0.3s ease;
+    text-shadow: 1px 1px 1px rgba(0, 0, 0, 0.3);
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+}
+
+.Ending-Time:hover {
+    transform: scale(1.05);
+    box-shadow: 0 0 15px rgba(0, 0, 0, 0.3);
+}
+
+
+.Ending-Time::placeholder{
+    color: black;
+}
+
+
+.Starting-Time::placeholder{
+    color: black;
+}
+
+.time-Date{
+    border: solid 1px grey;
+    padding: 50px;
+    height: 21rem;
+
+}
+
+.time-Date {
+    display: flex;
+    flex-direction: column; /* Stack children vertically */
+    justify-content: center; /* Center items horizontally */
+    align-items: center; /* Center items vertically */
+    width: 53rem;
+    background-image: url('/assets/user/BookingTime.png');
+}
+
+.TD-title{
+    background-color: yellow;
+    height: 46px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: x-large;
+    font-weight: 700;
+}

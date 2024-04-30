@@ -8,7 +8,8 @@ import 'react-toastify/dist/ReactToastify.css';
 import { Provider } from 'react-redux';
 import store from './features/axios/redux/app/store';
 import 'react-confirm-alert/src/react-confirm-alert.css'; 
-
+import "react-country-state-city/dist/react-country-state-city.css";
+import 'react-datepicker/dist/react-datepicker.css';
 
 
 ReactDOM.createRoot(document.getElementById('root') as Element).render(

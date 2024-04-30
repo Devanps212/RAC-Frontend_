@@ -8,6 +8,7 @@ const VerifyOTP = lazy(()=> import('../pages/user/VOTP'))
 const HomePage = lazy(()=>import('../pages/user/Home'))
 const CarDetails = lazy(()=>import('../pages/user/carDetails'))
 import BlockedPage from '../components/commonComponent/blocked';
+const BookingTimeDate = lazy(()=>import('../pages/user/TimeSelectionUI'))
 import { UserRouteProtection, UserSignInSignupProtection, BlockedRoutes } from './protectedRoutes/routeProtection';
 
 const UserRouter = () => {
@@ -21,6 +22,7 @@ const UserRouter = () => {
         <Route path="/home" element={<UserRouteProtection><HomePage/></UserRouteProtection>}/>
         <Route path="/UserBlocked" element={<BlockedRoutes><BlockedPage/></BlockedRoutes>}/>
         <Route path='/carDetail' element={<CarDetails/>}/>
+        <Route path='/TimeDateSelection' element={<BookingTimeDate/>}/>
       </Routes>
     </Suspense>
     </>

@@ -6,6 +6,7 @@ import { findAllCars } from "../../../features/axios/api/car/carAxios";
 import { toast } from "react-toastify";
 import { carInterface, showCarInterface } from "../../../types/carAdminInterface";
 import { categoryInterface } from "../../../types/categoryInterface";
+import ImageSelector from "../ImageSelector/imageSelector";
 
 
 const CarDetails = () => {
@@ -17,8 +18,8 @@ const CarDetails = () => {
 
     const [car, setCar] = useState<showCarInterface>()
     const [category , setCategory] = useState<categoryInterface>()
-    
-    // const [user, setUser] = useState<userAdminInterface>
+    const [bigImg, setBigImg] = useState('')
+    const [smallImg, setSmallImg] = useState<any[]>([])
 
     useEffect(()=>{
         const fetchCarData = async()=>{
@@ -27,6 +28,10 @@ const CarDetails = () => {
                 const response = await findAllCars(carId, 'user')
                 setCar(response)
                 setCategory(response.category)
+                setBigImg(response.thumbnailImg)
+                const combinedImages = [...response.exterior, ...response.interior]
+                setSmallImg(combinedImages)
+
                 console.log("fetched data : ",response)
             }
             catch(error:any)
@@ -40,7 +45,20 @@ const CarDetails = () => {
         }
     },[carId])
 
-    
+    const handleClick = (bigImg: string, smallestImg: string)=>{
+        console.log("function working")
+        const smallImgIndex = smallImg.findIndex(img=>img===bigImg)
+        console.log("smallIndex : ", smallImgIndex)
+        if(smallImgIndex !== -1)
+            {
+                console.log("smallIndex : ", smallImgIndex)
+                setBigImg(bigImg)
+                const newSmallImg = [...smallImg]
+                newSmallImg[smallImgIndex] = smallestImg
+                console.log("newImage : ", newSmallImg)
+                setSmallImg(newSmallImg) 
+            }
+    }
 
     return (
         <>
@@ -65,25 +83,7 @@ const CarDetails = () => {
                         </div>
                     </div>
                     <div className="col-6">
-                    <img src={car && car.thumbnailImg ? car.thumbnailImg : "small_car_image_3.jpg"} alt="Big Car Image" className="img-thumbnail mb-2" style={{width:"100%"}} />
-                        <div className="d-flex justify-content-center align-items-center">
-                            {
-                                car && car.exterior && car.exterior.length > 0 &&
-                                car.exterior.map((images, index)=>(
-                                    <div className="col" key={index}>
-                                        <img src={images} alt="Small Car Image 3" className="img-thumbnail mb-2" style={{width:"100%", height:"100%"}} />
-                                    </div>
-                                ))
-                            }
-                            {
-                                car && car.interior && car.interior.length > 0 &&
-                                car.interior.map((images, index)=>(
-                                    <div className="col" key={index}>
-                                        <img src={images} alt="Small Car Image 3" className="img-thumbnail mb-2" style={{width:"100%", height:"100%"}} />
-                                    </div>
-                                ))
-                            }
-                        </div>
+                        <ImageSelector images={[bigImg, smallImg]} handleClick={handleClick}/>
                     </div>
                     <div className="col-4 d-flex flex-column justify-content-start align-items-start">
                         <h2>{car?.name}</h2>

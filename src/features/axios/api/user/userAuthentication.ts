@@ -102,3 +102,25 @@ export const GoogleVerification = async(credentials : string)=>{
         throw new Error(error.response.data.message)
     }
 } 
+
+
+export const locationFinding = async(location: string)=>{
+    try
+    {
+        console.log("This is location ==>",location)
+        const locationConfig :  AxiosRequestConfig = {
+            url: apiConfig.locationFinding,
+            method:'post',
+            data:{location}
+        }
+
+        const response = await axios(locationConfig)
+        console.log(response)
+        return response.data
+    }
+    catch(error:any)
+    {
+        console.log("errror : ", error)
+        throw new Error(error.data.message)
+    }
+}

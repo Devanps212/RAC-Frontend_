@@ -27,7 +27,9 @@ const apiConfig = {
 
     partnerLogin:`${configKeys.API_URL}partner/login`,
     PartneraddCar:`${configKeys.API_URL}partner/addCar`,
-    PartnerSignUp:`${configKeys.API_URL}partner/SignUp`
+    PartnerSignUp:`${configKeys.API_URL}partner/SignUp`,
+
+    locationFinding: `${configKeys.API_URL}user-auth/location`
 }
 
 export default apiConfig

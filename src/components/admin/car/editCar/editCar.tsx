@@ -285,7 +285,11 @@ const EditCar = ()=>{
                                     sendData.append(key, item);
                                 }
                             }
-                        } else {
+                        }
+                        else if (key === 'category' && typeof value === 'object' && value._id){
+                                sendData.append('category', value._id);
+                            }
+                         else {
                             sendData.append(key, value);
                         }
                     }
