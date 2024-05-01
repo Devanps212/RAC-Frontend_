@@ -1,0 +1,26 @@
+.container{
+    height: 100vh;
+    width: 100vw;
+}
+
+.left-contents{
+    border: solid 1px grey;
+    width: max-content;
+    padding: 20px;
+    height: 100%;
+    overflow-y: auto;
+    position: sticky; 
+    top: 0;
+}
+
+.font-text{
+    font-weight: 600;
+}
+
+.right-top-contents{
+    border: solid 1px grey;
+    padding: 10px;
+    border-radius: 8px;
+    width: 100%;
+}
+

@@ -9,6 +9,7 @@ const HomePage = lazy(()=>import('../pages/user/Home'))
 const CarDetails = lazy(()=>import('../pages/user/carDetails'))
 import BlockedPage from '../components/commonComponent/blocked';
 const BookingTimeDate = lazy(()=>import('../pages/user/TimeSelectionUI'))
+const Cars = lazy(()=>import('../pages/user/carPage'))
 import { UserRouteProtection, UserSignInSignupProtection, BlockedRoutes } from './protectedRoutes/routeProtection';
 
 const UserRouter = () => {
@@ -23,6 +24,7 @@ const UserRouter = () => {
         <Route path="/UserBlocked" element={<BlockedRoutes><BlockedPage/></BlockedRoutes>}/>
         <Route path='/carDetail' element={<CarDetails/>}/>
         <Route path='/TimeDateSelection' element={<BookingTimeDate/>}/>
+        <Route path='/Allcars' element={<Cars/>}/>
       </Routes>
     </Suspense>
     </>

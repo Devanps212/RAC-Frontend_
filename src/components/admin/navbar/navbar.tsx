@@ -22,7 +22,7 @@ const Header = () => {
 
   }
   return (
-    <Navbar className='navbar' bg="light" expand="lg" style={{position:'fixed', width:'100%'}}>
+    <Navbar className='navbar' bg="light" expand="lg" style={{position:'fixed', width:'100%', zIndex: "1000"}}>
       <Container style={{ minHeight: '57px' }}>
 
         <Navbar.Toggle id="navbar-contents" />

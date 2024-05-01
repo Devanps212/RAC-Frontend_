@@ -9,6 +9,7 @@ import { useNavigate } from 'react-router-dom';
 import { bookingInterface } from '../../../types/bookingInterface';
 import { locationFinding } from '../../../features/axios/api/user/userAuthentication';
 import { LocationSuggestion } from '../../../types/bookingInterface';
+import { filterCarsBooking } from '../../../features/axios/api/booking/booking';
 
 
 
@@ -84,13 +85,14 @@ function Home() {
 
   const setTime = (time: string, purpose: string)=>{
     if(purpose === "pickup"){
+      console.log("time picking")
         const inputValue = time
-        const [hours, minutes] = inputValue.split(':'); // Split hours and minutes
+        const [hours, minutes] = inputValue.split(':');
         const formattedTime = `${hours}:${minutes || '00'}`
         setPickupTime(formattedTime)
       }else{
         const inputValue = time
-        const [hours, minutes] = inputValue.split(':'); // Split hours and minutes
+        const [hours, minutes] = inputValue.split(':');
         const formattedTime = `${hours}:${minutes || '00'}`
         setDropOffTime(formattedTime)
       }
@@ -105,12 +107,14 @@ function Home() {
       }
   }
 
-  const handleSubMission = ( value: string,
+  const handleSubMission = async( value: string,
     DropOffValue: string,
     pickUpDate: Date,
     dropOffDate: Date,
     pickupTime: string,
     dropOffTime: string)=>{
+
+      console.log("subbmitting data")
       const data = {
         pickupLocation: value,
         dropOffLocation: DropOffValue,
@@ -119,8 +123,23 @@ function Home() {
         pickupTime: pickupTime,
         dropOffTime: dropOffTime
       }
-      setBookingData(data)
+      setBookingData(data) 
     }
+
+    useEffect(()=>{
+      const filterCars = async()=>{
+        try{
+        if(bookingData){
+          const response = await filterCarsBooking(bookingData)
+          console.log(response)
+        }
+       }
+       catch(error:any){
+        throw new Error(error.message)
+       }
+      }
+      filterCars()
+    }, [bookingData])
 
 
   useEffect(()=>{

@@ -9,6 +9,7 @@ export interface carAdminInterface {
     owner:string,
     category?:categoryInterface,
     status:string,
+    rentPricePerDay?:number
 }
 
 

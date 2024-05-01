@@ -38,6 +38,10 @@ const Banner: React.FC<BannerProps> = ({search, PickupPlaces, click, value, Drop
         handleTime(e.target.value, purpose)
   }
 
+  const handleDateChange = (e:React.ChangeEvent<HTMLInputElement>, purpose: string)=>{
+       handleDate(new Date(e.target.value), purpose)
+  }
+
   const handleSubmit = ()=>{
     handleFormSubmission(value, DropOffValue, pickUpDate, dropOffDate, pickupTime, dropOffTime)
   }
@@ -105,21 +109,23 @@ const Banner: React.FC<BannerProps> = ({search, PickupPlaces, click, value, Drop
           <div className="row">
             <div className="contents d-flex justify-content-center align-items-center">
               <div className="col-6">
-                <p>Select Pickup Time :</p>
+                <p>Select Pickup Date :</p>
                 <input 
                 type="date" 
                 value={pickUpDate ? pickUpDate.toISOString().split('T')[0] : ''}
                 className="form-control-input"
                 min={currentDate}
+                onChange={(e)=>handleDateChange(e, 'pickup')}
                 />
               </div>
               <div className="col-6">
-              <p>Select DropOff Time :</p>
+              <p>Select DropOff Date :</p>
                 <input 
                 type="date" 
                 value={dropOffDate ? dropOffDate.toISOString().split('T')[0] : ''}
                 className="form-control-input"
-                min={currentDate}/>
+                min={currentDate}
+                onChange={(e)=>handleDateChange(e, 'DropOff')}/>
               </div>
             </div>
           </div>
@@ -146,16 +152,16 @@ const Banner: React.FC<BannerProps> = ({search, PickupPlaces, click, value, Drop
               </div>
             </div>
           </div>
-          <div className="d-flex justify-content-center align-items-center m-3">
-            <Button onClick={handleSubmit}>
+          <div style={{zIndex: '500'}} className="d-flex justify-content-center align-items-center m-3">
+            <Button  onClick={handleSubmit}>
               Submit
             </Button>
           </div>
         </div>
-        <Carousel.Caption>
+        {/* <Carousel.Caption>
           <h3>First Slide</h3>
           <p>Lorem ipsum votit le norah se denshuel sok et vatnako</p>
-        </Carousel.Caption>
+        </Carousel.Caption> */}
       </Carousel.Item>
     </Carousel>
   );

@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react"
 import { confirmAlert } from 'react-confirm-alert';
-import { Table, Button, FormControl, Form, Modal, Row, Col } from "react-bootstrap"
+import { Table, Button, FormControl, Form, Modal, Row, Col, Dropdown } from "react-bootstrap"
 import { FaTrash, FaEdit, FaInfoCircle } from 'react-icons/fa';
 import { carAdminInterface, showCarInterface, category } from "../../../../types/carAdminInterface";
 import { findAllCars } from "../../../../features/axios/api/car/carAxios";
@@ -12,6 +12,7 @@ import { toast } from "react-toastify";
 import SearchOne from "../../../commonComponent/search/search";
 import Pagination from "../../../commonComponent/pagination/pagination";
 import { useNavigate } from "react-router-dom";
+import { categoryInterface } from "../../../../types/categoryInterface";
 
 
 const CarManagement = ()=>{
@@ -24,6 +25,7 @@ const CarManagement = ()=>{
     const [currentPage, setCurrentPage] = useState(1)
     const [CarData, setCarData] = useState<showCarInterface | null >(null)
     const [showModal, setShowModal] = useState(false)
+    const [category, setCategory] = useState<string[]>([])
     
 
 
@@ -39,7 +41,15 @@ const CarManagement = ()=>{
           try {
             const response = await findAllCars('all', 'admin');
             if (mounted) {
-              console.log('data received:', response);
+              const categoryData: categoryInterface[] = response.map((categ: showCarInterface) => categ.category);
+              const uniqueCategoryNames: string[] = Array.from(new Set(categoryData.map((car: categoryInterface) => car.name)))
+                .filter((name: string | undefined) => typeof name === 'string')
+                .map((name: string | undefined) => name!);
+              
+              setCategory(uniqueCategoryNames);
+
+              console.log("unique : ", uniqueCategoryNames)
+              console.log("show :",category)
               setFormData(response);
               setFilteredData(response)
               setCarFullData(response)
@@ -75,8 +85,7 @@ const CarManagement = ()=>{
 
       const handleSearch = (value:string)=>{
         console.log("filtered Data : ", filteredData)
-        if(value.trim() !== "")
-          {
+        if(value.trim() !== ""){
             console.log(value)
             setSearch(value)
             const regexp = new RegExp(`^${value}`, "i")
@@ -85,8 +94,7 @@ const CarManagement = ()=>{
            setFilteredData(data)
            console.log("filtered Data : ", filteredData)
           }
-          else
-          {
+          else{
             setFilteredData(formData)
           }
       }
@@ -125,6 +133,24 @@ const CarManagement = ()=>{
 
     }
 
+    const handleLowtoHigh = ()=>{
+      console.log("etting low to hight")
+     const LowHigh =  [...filteredData].sort((a, b)=>(a.rentPricePerDay ?? 0) - (b.rentPricePerDay ?? 0))
+     setFilteredData(LowHigh)
+    }
+
+    const handleHightoLow = ()=>{
+      const HighLow = [...filteredData].sort((a,b)=>(b.rentPricePerDay ?? 0) - (a.rentPricePerDay ?? 0))
+      setFilteredData(HighLow)
+    }
+
+    const handleSorting = (categ: string) => {
+      console.log(categ)
+      const filterData = formData.filter((car) => car.category?.name === categ);
+      setFilteredData(filterData);
+    };
+
+
 
     const handleEdit = (id:string)=>{
       navigate(`/admin/car/editCars`, {state:{id}})
@@ -151,6 +177,33 @@ const CarManagement = ()=>{
         <div className="table-body">
             <h3 className="mb-5">Car Management</h3>
             {load && <Loading/>}
+            <div className="d-flex justify-content-end align-items-end mb-4">
+            <Dropdown className="me-2">
+                <Dropdown.Toggle variant="info">
+                  select price
+                </Dropdown.Toggle>
+                <Dropdown.Menu>
+                  <Dropdown.Item onClick={handleLowtoHigh}>
+                    Low to High
+                  </Dropdown.Item>
+                  <Dropdown.Item onClick={handleHightoLow}>
+                    Hight to Low
+                  </Dropdown.Item>
+                </Dropdown.Menu>
+              </Dropdown>
+              <Dropdown>
+                <Dropdown.Toggle variant="info">
+                  Filter by category
+                </Dropdown.Toggle>
+                <Dropdown.Menu>
+                  {
+                    category && category.map((categ, index)=>(
+                      <Dropdown.Item key={index} onClick={()=>handleSorting(categ)}>{categ}</Dropdown.Item>
+                    ))
+                  }
+                </Dropdown.Menu>
+              </Dropdown>
+            </div>
             <SearchOne onSearch={handleSearch}/>
             <Table responsive striped hover className="custom-table">
                 <thead className="thead-dark">
