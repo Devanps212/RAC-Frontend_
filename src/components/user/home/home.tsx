@@ -10,7 +10,7 @@ import { bookingInterface } from '../../../types/bookingInterface';
 import { locationFinding } from '../../../features/axios/api/user/userAuthentication';
 import { LocationSuggestion } from '../../../types/bookingInterface';
 import { filterCarsBooking } from '../../../features/axios/api/booking/booking';
-
+import { bookingValidator } from "../../../Validators/userValidator.ts/bookingValidator";
 
 
 
@@ -18,7 +18,7 @@ function Home() {
 
   const [cars, setCars] = useState<{[key:string] : showCarInterface[]}>({})
   const [selectedCar, setSelectedCar] = useState<string | undefined>()
-  const [bookingData, setBookingData] = useState<bookingInterface | null>({} as bookingInterface)
+  const [bookingData, setBookingData] = useState<bookingInterface | null>(null)
   const [PickupSuggestions, setPickupSuggestions] = useState<LocationSuggestion[]>([]);
   const [DropOffSuggestions, setDropOffSuggestions] = useState<LocationSuggestion[]>([]);
   const [Pickuplocation, setPickupLocation]= useState('')
@@ -47,7 +47,6 @@ function Home() {
         {
           setPickupLocation(locations)
           const response = await locationFinding(locations)
-          console.log("data recieved: ",response.data)
           setPickupSuggestions(response.data)
         }
         else
@@ -59,11 +58,9 @@ function Home() {
     }
     catch(error:any)
     {
-      console.log("error occured in home : ", error.message)
       if(error.message !== "Cannot read properties of undefined (reading 'message')")
         {
           toast.error(error.message)
-          console.log(error.message)
         }
     }
   }
@@ -85,7 +82,6 @@ function Home() {
 
   const setTime = (time: string, purpose: string)=>{
     if(purpose === "pickup"){
-      console.log("time picking")
         const inputValue = time
         const [hours, minutes] = inputValue.split(':');
         const formattedTime = `${hours}:${minutes || '00'}`
@@ -107,6 +103,7 @@ function Home() {
       }
   }
 
+
   const handleSubMission = async( value: string,
     DropOffValue: string,
     pickUpDate: Date,
@@ -114,7 +111,6 @@ function Home() {
     pickupTime: string,
     dropOffTime: string)=>{
 
-      console.log("subbmitting data")
       const data = {
         pickupLocation: value,
         dropOffLocation: DropOffValue,
@@ -123,23 +119,28 @@ function Home() {
         pickupTime: pickupTime,
         dropOffTime: dropOffTime
       }
-      setBookingData(data) 
+      const checking = await bookingValidator(data)
+      console.log("checking : ",checking)
+      if(checking !== null){
+        toast.error(Object.values(checking).join(", "));
+      }
+      else{
+        setBookingData(data);
+        console.log(bookingData);
+      }
+      
     }
 
     useEffect(()=>{
-      const filterCars = async()=>{
-        try{
-        if(bookingData){
-          const response = await filterCarsBooking(bookingData)
-          console.log(response)
-        }
-       }
-       catch(error:any){
-        throw new Error(error.message)
-       }
+      if(bookingData){
+        
+        const encodedBookingData = encodeURIComponent(JSON.stringify(bookingData));
+        navigate(`/users/Allcars?bookingData=${encodedBookingData}`);
+        setBookingData(null)
       }
-      filterCars()
-    }, [bookingData])
+    }, [bookingData, navigate])
+
+
 
 
   useEffect(()=>{
@@ -164,7 +165,6 @@ function Home() {
             setCars(groupCars)
           } 
       }catch(error:any){
-        console.log(error.message)
         toast.error(error.message)
       }
     }

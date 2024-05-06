@@ -31,7 +31,8 @@ const apiConfig = {
 
     locationFinding: `${configKeys.API_URL}user-auth/location`,
 
-    FilterForBooking: `${configKeys.API_URL}booking/filterForBooking`
+    FilterForBooking: `${configKeys.API_URL}booking/filterForBooking`,
+    findBookings : `${configKeys.API_URL}booking/findBookings`
 }
 
 export default apiConfig

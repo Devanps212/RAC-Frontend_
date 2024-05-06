@@ -1,160 +1,152 @@
-import React, { useState, useEffect } from "react"
-import './booking.css'
-import { City, IState, ICity }  from 'country-state-city';
-import DatePicker from 'react-datepicker'; 
-import { Button, Dropdown } from "react-bootstrap"
-import { getAllStates } from "country-state-city/lib/state";
-import { toast } from "react-toastify";
-import { FaCalendar } from "react-icons/fa";
+import React from "react";
+import './booking.css';
+import { FaArrowRight, FaCalendarAlt, FaCar, FaCarBattery, FaChair, FaCog, FaCogs, FaGasPump, FaMapMarkerAlt, FaTimes, FaTimesCircle } from "react-icons/fa";
+import { BiCategory, BiTime } from "react-icons/bi";
+import { Button } from "react-bootstrap";
 
 
-const BookingUI = ()=>{
-
-    const [states, setStates] = useState<IState>()
-    const [city, setCity] = useState<ICity[]>([])
-    const [selectedCity, setSelectedCityName] = useState<ICity>()
-    const [selectedDate, setSelectedDate] = useState<Date | null>(new Date());
-    const [selectedEndDate, setSelectedEndDate] = useState<Date | null>(null)
-
-    const state = getAllStates()
-    const cities = City.getAllCities()
-
-    const IndianStates = state.filter(state=>state.countryCode ==='IN')
-    
-
-    const handleState = (stateName : IState, stateCode: string)=>{
-        setStates(stateName)
-        if(states)
-            {
-                const selectedStateCity = cities.filter(city=> city.stateCode === stateCode)
-                setCity(selectedStateCity)
-            }
-    }
-
-    const handleCity = (city: ICity)=>{
-        setSelectedCityName(city)
-    }
-
-    useEffect(() => {
-        if (states) {
-          const selectedStateCity = cities.filter(
-            (city) => city.stateCode === states.isoCode
-          );
-          setCity(selectedStateCity);
-        } else {
-          setCity([]);
-        }
-      }, [states]);
-
-    const handleStartDate = (date : Date)=>{
-        setSelectedDate(date)
-        }
-
-    const handleEndDateChange = (date : Date) => {
-        if(selectedDate){
-            console.log(selectedDate)
-            if(date < selectedDate){
-                console.log("greater")
-                    toast.error("Please select a valid date")
-                    setSelectedEndDate(null)
-                    return
-                }else{
-                    console.log(date + "<" + selectedDate)
-                    setSelectedEndDate(date)
-                }
-        }else{
-            toast.error("Please select starting date")
-            return
-        }
-    };
-
-    
-
-    
-    
-    
-    
-    return(
-        <>
-        <div className="container T-container d-flex justify-content-center align-items-center">
-            <div className="time-Date " style={{width: "53rem"}}>
-                    <div className="TD-title text-center mb-5 pt03">
-                        Book Your Car
+const BookingUI = () => {
+    return (
+        <div className="container-fluid main-container" style={{ padding: "0px" }}>
+            <div className="main-contents">
+                <div className="row d-flex flex-column justify-content-center align-items-center">
+                    <div className="col-12 position-relative" style={{padding:'0'}}>
+                        <img
+                            src="https://res.cloudinary.com/dlkrxem40/image/upload/v1714982583/Assets/page%20banners/wlgead61omjt2dx37xdz.png"
+                            style={{ width: '100%', height: '34rem' }}
+                            alt="Booking Banner"
+                        />
+                        <div className="overlay"></div>
+                        <div className="text-overlay">
+                            <h1 className="car-heading">Book Your Car</h1>
+                            <p className="car-text">Explore our wide range of cars and find the perfect one for your next adventure.</p>
+                        </div>
                     </div>
-                    <div className="row">
-                        <div className="col-4">
-                        <label className="mb-2">Select starting Date :</label>
-                            <div className="Time-start" style={{width: "7rem"}}>
-                               <DatePicker
-                               selected={selectedDate}
-                               onChange={handleStartDate}
-                               dateFormat="yyyy-MM-dd"
-                               placeholderText="yyyy-mm-dd"
-                               className="Starting-Time"
-                               minDate={new Date()}
-                               />
-                            </div>
-                        </div>
-                        <div className="col-4">
-                        <label className="mb-2">Select ending Date :</label>
-                            <div className="Time-ends">
-                            <DatePicker
-                            selected={selectedEndDate}
-                            onChange={handleEndDateChange}
-                            dateFormat="yyyy-MM-dd"
-                            placeholderText="yyyy-mm-dd"
-                            className="Ending-Time"
-                            minDate={new Date()}
-                            />
-                            </div>
-                        </div>
-                        <div className="col-4">
-                        <label className="mb-2">Select ending Location :</label>
-                            <div className="end-location">
-                                <Dropdown>
-                                    <Dropdown.Toggle variant="dark" id="dropdown-basic">
-                                        {states? states.name : "select State"}
-                                    </Dropdown.Toggle>
-                                    <Dropdown.Menu className="scrollable-menu">
-                                        {
-                                            IndianStates.map((states,index)=>(
-                                                <Dropdown.Item key={index} onClick={()=>handleState(states, states.isoCode)}>
-                                                    {states.name}
-                                                </Dropdown.Item>
-                                            ))
-                                        }
-                                    </Dropdown.Menu>
-                                </Dropdown>
-                                {
-                                        city && (
-                                            <Dropdown>
-                                                <Dropdown.Toggle variant="dark" id="dropdown-basic">
-                                                    {selectedCity ? selectedCity.name :"Select City"}
-                                                </Dropdown.Toggle>
-                                                <Dropdown.Menu className="scrollable-menu">
-                                                    {
-                                                        city.map(cities=>(
-                                                            <Dropdown.Item onClick={()=>handleCity(cities)}>
-                                                                {cities.name}
-                                                            </Dropdown.Item>
-                                                        ))
-                                                    }
-                                                </Dropdown.Menu>
-                                            </Dropdown>
-                                        )
-                                    }
-                                    
+                    <div className="col-12">
+                        <div className="contents">
+                            <div className="row d-flex justify-content-center align-items-center">
+                                <div className="col-6">
+                                    <div className="left-contents">
+                                        <div className="d-flex justify-content-center align-items-center">
+                                            <h4>Booking Details</h4>
+                                        </div>
+                                        <div className="row">
+                                            <div className="col-6">
+                                            <div className="image-content mt-4">
+                                                <img
+                                                src="https://res.cloudinary.com/dlkrxem40/image/upload/v1714982583/Assets/page%20banners/wlgead61omjt2dx37xdz.png"
+                                                style={{ width: '100%', height: 'auto' }}
+                                                alt="Car"
+                                                />
+                                            </div>
+                                            </div>
+                                            <div className="col-6">
+                                            <div className="right-detail-content">
+                                                <p className="text-center" style={{ fontFamily: 'Archivo', fontWeight: 'bolder' }}>Car name</p>
+                                            </div>
+                                            <div className="cars-details d-flex align-items-center">
+                                                <div className="div-cars">
+                                                <FaChair /> <strong>5 seater</strong>
+                                                </div>
+                                                <div className="div-cars">
+                                                <BiCategory /> <strong>Category</strong>
+                                                </div>
+                                            </div>
+                                                <div className="cars-details d-flex align-items-center mt-3">
+                                                    <div className="div-cars">
+                                                    <FaCar /> <strong>Brand</strong>
+                                                    </div>
+                                                    <div className="div-cars">
+                                                    <FaGasPump /><strong>Fuel</strong>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div className="row mt-4">
+                                            <h5>Details</h5>
+                                            <div className="col-md-12">
+                                                <div className="d-flex justify-content-start align-items-start">
+                                                    <p>Rating</p>: <strong>4.5</strong>
+                                                </div>
+                                                <div className="d-flex justify-content-center align-items-start">
+                                            <div className="col-6">
+                                                <strong>From</strong>
+                                                <p>Pickup Location</p>
+                                                <small>Date, Time</small>
+                                            </div>
+                                            <div className="col-6">
+                                                <strong>To</strong>
+                                                <p>Drop-off Location</p>
+                                                <small>Date, Time</small>
+                                            </div>
+                                        </div>
+                                            </div>
+                                        </div>
+
+                                        </div>
+
+                                    </div>
+                                </div>
+                                <div className="col-3">
+                                    <div className="rigth-contents">
+                                        <div className="d-flex justify-content-center align-items-center">
+                                            <div className="rightside-contents">
+                                                <div>
+                                                    <h4>Payment Details</h4>
+                                                </div>
+                                                <div className="row">
+                                                <div className="contents d-flex flex-column align-items-center justify-content-center">
+                                                        <strong>Price Summary</strong>
+                                                        <div className="col-12 d-flex justify-content-between align-items-center mt-4">
+                                                            <strong>Rent price:</strong> <span>price</span>
+                                                        </div>
+                                                        <div className="col-12 d-flex justify-content-between align-items-center mt-4">
+                                                            <strong>Discount:</strong> <span>price %</span>
+                                                        </div>
+                                                        <hr className="col-12 mt-1" />
+                                                        <div className="col-12 d-flex justify-content-between align-items-center mt-4">
+                                                            <strong>Total :</strong> <span>Total Amount</span>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                       
+                                    </div>
+                                </div>
+                                <div className="col-3">
+                                    <div className="rigth-contents">
+                                        <div className="d-flex justify-content-center align-items-center">
+                                            <div className="rightside-contents">
+                                                <div>
+                                                    <h4>Online Payment</h4>
+                                                </div>
+                                                <div className="row">
+                                                <div className="contents d-flex flex-column align-items-center justify-content-center">  
+                                                        <div className="col-12">
+                                                            <img src="https://res.cloudinary.com/dlkrxem40/image/upload/v1715002718/others/t4tzk737jgilgpbb53mt.png" style={{width:'100%'}}/>
+                                                        </div>
+                                                        <div className="col-12 mt-4">
+                                                            <p style={{fontSize:'12px', fontWeight:'500'}}>At RAC, we offer a seamless and secure online payment process to make booking your rental car hassle-free. With our encrypted payment gateway, you can confidently complete your transaction knowing that your personal and financial information is protected.</p>
+                                                        </div>
+                                                        <div className="col-12 mt-2">
+                                                            <Button style={{width: '100%'}}>
+                                                                Pay now
+                                                            </Button>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                       
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>
-                    <div className="d-flex justify-content-center mt-5" >
-                        <Button>submit</Button>
-                    </div>
-                
+                </div>
             </div>
         </div>
-        </>
-    )
+    );
 }
 
-export default BookingUI
+export default BookingUI;

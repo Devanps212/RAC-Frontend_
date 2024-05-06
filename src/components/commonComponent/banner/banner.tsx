@@ -5,6 +5,7 @@ import { LocationSuggestion } from "../../../types/bookingInterface";
 import { FaLocationArrow, FaMapMarkerAlt } from "react-icons/fa";
 
 
+
 interface BannerProps {
   search: (location: string, purpose: string) => void;
   PickupPlaces: LocationSuggestion[];

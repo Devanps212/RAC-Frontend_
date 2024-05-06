@@ -1,12 +1,124 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { Button, Dropdown } from "react-bootstrap";
 import './cars.css';
 import { BiSortDown, BiSortUp } from "react-icons/bi";
 import { BsStarFill } from "react-icons/bs";
-import Cards from "../../commonComponent/cards/cards";
+import CarCards from "../../commonComponent/cards/NormalCards/normalCards";
+import { useLocation } from "react-router-dom";
+import { bookingInterface } from "../../../types/bookingInterface";
+import { findBookings } from "../../../features/axios/api/booking/booking";
+import { toast } from "react-toastify";
+import { detailBooking } from "../../../types/bookingInterface";
+import { bookingHelper } from "../../../utils/bookingHelper";
+import { showCarInterface } from "../../../types/carAdminInterface";
+import { findAllCars } from "../../../features/axios/api/car/carAxios";
+import { locationFinding } from "../../../features/axios/api/user/userAuthentication";
+import { LocationSuggestion } from "../../../types/bookingInterface";
+import { FaLocationArrow } from "react-icons/fa";
 
 
 const Cars: React.FC = () => {
+
+    const [suggestions, setSuggestions] = useState<LocationSuggestion[] | null>(null)
+    const [bookingDetails, setBookingDetails] = useState<bookingInterface | null>(null)
+    const [detailedBooking, setDetailedBooking] = useState<detailBooking[] | null>(null)
+    const [selectedCars, setSelectedCars] = useState<showCarInterface[]>([])
+    const [pickUpvalue, setpickUpValue] = useState('')
+    const [dropOffvalue, setdropOffValue] = useState('')
+
+    const location = useLocation();
+    const searchParams = new URLSearchParams(location.search);
+    const bookingDataParams = searchParams.get("bookingData");
+    console.log(bookingDataParams)
+    
+
+    useEffect(()=>{
+        const fetchCars = async()=>{
+            const response = await findAllCars('all', 'user')
+            console.log("cars :",response)
+            setSelectedCars(response)
+
+            if (bookingDataParams) {
+                const parsedData = JSON.parse(bookingDataParams);
+                setBookingDetails(parsedData);
+            }
+        }
+        fetchCars()
+    },[bookingDataParams])
+
+    useEffect(()=>{
+        const fetchBookings = async()=>{
+            try{
+                const response = await findBookings('all')
+                console.log(response)
+                setDetailedBooking(response)
+            }
+            catch(error: any){
+                toast.error(error.messsage)
+            }
+        }
+        fetchBookings()
+    }, [])
+
+    useEffect(()=>{
+        console.log("helper running")
+        const helper = async()=>{
+            console.log(bookingDetails, detailedBooking)
+            if(bookingDetails && detailedBooking){
+                console.log("detailed booking : ", detailedBooking)
+                const response = await bookingHelper(bookingDetails, detailedBooking, selectedCars)
+                console.log("filtered Cars : ", response)
+                if(response)setSelectedCars(response)
+            }else{
+        console.log("receiving details")
+            }
+            
+        }
+        helper()
+    },[bookingDetails, detailedBooking])
+
+    const locationFindings = async(value : string, mode: string)=>{
+        const response = await locationFinding(value)
+                const data : LocationSuggestion[] = response.data
+                console.log("Map data : ", data)
+                setSuggestions(data)
+        if(mode ==='pickup')
+            {
+                setBookingDetails(PrevState=>({
+                    ...PrevState,
+                    pickupLocation:value
+                }))
+                setpickUpValue(value)
+                
+                
+            } else {
+                setBookingDetails(PrevState=>({
+                    ...PrevState,
+                    dropOffLocation:value
+                }))
+                setdropOffValue(value)
+            }
+    }
+
+    const handleClick = (value: string, mode:string)=>{
+        if(mode ==='pickup')
+            {
+                setBookingDetails(PrevState=>({
+                    ...PrevState,
+                    pickupLocation:value
+                }))
+                setpickUpValue('')
+                setSuggestions([])
+            } else {
+                setBookingDetails(PrevState=>({
+                    ...PrevState,
+                    dropOffLocation:value
+                }))
+                setdropOffValue('')
+                setSuggestions([])
+            }
+    }
+
     return (
         <div className="container-fluid full-container">
             <div className="contents">
@@ -119,33 +231,105 @@ const Cars: React.FC = () => {
                     <div className="col-8">
                         <div className="row">
                             <div className="rightSide-content">
-                                <div className="col-11">
-                                    <div className="right-top-contents d-flex justify-content-center align-items-center">
-                                        <div className="col-2 d-flex justify-content-center">
-                                            <input type="date" />
-                                        </div>
-                                        <div className="col-2 d-flex justify-content-center">
-                                            <input type="date" />
-                                        </div>
-                                        <div className="col-1 d-flex justify-content-center">
-                                            <input type="time" />
-                                        </div>
-                                        <div className="col-1 d-flex justify-content-center">
-                                            <input type="time" />
-                                        </div>
-                                        <div className="col-3 d-flex justify-content-center">
-                                            <input type="text" style={{width:'120px'}} placeholder="select Starting"/>                                        </div>
-                                        <div className="col-1 d-flex justify-content-center">
-                                            <input type="text" style={{width:'120px'}} placeholder="select ending"/>
-                                        </div>
+                            <div className="col-12">
+                                <div className="right-top-contents d-flex justify-content-center align-items-center">
+                                    <div className="col-2 d-flex justify-content-center">
+                                        <input 
+                                            type="date"
+                                            value={bookingDetails?.startDate ? new Date(bookingDetails.startDate).toISOString().split('T')[0] : ''}
+                                            onChange={(e)=>{const selectedDate = new Date(e.target.value)
+                                                setBookingDetails({...bookingDetails, startDate: selectedDate})}}
+                                        />
+                                    </div>
+                                    <div className="col-2 d-flex justify-content-center">
+                                        <input 
+                                            type="date"
+                                            value={bookingDetails?.endDate ? new Date(bookingDetails.endDate).toISOString().split('T')[0] : ''}
+                                            onChange={(e)=>{const selectedDate = new Date(e.target.value)
+                                                setBookingDetails({...bookingDetails, endDate: selectedDate})}}
+                                        />
+                                    </div>
+                                    <div className="col-1 d-flex justify-content-center">
+                                        <input 
+                                            type="time" 
+                                            value={bookingDetails?.pickupTime}
+                                            onChange={(e)=>{
+                                                const inputValue = e.target.value;
+                                                const [hours, minutes] = inputValue.split(':'); 
+                                                const formattedTime = `${hours}:${minutes || '00'}`;
+                                                setBookingDetails({...bookingDetails, pickupTime: formattedTime})}}
+                                        />
+                                    </div>
+                                    <div className="col-1 d-flex justify-content-center">
+                                        <input 
+                                            type="time"
+                                            value={bookingDetails?.dropOffTime}
+                                            onChange={(e)=>{
+                                                const inputValue = e.target.value;
+                                                const [hours, minutes] = inputValue.split(':');
+                                                const formattedTime = `${hours}:${minutes || '00'}`;
+                                                setBookingDetails({...bookingDetails, dropOffTime: formattedTime})}}
+                                        />
+                                    </div>
+                                    <div className="col-3 d-flex justify-content-center position-relative">
+                                        <input 
+                                            type="text" 
+                                            style={{ width: '120px' }} 
+                                            placeholder="select Starting"
+                                            value={bookingDetails?.pickupLocation}
+                                            onChange={(e)=>locationFindings(e.target.value, 'pickup')}
+                                        />
+                                        {
+                                            pickUpvalue && (
+                                                <ul className="suggestion-list">
+                                                    { Array.isArray(suggestions) && suggestions.map((place, index) => (
+                                                        <li key={index} className="suggestion-item" onClick={()=>handleClick(place.name, 'pickup')}>
+                                                            <span className="suggestion-text">{place.name}<strong>{place.name}</strong>
+                                                            <br />
+                                                            <small>{place.place_formatted}</small>
+                                                            </span>
+                                                            <FaLocationArrow className="suggestion-icon" />
+                                                        </li>
+                                                    ))}
+                                                </ul>
+                                            )
+                                        }
                                     </div>
 
+                                    <div className="col-1 d-flex justify-content-center position-relative">
+                                        <input 
+                                            type="text" 
+                                            style={{ width: '120px' }} 
+                                            placeholder="select ending"
+                                            value={bookingDetails?.dropOffLocation}
+                                            onChange={(e)=>locationFindings(e.target.value, 'dropoff')}
+                                        />
+                                        {
+                                            dropOffvalue && (
+                                                <ul className="suggestion-list">
+                                                { Array.isArray(suggestions) && suggestions.map((place, index) => (
+                                                    <li key={index} className="suggestion-item" onClick={()=>handleClick(place.name, 'dropoff')}>
+                                                        <span className="suggestion-text">{place.name}<strong>{place.name}</strong>
+                                                        <br />
+                                                        <small>{place.place_formatted}</small>
+                                                        </span>
+                                                        <FaLocationArrow className="suggestion-icon" />
+                                                    </li>
+                                                ))}
+                                            </ul>
+                                            )
+                                        }
+                                    </div>
+                                    {/* <div className="col-1 d-flex justify-content-center">
+                                        <button onClick={handleSubmit} type="submit" className="btn btn-dark" style={{ width: '80px' }}>Submit</button>
+                                    </div> */}
                                 </div>
+                            </div>
+
                                 <div className="col-12 mt-4">
                                     <h5>Cars</h5>
                                     <div className="right-bottom-contents">
-                                        {/* <Cards/> */}
-                                        <h1> hello</h1>
+                                        <CarCards cars={selectedCars}/>
                                     </div>
                                 </div>
                             </div>

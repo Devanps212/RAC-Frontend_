@@ -1,10 +1,12 @@
+import { showCarInterface } from "./carAdminInterface";
+
 export interface bookingInterface {
-    pickupLocation: string;
-    dropOffLocation: string;
-    startDate: Date;
-    endDate: Date;
-    pickupTime: string;
-    dropOffTime: string
+    pickupLocation?: string;
+    dropOffLocation?: string;
+    startDate?: Date;
+    endDate?: Date;
+    pickupTime?: string;
+    dropOffTime?: string
 }
 
 export interface LocationSuggestion {
@@ -20,3 +22,35 @@ export interface LocationSuggestion {
         };
     };
 }
+
+export interface detailBooking {
+    _id: string
+    carId: showCarInterface;
+    userId: string;
+    owner: string;
+    status: string;
+    date: DateRange[];
+    time: TimeRange[];
+    location: Location[];
+    transaction: Transaction[];
+}
+
+interface DateRange {
+    start: Date;
+    end: Date;
+  }
+  
+  interface TimeRange {
+    start: string;
+    end: string;
+  }
+  
+  interface Location {
+    start: string;
+    end: string;
+  }
+  
+  interface Transaction {
+    transaction: string;
+    amount: number;
+  }

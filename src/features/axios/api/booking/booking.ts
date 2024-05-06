@@ -1,5 +1,5 @@
 import axios, { AxiosRequestConfig } from "axios";
-import { bookingInterface } from "../../../../types/bookingInterface";
+import { bookingInterface, detailBooking } from "../../../../types/bookingInterface";
 import apiConfig from "../../../../utils/apiConfig";
 
 export const filterCarsBooking = async(Data: bookingInterface)=>{
@@ -21,3 +21,19 @@ export const filterCarsBooking = async(Data: bookingInterface)=>{
         throw new Error(error)
     }
 }
+
+export const findBookings = async(bookingData : string)=>{
+    try{
+        console.log("data to pass : ", bookingData)
+        const findingBookingConfig : AxiosRequestConfig = {
+            url:`${apiConfig.findBookings}?bookingData=${bookingData}`,
+            method:'get'
+        }
+        const response = await axios(findingBookingConfig)
+        return response.data
+    }
+    catch(error:any){
+        console.log(error)
+        throw new Error(error)
+    }
+} 
