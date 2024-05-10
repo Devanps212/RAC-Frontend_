@@ -39,7 +39,7 @@ function Home() {
   //     setSelectedCity(response.data.city)
   //   })
   // }, [])
-
+  
   const handleSearch = async(locations: string, purpose: string)=>{
     try
     {

@@ -9,6 +9,7 @@ const EditCategory = lazy(()=>import('../pages/admin/editCategory.js'))
 import {AdminRouteProtection} from "./protectedRoutes/routeProtection.js";
 import CarRoutes from "./carRoute.js";
 import UserAdminRouter from "./userAdminRoute.js";
+import BookingRoutes from "./bookingRoutes";
 
 const AdminRoutes = ()=>{
 
@@ -22,6 +23,7 @@ const AdminRoutes = ()=>{
                 <Route path="/editCategory/:categoryId" element={<AdminRouteProtection><EditCategory/></AdminRouteProtection>}/>
                 <Route path="/car/*" element={<CarRoutes/>}/>
                 <Route path="/user/*" element={<UserAdminRouter/>}/>
+                <Route path="/booking/*" element={<BookingRoutes/>}/>
             </Routes>
         </Suspense>
     )

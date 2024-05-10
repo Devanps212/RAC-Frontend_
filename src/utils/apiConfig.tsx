@@ -10,6 +10,7 @@ const apiConfig = {
     adminLogin : `${configKeys.API_URL}admin-auth/login`,
 
     createCategory :`${configKeys.API_URL}category/createCateg`,
+    findAllCategory :`${configKeys.API_URL}category/findAllCategory`, 
     getCategories: `${configKeys.API_URL}category/getCategoryAll`,
     unlistCategory: `${configKeys.API_URL}category/unlistCateg`,
     listCategory: `${configKeys.API_URL}category/listCateg`,
@@ -32,7 +33,11 @@ const apiConfig = {
     locationFinding: `${configKeys.API_URL}user-auth/location`,
 
     FilterForBooking: `${configKeys.API_URL}booking/filterForBooking`,
-    findBookings : `${configKeys.API_URL}booking/findBookings`
+    findBookings : `${configKeys.API_URL}booking/findBookings`,
+    bookingPaymentURI:`${configKeys.API_URL}booking/payment`,
+    bookingCompletion:`${configKeys.API_URL}booking/completion`,
+    bookingBasedOnRole:`${configKeys.API_URL}booking/BasedOnRole`,
+    bookingUpdater:`${configKeys.API_URL}booking/updater`
 }
 
 export default apiConfig

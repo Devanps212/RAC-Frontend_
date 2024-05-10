@@ -4,8 +4,10 @@ import { FaArrowCircleDown, FaStar } from "react-icons/fa";
 import './normalCards.css';
 import { showCarInterface } from "../../../../types/carAdminInterface";
 import { Link } from "react-router-dom";
+import { bookingInterface } from "../../../../types/bookingInterface";
 
-const CarCards: React.FC<{ cars: showCarInterface[] }> = ({ cars }) => {
+const CarCards: React.FC<{ cars: showCarInterface[], bookings: bookingInterface | null }> = ({ cars, bookings }) => {
+    const parsedBooking = JSON.stringify(bookings)
     return (
         <div className="carousel-container">
             <Carousel interval={null} wrap={false} touch={true} pause={false} keyboard={false} indicators={false}>
@@ -36,7 +38,7 @@ const CarCards: React.FC<{ cars: showCarInterface[] }> = ({ cars }) => {
                                 <p className="text-start price-font">
                                     Price: <span>{car.rentPricePerDay}₹ /Day</span>
                                 </p>
-                                <Link to={`/users/carDetail?carId=${car._id}`}>
+                                <Link to={`/users/carDetail?carId=${car._id}&bookingDetail=${parsedBooking}`}>
                                     <Button variant="primary" className="viewMore">
                                         View More
                                     </Button>

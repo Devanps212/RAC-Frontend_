@@ -7,6 +7,9 @@ export interface bookingInterface {
     endDate?: Date;
     pickupTime?: string;
     dropOffTime?: string
+    amount?:number
+    discount?:number
+    total?:number
 }
 
 export interface LocationSuggestion {
@@ -29,13 +32,25 @@ export interface detailBooking {
     userId: string;
     owner: string;
     status: string;
-    date: DateRange[];
-    time: TimeRange[];
-    location: Location[];
-    transaction: Transaction[];
+    date: DateRange;
+    time: TimeRange;
+    location: Location;
+    transaction: Transaction;
+    amount?:number
+    discount?:number
+    total?:number,
+    issues?:string
 }
 
-interface DateRange {
+export interface backendBooking { 
+    transactionId: string,
+    carId: string,
+    userId: string,
+    amount: number,
+    currency: string,
+}
+
+export interface DateRange {
     start: Date;
     end: Date;
   }
@@ -51,6 +66,7 @@ interface DateRange {
   }
   
   interface Transaction {
+    _id: string
     transaction: string;
     amount: number;
   }

@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import { Link, useNavigate, useParams } from "react-router-dom";
 import { FaLock } from "react-icons/fa";
 import './carDetails.css'
 import { useLocation } from "react-router-dom";
@@ -7,19 +8,26 @@ import { toast } from "react-toastify";
 import { carInterface, showCarInterface } from "../../../types/carAdminInterface";
 import { categoryInterface } from "../../../types/categoryInterface";
 import ImageSelector from "../ImageSelector/imageSelector";
+import { bookingInterface } from "../../../types/bookingInterface";
 
 
 const CarDetails = () => {
-
-    const location = useLocation();
-    const searchParams = new URLSearchParams(location.search);
-    const carId = searchParams.get('carId') ?? '';
-    console.log("carId : ", carId)
 
     const [car, setCar] = useState<showCarInterface>()
     const [category , setCategory] = useState<categoryInterface>()
     const [bigImg, setBigImg] = useState('')
     const [smallImg, setSmallImg] = useState<any[]>([])
+    const navigate = useNavigate()
+
+
+    const location = useLocation();
+    const searchParams = new URLSearchParams(location.search);
+    const carId = searchParams.get('carId') ?? '';
+
+    const bookingDetail = searchParams.get('bookingDetail')
+    console.log("carId : ", carId)
+
+
 
     useEffect(()=>{
         const fetchCarData = async()=>{
@@ -107,7 +115,10 @@ const CarDetails = () => {
                             <FaLock className="position-absolute top-50 start-50 translate-middle" style={{ transform: "translate(-50%, -50%)" }} />
                             <span className="position-relative" style={{filter: "blur(1.5px)", zIndex: 2 }}>Negotiate</span>
                         </button>
-                            <button className="book-now">Book now</button>
+                        <Link to={`/users/bookingUI?carId=${car._id}&bookingDetail=${bookingDetail}`}>
+                        <button className="book-now">Book now</button>
+                        </Link>
+                            
                         </div>
                     </div>
                 </div>

@@ -6,41 +6,51 @@ export const bookingHelper = (currentBookingDetail: bookingInterface, fullDetail
         console.log("booking setting ");
         console.log("full :", fullDetailOfBookings);
         const eligibleCarIds: showCarInterface[] = [];
+        const Overlapping :  showCarInterface[] | showCarInterface = []
+        console.log("currentBookimgs : ", currentBookingDetail.startDate)
+        console.log("currentBookimgs : ", currentBookingDetail.endDate)
 
 
-        const fulldetail = Array.from(fullDetailOfBookings)
-        fulldetail.forEach((booking) => {
 
-            const isOverlapping = booking.date.some((dates) => {
-                const start = new Date(dates.start).getTime();
-                const end = new Date(dates.end).getTime();
+        fullDetailOfBookings.forEach((booking) => {
+            const startDate = new Date(booking.date.start).getTime();
+            const endDate = new Date(booking.date.end).getTime();
+            
+            if(currentBookingDetail.startDate && currentBookingDetail.endDate) {
                 const currentStart = new Date(currentBookingDetail.startDate).getTime();
                 const currentEnd = new Date(currentBookingDetail.endDate).getTime();
-
-                return (
-                    // (currentStart >= start && currentEnd <= end) ||
-                    // (currentStart < start && currentEnd <= end) ||
-                    // (currentEnd > end && currentStart >= start) ||
-                    // (currentStart >= end && currentEnd <= start)
-                    (currentStart < start && currentEnd > end) ||
-                    ((currentStart > start && currentStart < end) && currentEnd > end) ||
-                    ((currentEnd < end && currentEnd > start ) && currentStart <= start) ||
-                    (currentStart <= end && currentEnd >= start)
-                );
-            });
-
-            if (isOverlapping) {
-                eligibleCarIds.push(booking.carId);
+        
+                const isOverlapping = 
+                    (currentStart < startDate && currentEnd > endDate) ||
+                    ((currentStart > startDate && currentStart < endDate) && currentEnd > endDate) ||
+                    ((currentEnd < endDate && currentEnd > startDate) && currentStart <= startDate) ||
+                    (currentStart <= endDate && currentEnd >= startDate);
+        
+                console.log("overlapping : ", isOverlapping);
+        
+                if (!isOverlapping) {
+                    eligibleCarIds.push(booking.carId);
+                } else {
+                    Overlapping.push(booking.carId)
+                }
+        
+                return !isOverlapping;
             }
+        
+            return false;
         });
-        console.log("booking eleible : ", eligibleCarIds)
 
-        const carsWithNoBookings = carsAvailable.filter(car => !eligibleCarIds.some(eligibleCar => eligibleCar._id === car._id));
+        console.log("overlappping : ", Overlapping)
+
+        console.log("eligible : ", eligibleCarIds)
+
+        const carsWithNoBookings = carsAvailable.filter(car => !Overlapping.some(overlappingCar => overlappingCar._id === car._id) && !eligibleCarIds.some(eligibleCar=>eligibleCar._id === car._id) );
         eligibleCarIds.push(...carsWithNoBookings);
+        const uniqueCars = Array.from(new Set(eligibleCarIds))
 
         console.log("eligible cars :", eligibleCarIds);
 
-        return eligibleCarIds
+        return uniqueCars
     } catch (error) {
         console.log(error);
     }

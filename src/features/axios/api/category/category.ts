@@ -1,4 +1,4 @@
-import axios, {AxiosRequestConfig} from "axios";
+import axios, {Axios, AxiosRequestConfig} from "axios";
 import apiConfig from "../../../../utils/apiConfig";
 import { setAdminInterceptor } from "../../axios_Interceptor/Interceptor";
 import { categoryInterface } from "../../../../types/categoryInterface";
@@ -135,5 +135,18 @@ export const editCategory = async(formData: categoryInterface)=>{
         console.log("error : ",error.response.data)
         toast.error(error.response.data.message)
         throw new Error(error.response.data)
+    }
+}
+
+export const findAllCategory = async()=>{
+    try{
+        const allCateg : AxiosRequestConfig = {
+            url:apiConfig.findAllCategory,
+            method:'get'
+        }
+        const response = await axios(allCateg)
+        return response.data.allData
+    }catch(error: any){
+        throw new Error(error.message)
     }
 }

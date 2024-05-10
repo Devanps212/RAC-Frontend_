@@ -8,8 +8,10 @@ const VerifyOTP = lazy(()=> import('../pages/user/VOTP'))
 const HomePage = lazy(()=>import('../pages/user/Home'))
 const CarDetails = lazy(()=>import('../pages/user/carDetails'))
 import BlockedPage from '../components/commonComponent/blocked';
-const BookingTimeDate = lazy(()=>import('../pages/user/TimeSelectionUI'))
+const Bookings = lazy(()=>import('../pages/user/TimeSelectionUI'))
 const Cars = lazy(()=>import('../pages/user/carPage'))
+const SuccessfullTransaction = lazy(()=>import('../pages/user/successFullTransacrtion'))
+const BookedCars = lazy(()=>import('../pages/user/bookedCars'))
 import { UserRouteProtection, UserSignInSignupProtection, BlockedRoutes } from './protectedRoutes/routeProtection';
 
 const UserRouter = () => {
@@ -23,8 +25,10 @@ const UserRouter = () => {
         <Route path="/home" element={<UserRouteProtection><HomePage/></UserRouteProtection>}/>
         <Route path="/UserBlocked" element={<BlockedRoutes><BlockedPage/></BlockedRoutes>}/>
         <Route path='/carDetail' element={<CarDetails/>}/>
-        <Route path='/TimeDateSelection' element={<BookingTimeDate/>}/>
+        <Route path='/bookingUI' element={<Bookings/>}/>
         <Route path='/Allcars' element={<Cars/>}/>
+        <Route path='/TransactionSuccess' element={<SuccessfullTransaction/>}/>
+        <Route path='/BookedCars/:bookingId' element={<BookedCars/>}/>
       </Routes>
     </Suspense>
     </>

@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Button, Dropdown } from "react-bootstrap";
+import { Button } from "react-bootstrap";
 import './cars.css';
 import { BiSortDown, BiSortUp } from "react-icons/bi";
 import { BsStarFill } from "react-icons/bs";
@@ -15,6 +15,8 @@ import { findAllCars } from "../../../features/axios/api/car/carAxios";
 import { locationFinding } from "../../../features/axios/api/user/userAuthentication";
 import { LocationSuggestion } from "../../../types/bookingInterface";
 import { FaLocationArrow } from "react-icons/fa";
+import { categoryInterface } from "../../../types/categoryInterface";
+import { findAllCategory } from "../../../features/axios/api/category/category";
 
 
 const Cars: React.FC = () => {
@@ -23,18 +25,20 @@ const Cars: React.FC = () => {
     const [bookingDetails, setBookingDetails] = useState<bookingInterface | null>(null)
     const [detailedBooking, setDetailedBooking] = useState<detailBooking[] | null>(null)
     const [selectedCars, setSelectedCars] = useState<showCarInterface[]>([])
+    const [category, setCategory] = useState<categoryInterface[]>([])
     const [pickUpvalue, setpickUpValue] = useState('')
     const [dropOffvalue, setdropOffValue] = useState('')
+    const currentDate = new Date().toISOString().split('T')[0];
 
     const location = useLocation();
     const searchParams = new URLSearchParams(location.search);
     const bookingDataParams = searchParams.get("bookingData");
-    console.log(bookingDataParams)
+    // console.log(bookingDataParams)
     
 
     useEffect(()=>{
         const fetchCars = async()=>{
-            const response = await findAllCars('all', 'user')
+            const response : showCarInterface[] = await findAllCars('all', 'user')
             console.log("cars :",response)
             setSelectedCars(response)
 
@@ -50,14 +54,24 @@ const Cars: React.FC = () => {
         const fetchBookings = async()=>{
             try{
                 const response = await findBookings('all')
-                console.log(response)
-                setDetailedBooking(response)
+                console.log("fetched data from backend : ", response.data)
+                setDetailedBooking(response.data)
             }
             catch(error: any){
                 toast.error(error.messsage)
             }
         }
+        const findCategories = async()=>{
+            try{
+                const response = await findAllCategory()
+                console.log("recieved response : ", response )
+                setCategory(response)
+            } catch(error){
+
+            }
+        }
         fetchBookings()
+        findCategories()
     }, [])
 
     useEffect(()=>{
@@ -119,6 +133,19 @@ const Cars: React.FC = () => {
             }
     }
 
+    const categoryFilter = (categoryId: string) => {
+        const filteredData = selectedCars.filter((car) => {
+            if (car.category && typeof car.category === 'object' && '_id' in car.category && car.category._id?.toString() === categoryId) {
+                return true;
+            }
+            return false;
+        });
+        console.log("filteredData : ", filteredData)
+    
+        setSelectedCars(filteredData); // start from here 
+    };
+    
+
     return (
         <div className="container-fluid full-container">
             <div className="contents">
@@ -175,20 +202,15 @@ const Cars: React.FC = () => {
                                 <div className="col-12 mt-2">
                                     <p className="font-text">sort by Category :</p>
                                     <div className="d-flex justify-content-start align-items-start">
-                                        <div>
-                                            <Button variant="link">
-                                                hello
-                                            </Button>
-                                            <Button variant="link">
-                                                hello
-                                            </Button>
-                                            <Button variant="link">
-                                                hello
-                                            </Button>
-                                            <Button variant="link">
-                                                hello
-                                            </Button>
-                                        </div>
+                                        {
+                                            category && category!==null && category.map((categories)=>(
+                                                <div>
+                                                    <Button onClick={()=>categoryFilter(categories._id ? categories._id :'')} value={categories._id} variant="link">
+                                                        {categories.name}
+                                                    </Button>
+                                                </div>
+                                            ))
+                                        }
                                     </div>
                                 </div>
                                 <div className="col-12 mt-2">
@@ -236,7 +258,8 @@ const Cars: React.FC = () => {
                                     <div className="col-2 d-flex justify-content-center">
                                         <input 
                                             type="date"
-                                            value={bookingDetails?.startDate ? new Date(bookingDetails.startDate).toISOString().split('T')[0] : ''}
+                                            value={bookingDetails?.startDate ? new Date(bookingDetails.startDate).toISOString().split('T')[0] : new Date().toISOString().split('T')[0]}       
+                                            min={currentDate}
                                             onChange={(e)=>{const selectedDate = new Date(e.target.value)
                                                 setBookingDetails({...bookingDetails, startDate: selectedDate})}}
                                         />
@@ -244,7 +267,8 @@ const Cars: React.FC = () => {
                                     <div className="col-2 d-flex justify-content-center">
                                         <input 
                                             type="date"
-                                            value={bookingDetails?.endDate ? new Date(bookingDetails.endDate).toISOString().split('T')[0] : ''}
+                                            value={bookingDetails?.endDate ? new Date(bookingDetails.endDate).toISOString().split('T')[0] : new Date().toISOString().split('T')[0]}
+                                            min={currentDate}
                                             onChange={(e)=>{const selectedDate = new Date(e.target.value)
                                                 setBookingDetails({...bookingDetails, endDate: selectedDate})}}
                                         />
@@ -329,7 +353,7 @@ const Cars: React.FC = () => {
                                 <div className="col-12 mt-4">
                                     <h5>Cars</h5>
                                     <div className="right-bottom-contents">
-                                        <CarCards cars={selectedCars}/>
+                                        <CarCards cars={selectedCars} bookings={bookingDetails}/>
                                     </div>
                                 </div>
                             </div>

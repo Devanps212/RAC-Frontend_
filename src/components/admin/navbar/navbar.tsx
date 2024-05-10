@@ -53,7 +53,7 @@ const Header = () => {
 
             <NavDropdown title="Booking Management" id="booking-management-submenu" drop='start' className='nested-dropdown'>
               <NavDropdown.Item href='#'>Add Booking</NavDropdown.Item>
-              <NavDropdown.Item href='#'>Manage Booking</NavDropdown.Item>
+              <NavDropdown.Item href='/admin/booking/BookingManagement'>Manage Booking</NavDropdown.Item>
             </NavDropdown>
 
             <NavDropdown title="Category Management" id="category-management-submenu" drop='start' className='nested-dropdown'>

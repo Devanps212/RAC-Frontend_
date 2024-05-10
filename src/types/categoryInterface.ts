@@ -1,6 +1,6 @@
 
 export interface categoryInterface {
-    _id: string,
+    _id?: string,
     name?:string,
     description?:string,
     isListed?:boolean

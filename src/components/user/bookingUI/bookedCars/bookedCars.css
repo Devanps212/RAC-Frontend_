@@ -1,0 +1,50 @@
+.form-control-input:focus {
+  box-shadow: none;
+}
+
+.form-control-input{
+  width: 135px;
+  padding: 6px;
+  border-radius: 5px;
+  border-style: none;
+  background-color: #fff;
+  border-color: #ccc;
+}
+
+.left-side-contents{
+    border: solid 1px grey;
+    border-radius: 4px;
+    padding: 30px;
+    width: 85%;
+    margin-left:40px;
+}
+.font-text{
+    font-size: 20px;
+    font-family: 'Kanit';
+    font-weight: 300;
+}
+
+.right-side-contents{
+    border: solid 1px grey;
+    border-radius: 4px;
+    padding: 7px;
+    width: 100%;
+}
+.small-specs{
+    border: solid 1px grey;
+    border-radius: 4px;
+    width: max-content;
+    padding: inherit;
+}
+
+.scrollable-contents {
+  max-height: 400px; /* Adjust the max height as needed */
+  overflow-y: auto;
+}
+
+.issue-detail{
+  width: 100%;
+  max-width: 100%;
+  min-height: 150px;
+  padding: 6px !important;
+}
