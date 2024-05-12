@@ -12,21 +12,20 @@ import { toast } from "react-toastify";
 import { findAllCars } from "../../../../features/axios/api/car/carAxios";
 import { showCarInterface } from "../../../../types/carAdminInterface";
 import { decodeToken } from "../../../../utils/tokenUtil";
+import { UseSelector, useSelector } from "react-redux";
 
 
 const BookedCars = () => {
 
     const [selectedDate, setSelectedDate] = useState<Date | null>(null);
     const [bookingInfo, setBookingInfo] = useState<detailBooking[] | detailBooking | null>(null)
+    const [filteredBookingInfo, setFilteredBookingInfo] = useState<detailBooking[] | detailBooking | null>(null)
     const [car, setCar] = useState<showCarInterface[] | null>(null)
     const [singleBooking, setSingleBooking]= useState<Partial<detailBooking> | null>(null)
     const [showModal, setShowModal] = useState(false)
-    const {bookingId} = useParams<{bookingId: string}>()
     const token = localStorage.getItem('token') ?? ''
-    console.log(bookingId)
 
     const fetchBookingDetail = async()=>{
-        if(bookingId){
             const userId = await decodeToken(token).payload
             const partialDetail : Partial<detailBooking> = {
                 userId: userId
@@ -43,9 +42,7 @@ const BookedCars = () => {
             console.log("Recieved cars : ", car)
             setCar(car)
             setBookingInfo(response.data.data)
-        } else {
-            toast.error("no bookingId found")
-        }        
+            setFilteredBookingInfo(response.data.data)      
     }
     
     const handleChange = async(e: ChangeEvent<HTMLTextAreaElement>)=>{
@@ -78,7 +75,28 @@ const BookedCars = () => {
 
     useEffect(()=>{
         fetchBookingDetail()
-    }, [bookingId])
+    }, [])
+
+    const handleDate = (date: Date | null) => {
+        setSelectedDate(date);
+        console.log(date);
+        if (date && Array.isArray(bookingInfo) && filteredBookingInfo !== null) {
+            let filteredData: detailBooking[];
+            if (Array.isArray(filteredBookingInfo)) {
+                filteredData = filteredBookingInfo.filter((data: detailBooking) => {
+                    const bookingStartDate = new Date(data.date.start);
+                    return bookingStartDate.toDateString() === date.toDateString();
+                });
+            } else {
+                filteredData = [filteredBookingInfo].filter((data: detailBooking) => {
+                    const bookingStartDate = new Date(data.date.start);
+                    return bookingStartDate.toDateString() === date.toDateString();
+                });
+            }
+            setBookingInfo(filteredData);
+        }
+    };
+    
     
     return (
         <div className="container-fluid" style={{ paddingTop: '8rem' }}>
@@ -87,7 +105,7 @@ const BookedCars = () => {
                     <div className="col-4">
                         <div className="left-side-contents d-flex flex-column align-items-center">
                             <h3 className="mb-4" style={{ fontSize: "x-large" }}>Check bookings</h3>
-                            <div className="timePickerContainer">
+                            {/* <div className="timePickerContainer">
                                 <h4 className="mb-3 font-text">Check by time</h4>
                                 <div className="row">
                                     <div className="col-6">
@@ -103,13 +121,13 @@ const BookedCars = () => {
                                         />
                                     </div>
                                 </div>
-                            </div>
+                            </div> */}
                             <div className="mt-4 datePicker">
                                 <h4 className="font-text">Check by date</h4>
                                 <div className="calender">
                                     <DatePicker
                                         selected={selectedDate}
-                                        onChange={date => setSelectedDate(date)}
+                                        onChange={date => handleDate(date)}
                                         dateFormat="dd/MM/yyyy"
                                         className="form-control-input"
                                         minDate={new Date()}

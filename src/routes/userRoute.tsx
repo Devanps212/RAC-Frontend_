@@ -28,7 +28,7 @@ const UserRouter = () => {
         <Route path='/bookingUI' element={<Bookings/>}/>
         <Route path='/Allcars' element={<Cars/>}/>
         <Route path='/TransactionSuccess' element={<SuccessfullTransaction/>}/>
-        <Route path='/BookedCars/:bookingId' element={<BookedCars/>}/>
+        <Route path='/BookedCars/' element={<BookedCars/>}/>
       </Routes>
     </Suspense>
     </>

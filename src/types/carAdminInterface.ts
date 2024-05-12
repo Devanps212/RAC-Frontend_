@@ -68,6 +68,7 @@ export interface category {
     _id?:Types.ObjectId,
     name:string,
     description:string,
+    isListed?:boolean
 }
 
 interface commentsInterface {

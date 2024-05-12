@@ -3,14 +3,8 @@ import { showCarInterface } from "../types/carAdminInterface";
 
 export const bookingHelper = (currentBookingDetail: bookingInterface, fullDetailOfBookings: detailBooking[], carsAvailable: showCarInterface[]) => {
     try {
-        console.log("booking setting ");
-        console.log("full :", fullDetailOfBookings);
         const eligibleCarIds: showCarInterface[] = [];
         const Overlapping :  showCarInterface[] | showCarInterface = []
-        console.log("currentBookimgs : ", currentBookingDetail.startDate)
-        console.log("currentBookimgs : ", currentBookingDetail.endDate)
-
-
 
         fullDetailOfBookings.forEach((booking) => {
             const startDate = new Date(booking.date.start).getTime();
@@ -26,8 +20,6 @@ export const bookingHelper = (currentBookingDetail: bookingInterface, fullDetail
                     ((currentEnd < endDate && currentEnd > startDate) && currentStart <= startDate) ||
                     (currentStart <= endDate && currentEnd >= startDate);
         
-                console.log("overlapping : ", isOverlapping);
-        
                 if (!isOverlapping) {
                     eligibleCarIds.push(booking.carId);
                 } else {
@@ -40,15 +32,10 @@ export const bookingHelper = (currentBookingDetail: bookingInterface, fullDetail
             return false;
         });
 
-        console.log("overlappping : ", Overlapping)
-
-        console.log("eligible : ", eligibleCarIds)
 
         const carsWithNoBookings = carsAvailable.filter(car => !Overlapping.some(overlappingCar => overlappingCar._id === car._id) && !eligibleCarIds.some(eligibleCar=>eligibleCar._id === car._id) );
         eligibleCarIds.push(...carsWithNoBookings);
         const uniqueCars = Array.from(new Set(eligibleCarIds))
-
-        console.log("eligible cars :", eligibleCarIds);
 
         return uniqueCars
     } catch (error) {
