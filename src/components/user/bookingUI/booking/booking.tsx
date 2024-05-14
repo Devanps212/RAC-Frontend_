@@ -74,6 +74,13 @@ const BookingUI = () => {
         const result = await stripe?.redirectToCheckout({
             sessionId: bookingPayment
         });
+        if(result){
+            const bookings = await findAllCars('all', 'user')
+            console.log(bookings)
+        } else
+        {
+            toast.success(result)
+        }
         
 
        

@@ -38,7 +38,7 @@
 }
 
 .scrollable-contents {
-  max-height: 400px; /* Adjust the max height as needed */
+  max-height: 400px;
   overflow-y: auto;
 }
 
@@ -47,4 +47,46 @@
   max-width: 100%;
   min-height: 150px;
   padding: 6px !important;
+}
+
+.status-container {
+  margin-top: 10px;
+  margin-left: 5px;
+}
+
+.status {
+  padding: 5px 10px;
+  border-radius: 5px;
+  font-weight: bold;
+  color: #fff;
+}
+
+.status.pending {
+  background-color: #ffff99;
+  color: #333;
+}
+
+.status.confirmed {
+  background-color: #99ff99;
+  color: #333;
+}
+
+.status.cancelled {
+  background-color: #ff9999;
+  color: #fff;
+}
+
+.status.completed {
+  background-color: #9999ff;
+  color: #fff;
+}
+
+.status.on-hold {
+  background-color: #ffcc99;
+  color: #333;
+}
+
+.status.in-progress {
+  background-color: #66cccc;
+  color: #fff;
 }

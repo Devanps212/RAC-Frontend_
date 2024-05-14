@@ -110,10 +110,10 @@ export const bookingUpdater = async(data: Partial<detailBooking>)=>{
             }
         }
         const response = await axios(updaterConfig)
-        console.log(response)
+        console.log("response from frontend : ", response.data)
         return response.data
     } catch(error: any){
-        console.log(error.message)
-        throw new Error(error.message)
+        console.log("error: ", error.response.data)
+        throw new Error(error.response.data.message)
     }
 }

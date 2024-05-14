@@ -1,18 +1,17 @@
 import React, { ChangeEvent, useEffect, useState } from "react";
+import { confirmAlert } from 'react-confirm-alert';
 import './bookedCars.css'
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
+import PaymentFlow from "../../../paymentLoader/paymetnLoader";
 import { FaArrowRight, FaCalendarTimes, FaCar, FaChair, FaGasPump, FaLocationArrow, FaPlaceOfWorship } from "react-icons/fa";
 import { Button, Modal } from "react-bootstrap";
 import { BiSolidLocationPlus } from "react-icons/bi";
-import { useParams } from "react-router-dom";
 import { detailBooking } from "../../../../types/bookingInterface";
 import { bookingFindingBasedOnRole, bookingUpdater } from "../../../../features/axios/api/booking/booking";
 import { toast } from "react-toastify";
-import { findAllCars } from "../../../../features/axios/api/car/carAxios";
 import { showCarInterface } from "../../../../types/carAdminInterface";
 import { decodeToken } from "../../../../utils/tokenUtil";
-import { UseSelector, useSelector } from "react-redux";
 
 
 const BookedCars = () => {
@@ -22,6 +21,8 @@ const BookedCars = () => {
     const [filteredBookingInfo, setFilteredBookingInfo] = useState<detailBooking[] | detailBooking | null>(null)
     const [car, setCar] = useState<showCarInterface[] | null>(null)
     const [singleBooking, setSingleBooking]= useState<Partial<detailBooking> | null>(null)
+    const [paymentLoader, setPaymentLoader] = useState(false)
+
     const [showModal, setShowModal] = useState(false)
     const token = localStorage.getItem('token') ?? ''
 
@@ -82,23 +83,63 @@ const BookedCars = () => {
         console.log(date);
         if (date && Array.isArray(bookingInfo) && filteredBookingInfo !== null) {
             let filteredData: detailBooking[];
+            console.log(filteredBookingInfo)
             if (Array.isArray(filteredBookingInfo)) {
                 filteredData = filteredBookingInfo.filter((data: detailBooking) => {
                     const bookingStartDate = new Date(data.date.start);
                     return bookingStartDate.toDateString() === date.toDateString();
                 });
+                console.log(filteredData)
             } else {
                 filteredData = [filteredBookingInfo].filter((data: detailBooking) => {
                     const bookingStartDate = new Date(data.date.start);
                     return bookingStartDate.toDateString() === date.toDateString();
                 });
+                console.log(filteredData)
             }
+            console.log(filteredData)
             setBookingInfo(filteredData);
         }
     };
+
+    const HandleBookingCancel = async(id: string, carName: string, totalAmount : number)=>{
+            const data : Partial<detailBooking> = {_id: id, status:'Cancelled'}
+            console.log(data)
+            confirmAlert({
+                title: 'Confirm Cancellation and Refund',
+                message: `You are about to cancel the booking for the car "${carName}". A refund of INR ${totalAmount} will be processed to the account used for this booking. Are you sure you want to proceed?`,
+                buttons: [
+                  {
+                    label: 'Yes',
+                    onClick: async () => {
+                      try {
+                        setPaymentLoader(true)
+                        const response = await bookingUpdater(data)
+                        setTimeout(()=>{
+                            setPaymentLoader(false)
+                            toast.success(response.message)
+                        }, 3500)
+                      } catch (error: any) {
+                        setPaymentLoader(false)
+                        console.error('Error deleting car:', error);
+                        toast.error(error.message);
+                      }
+                    },
+                  },
+                  {
+                    label: 'No',
+                    onClick: () => {
+                      console.log('Deletion canceled by user');
+                    },
+                  },
+                ],
+              });
+    }
     
     
     return (
+        <>
+        {paymentLoader && <PaymentFlow/>}
         <div className="container-fluid" style={{ paddingTop: '8rem' }}>
             <div className="main-contents">
                 <div className="row">
@@ -210,9 +251,16 @@ const BookedCars = () => {
                                                     <Button className="ms-5" onClick={() => setShowModal(true)}>
                                                         Report an issue
                                                     </Button>
-                                                    <Button variant="info" className="ms-5 mt-4">
+                                                    <Button variant="info" onClick={()=>HandleBookingCancel(bookings._id, bookings.carId.name, bookings.transaction.amount)} className="ms-5 mt-4">
                                                         view more
                                                     </Button>
+                                                    <div className="status-container ms-5 mt-4">
+                                                        <p className={`status ${bookings.status.replace(/\s+/g, '-').toLowerCase()}`}>
+                                                            {bookings.status}
+                                                        </p>
+                                                    </div>
+
+
                                                 </div>
                                             </div>
 
@@ -310,9 +358,15 @@ const BookedCars = () => {
                                                 <Button className="ms-5" onClick={() => setShowModal(true)}>
                                                     Report an issue
                                                 </Button>
-                                                <Button variant="info" className="ms-5 mt-4">
-                                                    view more
+                                                <Button variant="danger" onClick={()=>HandleBookingCancel(bookingInfo._id, bookingInfo.carId.name, bookingInfo.transaction.amount)} className="ms-5 mt-3">
+                                                    Cancel booking
                                                 </Button>
+                                                <div className="status-container ms-5 mt-4">
+                                                    <p className={`status ${bookingInfo.status.replace(/\s+/g, '-').toLowerCase()}`}>
+                                                        {bookingInfo.status}
+                                                    </p>
+                                                </div>
+
                                             </div>
                                         </div>
                                     </div>
@@ -346,6 +400,7 @@ const BookedCars = () => {
                 </div>
             </div>
         </div>
+        </>
         
     );
 };

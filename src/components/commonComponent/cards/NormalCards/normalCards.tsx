@@ -38,11 +38,11 @@ const CarCards: React.FC<{ cars: showCarInterface[], bookings: bookingInterface 
                                 <p className="text-start price-font">
                                     Price: <span>{car.rentPricePerDay}₹ /Day</span>
                                 </p>
-                                <Link to={`/users/carDetail?carId=${car._id}&bookingDetail=${parsedBooking}`}>
+                                <a href={`/users/carDetail?carId=${car._id}&bookingDetail=${parsedBooking}`}>
                                     <Button variant="primary" className="viewMore">
                                         View More
                                     </Button>
-                                </Link>
+                                </a>
                                
                             </div>
                         </Card> 
