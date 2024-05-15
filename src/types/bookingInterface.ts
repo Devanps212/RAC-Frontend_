@@ -70,3 +70,25 @@ export interface DateRange {
     transaction: string;
     amount: number;
   }
+
+export interface BookingDetail {
+    itemName: string;
+    thumbnail: string;
+}
+
+export interface Card {
+    brand: string;
+    last4: string;
+    exp_month: number;
+    exp_year: number;
+}
+
+export interface RefundDetailsInterface {
+    amount: number;
+    bookingDetail: BookingDetail;
+    card: Card;
+    created: number;
+    currency: string;
+    status: string;
+    transactionId: string;
+}

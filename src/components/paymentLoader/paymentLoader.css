@@ -1,73 +1,64 @@
 .payment-container {
-    position: relative;
+    position: fixed;
+    top: 0;
+    left: 0;
     height: 100vh;
     width: 100vw;
     display: flex;
     justify-content: center;
     align-items: center;
     background-color: rgba(255, 255, 255, 0.8);
+    z-index: 1000;
+  }
+  
+  .blur-background {
     backdrop-filter: blur(5px);
-}
-
-.loader {
+  }
+  
+  .loader {
     display: flex;
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    height: 100%;
-    width: 100%;
-}
-
-.initiating {
-    animation: blur-background 1s ease-in-out;
-}
-
-.processing {
-    animation: blur-background 1s ease-in-out;
-}
-
-.spinner {
+    background: white;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    text-align: center;
+  }
+  
+  .payment-icon {
+    font-size: 2rem;
+    margin-bottom: 10px;
+  }
+  
+  .initiating .payment-icon {
+    color: #007bff;
+  }
+  
+  .processing .payment-icon {
+    color: #ffc107;
+  }
+  
+  .success .payment-icon {
+    color: #28a745;
+  }
+  
+  .spinning {
     animation: rotate 1s linear infinite;
-    height: 24px;
-    width: 24px;
-    border: 4px solid #ccc;
-    border-top-color: #333;
-    border-radius: 50%;
-}
-
-.path {
-    stroke-dasharray: 1, 200;
-    stroke-dashoffset: 0;
-    animation: dash 1.5s ease-in-out infinite;
-    stroke-linecap: round;
-}
-
-@keyframes rotate {
+  }
+  
+  @keyframes rotate {
     100% {
-        transform: rotate(360deg);
+      transform: rotate(360deg);
     }
-}
-
-@keyframes dash {
+  }
+  
+  @keyframes blur-background {
     0% {
-        stroke-dasharray: 1, 200;
-        stroke-dashoffset: 0;
-    }
-    50% {
-        stroke-dasharray: 89, 200;
-        stroke-dashoffset: -35px;
+      backdrop-filter: blur(0px);
     }
     100% {
-        stroke-dasharray: 89, 200;
-        stroke-dashoffset: -124px;
+      backdrop-filter: blur(5px);
     }
-}
-
-@keyframes blur-background {
-    0% {
-        filter: blur(0px);
-    }
-    100% {
-        filter: blur(5px);
-    }
-}
+  }

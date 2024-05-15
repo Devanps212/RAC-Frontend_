@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Button, Dropdown } from "react-bootstrap";
+import { Alert, Button, Dropdown } from "react-bootstrap";
 import './cars.css';
 import { BiSortDown, BiSortUp } from "react-icons/bi";
 import { BsStarFill } from "react-icons/bs";
@@ -14,7 +14,7 @@ import { category, showCarInterface } from "../../../types/carAdminInterface";
 import { findAllCars } from "../../../features/axios/api/car/carAxios";
 import { locationFinding } from "../../../features/axios/api/user/userAuthentication";
 import { LocationSuggestion } from "../../../types/bookingInterface";
-import { FaLocationArrow } from "react-icons/fa";
+import { FaExclamationTriangle, FaLocationArrow } from "react-icons/fa";
 import { categoryInterface } from "../../../types/categoryInterface";
 import { findAllCategory } from "../../../features/axios/api/category/category";
 
@@ -36,14 +36,13 @@ const Cars: React.FC = () => {
     const location = useLocation();
     const searchParams = new URLSearchParams(location.search);
     const bookingDataParams = searchParams.get("bookingData");
-    // console.log(bookingDataParams)
     
 
     useEffect(()=>{
         const fetchCars = async()=>{
             const response : showCarInterface[] = await findAllCars('all', 'user')
             setSelectedCars(response)
-            setFilteredCars(response)
+            
 
             const carSeatsAvailable  = new Set<number>()
             response.forEach((car)=>{
@@ -70,7 +69,16 @@ const Cars: React.FC = () => {
         const fetchBookings = async()=>{
             try{
                 const response = await findBookings('all')
-                setDetailedBooking(response.data)
+                console.log(response.data)
+                const data : detailBooking[] = response.data
+                const validBooking = data.filter((booking)=>booking.status !== 'Cancelled')
+                if(validBooking.length === 0){
+                    setDetailedBooking(null)
+                } else {
+                    console.log("valid bookings : ", validBooking)
+                    setDetailedBooking(response.data)
+                }
+                
             }
             catch(error: any){
                 toast.error(error.messsage)
@@ -112,9 +120,13 @@ const Cars: React.FC = () => {
         const helper = async()=>{
             if(bookingDetails && detailedBooking){
                 const response = await bookingHelper(bookingDetails, detailedBooking, selectedCars)
-                if(response)setSelectedCars(response)
+                if(response){
+                    setSelectedCars(response)
+                    setFilteredCars(response)
+                }
             }else{
-                console.log("receiving details")
+                
+                setFilteredCars(selectedCars)
             }
             
         }
@@ -401,9 +413,15 @@ const Cars: React.FC = () => {
 
                                 <div className="col-12 mt-4">
                                     <h5>Cars</h5>
-                                    <div className="right-bottom-contents">
-                                        <CarCards cars={selectedCars} bookings={bookingDetails}/>
-                                    </div>
+                                    {selectedCars.length > 0 ? (
+                                            <CarCards cars={selectedCars} bookings={bookingDetails}/>
+                                        ) : (
+                                            <div className="alert-container d-flex flex-column justify-content-center align-items-center mt-5">
+                                                <FaExclamationTriangle className="exclamation-icon" style={{ width: '30%', height: 'auto' }} />
+                                                <Alert variant="warning" className="alert-message">No cars found. But don't worry, we're still looking!</Alert>
+                                            </div>
+                                            
+                                        )}
                                 </div>
                             </div>
                         </div>
