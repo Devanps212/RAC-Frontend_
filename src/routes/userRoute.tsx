@@ -12,6 +12,7 @@ const Bookings = lazy(()=>import('../pages/user/TimeSelectionUI'))
 const Cars = lazy(()=>import('../pages/user/carPage'))
 const SuccessfullTransaction = lazy(()=>import('../pages/user/successFullTransacrtion'))
 const BookedCars = lazy(()=>import('../pages/user/bookedCars'))
+const Profile = lazy(()=>import('../pages/user/profile'))
 import { UserRouteProtection, UserSignInSignupProtection, BlockedRoutes } from './protectedRoutes/routeProtection';
 
 const UserRouter = () => {
@@ -29,6 +30,7 @@ const UserRouter = () => {
         <Route path='/Allcars' element={<Cars/>}/>
         <Route path='/TransactionSuccess' element={<SuccessfullTransaction/>}/>
         <Route path='/BookedCars/' element={<BookedCars/>}/>
+        <Route path='/profile' element={<Profile/>}/>
       </Routes>
     </Suspense>
     </>

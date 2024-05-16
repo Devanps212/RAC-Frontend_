@@ -155,7 +155,7 @@ const BookedCars = () => {
                             </div>
                         </div>
                         <div className="col-8" style={{ maxHeight: '488px', overflowY: 'auto' }}>
-                            {bookingInfo && (
+                            {bookingInfo &&  (
                                 Array.isArray(bookingInfo) ? (
                                     bookingInfo.map((bookings) => (
                                         <div className="right-side-contents mb-3" key={bookings._id}>
