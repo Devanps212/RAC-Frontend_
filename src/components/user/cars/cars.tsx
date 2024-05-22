@@ -69,7 +69,6 @@ const Cars: React.FC = () => {
         const fetchBookings = async()=>{
             try{
                 const response = await findBookings('all')
-                console.log(response.data)
                 const data : detailBooking[] = response.data
                 const validBooking = data.filter((booking)=>booking.status !== 'Cancelled')
                 if(validBooking.length === 0){

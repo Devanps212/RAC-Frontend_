@@ -7,29 +7,20 @@ export interface signUpPayload extends signInPayload{
     name:string,
     Cpassword?:string,
 }
-export interface userDetailPayload extends Address{
+export interface userDetailPayload{
+    _id?:string
     name:string,
     email:string,
     mobile:number,
     password:string,
     profilePic:string,
     DL:string,
-    DOB:Date,
-    address:Address[],
+    gender:'Male' | 'Female';
+    address:string,
     isActive:boolean,
     isGoogleUser:boolean,
     createdAt:Date,
-}
-
-export interface Address{
-    country?:string,
-    street?: string;
-    city?: string;
-    state?: string;
-    pincode?: string;
-    phone?: string;
-    alternateNumber?: string;
-    landmark?: string;
+    city: string
 }
 
 export interface tokenInterface {

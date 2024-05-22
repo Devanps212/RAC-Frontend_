@@ -10,6 +10,7 @@ import {AdminRouteProtection} from "./protectedRoutes/routeProtection.js";
 import CarRoutes from "./carRoute.js";
 import UserAdminRouter from "./userAdminRoute.js";
 import BookingRoutes from "./bookingRoutes";
+const AdminDashBoard = lazy(()=>import('../pages/admin/dashBoard'))
 
 const AdminRoutes = ()=>{
 
@@ -24,6 +25,7 @@ const AdminRoutes = ()=>{
                 <Route path="/car/*" element={<CarRoutes/>}/>
                 <Route path="/user/*" element={<UserAdminRouter/>}/>
                 <Route path="/booking/*" element={<BookingRoutes/>}/>
+                <Route path='/Dashboard' element={<AdminDashBoard/>}/>
             </Routes>
         </Suspense>
     )

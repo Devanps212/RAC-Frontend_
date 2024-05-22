@@ -108,7 +108,7 @@ const Banner: React.FC<BannerProps> = ({search, PickupPlaces, click, value, Drop
             </div>
           </div>
           <div className="row">
-            <div className="contents d-flex justify-content-center align-items-center">
+            <div className="contents-data d-flex justify-content-center align-items-center mb-3">
               <div className="col-6">
                 <p>Select Pickup Date :</p>
                 <input 

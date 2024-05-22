@@ -5,6 +5,9 @@ const apiConfig = {
     userSignIn: `${configKeys.API_URL}user-auth/login`,
     otpGenerate:`${configKeys.API_URL}user-auth/VOTP`,
     otpVerify:`${configKeys.API_URL}user-auth/VerifyOTP`,
+    userFind:`${configKeys.API_URL}user-auth/findUser`,
+    saveUserData:`${configKeys.API_URL}user-auth/saveUser`,
+    mongoUsers:`${configKeys.API_URL}user-auth/getAll` ,
 
     googleVerification: `${configKeys.API_URL}user-auth/Google-SignIn-Up`,
     adminLogin : `${configKeys.API_URL}admin-auth/login`,
@@ -29,6 +32,7 @@ const apiConfig = {
     partnerLogin:`${configKeys.API_URL}partner/login`,
     PartneraddCar:`${configKeys.API_URL}partner/addCar`,
     PartnerSignUp:`${configKeys.API_URL}partner/SignUp`,
+    partnerAll:`${configKeys.API_URL}partner/All`,
 
     locationFinding: `${configKeys.API_URL}user-auth/location`,
 
@@ -37,7 +41,8 @@ const apiConfig = {
     bookingPaymentURI:`${configKeys.API_URL}booking/payment`,
     bookingCompletion:`${configKeys.API_URL}booking/completion`,
     bookingBasedOnRole:`${configKeys.API_URL}booking/BasedOnRole`,
-    bookingUpdater:`${configKeys.API_URL}booking/updater`
+    bookingUpdater:`${configKeys.API_URL}booking/updater`,
+    bookingRescheduler: `${configKeys.API_URL}booking/rescheduler`
 }
 
 export default apiConfig

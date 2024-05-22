@@ -5,27 +5,94 @@ import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import PaymentFlow from "../../../paymentLoader/paymetnLoader"; // Adjust import path as necessary
 import { FaArrowRight, FaCalendarTimes, FaCar, FaChair, FaGasPump, FaLocationArrow } from "react-icons/fa";
-import { Button, Modal } from "react-bootstrap";
+import { Button, Form, Modal } from "react-bootstrap";
 import { BiSolidLocationPlus } from "react-icons/bi";
-import { detailBooking } from "../../../../types/bookingInterface";
-import { bookingFindingBasedOnRole, bookingUpdater } from "../../../../features/axios/api/booking/booking";
+import { BookingDetail, bookingInterfaceReschedule, detailBooking } from "../../../../types/bookingInterface";
+import { bookingFindingBasedOnRole, bookingRescheduler, bookingUpdater } from "../../../../features/axios/api/booking/booking";
 import { toast } from "react-toastify";
 import { showCarInterface } from "../../../../types/carAdminInterface";
 import { decodeToken } from "../../../../utils/tokenUtil";
 import { RefundDetailsInterface } from "../../../../types/bookingInterface";
+import DateDetailForm, { BookingOnSubmitType } from "../../../../Validators/userValidator.ts/bookingValidator";
+import { loadStripe } from "@stripe/stripe-js";
+import { useLocation, useNavigate, useParams } from "react-router-dom";
 
 const BookedCars = () => {
     const [selectedDate, setSelectedDate] = useState<Date | null>(null);
     const [bookingInfo, setBookingInfo] = useState<detailBooking[] | detailBooking | null>(null);
     const [filteredBookingInfo, setFilteredBookingInfo] = useState<detailBooking[] | detailBooking | null>(null);
-    const [car, setCar] = useState<showCarInterface[] | null>(null);
+    const [car, setCar] = useState<showCarInterface[] | showCarInterface | null>(null);
+    const [currentBooking, setCurrentBoking] = useState<detailBooking | null>(null)
     const [showRefundModal, setRefundShowModal] = useState(false)
+    const [additionalCharge, setAdditionalCharge] = useState<string>('0.00')
     const [singleBooking, setSingleBooking] = useState<Partial<detailBooking> | null>(null);
     const [refundDetails, setRefundDetails] = useState<RefundDetailsInterface | null>(null)
+    const [showReSchedule, setReschedule] = useState(false)
+    const [message, setSuccessMessage] = useState('')
     const [paymentLoader, setPaymentLoader] = useState(false);
     const [showModal, setShowModal] = useState(false);
+    const currentDate = new Date().toISOString().split('T')[0];
     const token = localStorage.getItem('token') ?? '';
+    const location = useLocation();
+    const navigate = useNavigate();
 
+    const handleSubmit: BookingOnSubmitType = async(values) => {
+        console.log(values);
+
+        const token = localStorage.getItem('token') ?? ''
+        const userId = await decodeToken(token).payload
+        const data : Partial<bookingInterfaceReschedule> = {
+            bookingId: currentBooking?._id,
+            carId:currentBooking?.carId,
+            startDate :  new Date(values.start),
+            endDate: new Date(values.end),
+            total: parseInt(additionalCharge),
+        }
+        const scheduleDate = await bookingRescheduler(data, userId)
+        const stripe = await loadStripe('pk_test_51PDiVJSFg3h3pm8hFZ9xw2Duq8djIUTp0t5I6M5yMguU8KpIdUnUt0epBFvTkOx0jWV3NWOQkE402iZat4c2JX8P00Hl0S8Igy');
+        console.log("received session id : ", scheduleDate.sessionId)
+        const result = await stripe?.redirectToCheckout({
+            sessionId: scheduleDate.sessionId
+        });
+    };
+
+    useEffect(() => {
+        const searchParams = new URLSearchParams(location.search);
+        const message = searchParams.get('message');
+        const status = searchParams.get('status');
+        console.log(message)
+    
+        if (message) {
+          setSuccessMessage(message);
+          toast.success(message)
+          
+          const timer = setTimeout(() => {
+
+            setSuccessMessage('');
+            searchParams.delete('message');
+            navigate({ search: searchParams.toString() }, { replace: true });
+          }, 3000); 
+    
+          return () => clearTimeout(timer);
+        } else {
+          setSuccessMessage('');
+        }
+    
+        console.log('Message:', message);
+        console.log('Status:', status);
+      }, [location.search, navigate]);
+
+    const rescheduleBooking = (booking : detailBooking)=>{
+        console.log("currentBookings : ", booking)
+        setCurrentBoking(booking)
+        setReschedule(true)
+    }
+    
+
+    const formik = DateDetailForm(handleSubmit)
+
+    
+    
     const fetchBookingDetail = async () => {
         const userId = await decodeToken(token).payload;
         const partialDetail: Partial<detailBooking> = { userId: userId };
@@ -34,8 +101,9 @@ const BookedCars = () => {
         if (Array.isArray(response.data.data)) {
             car = response.data.data.map((carData: detailBooking) => carData.carId);
         } else {
-            car = response.data.data;
+            car = response.data.data.carId;
         }
+        console.log("car found : ",car)
         setCar(car);
         setBookingInfo(response.data.data);
         setFilteredBookingInfo(response.data.data);
@@ -66,8 +134,51 @@ const BookedCars = () => {
     };
 
     useEffect(() => {
+        const calculateAmount = () => {
+            if (currentBooking) {
+                const startDate = new Date(formik.values.start);
+                const endDate = new Date(formik.values.end);
+                const currentStartDate = new Date(currentBooking.date.start);
+                const currentEndDate = new Date(currentBooking.date.end);
+
+                const newDateDifference = (endDate.getTime() - startDate.getTime()) / (1000 * 60 * 60 * 24);
+                const currentDateDifference = (currentEndDate.getTime() - currentStartDate.getTime()) / (1000 * 60 * 60 * 24);
+
+                let newAmount = currentBooking.transaction.amount || 0;
+
+                if (newDateDifference > currentDateDifference) {
+                    const additionalDays = newDateDifference - currentDateDifference;
+                    let ChargePerDay: number;
+
+                    if (Array.isArray(car)) {
+                        const matchedCar = car.find((cars) => cars._id === currentBooking.carId._id);
+                        ChargePerDay = matchedCar ? matchedCar.rentPricePerDay ?? 0 : 0;
+                    } else {
+                        ChargePerDay = car?.rentPricePerDay ?? 0;
+                    }
+
+                    const additionalChargePerDay = ChargePerDay;
+                    newAmount += additionalDays * additionalChargePerDay;
+                }
+
+                
+                if (newAmount > parseFloat(additionalCharge)) {
+                    setAdditionalCharge(newAmount.toFixed(2));
+                } else {
+                    setAdditionalCharge('0.00');
+                }
+            }
+        };
+
+        calculateAmount();
+    }, [formik.values.start, formik.values.end, currentBooking, car]);
+
+
+    useEffect(() => {
         fetchBookingDetail();
     }, []);
+
+    //Date Setting
 
     const handleDate = (date: Date | null) => {
         setSelectedDate(date);
@@ -88,6 +199,9 @@ const BookedCars = () => {
         }
     };
 
+
+    //Cancel Booking
+
     const handleBookingCancel = async (id: string, carName: string, totalAmount: number) => {
         const data: Partial<detailBooking> = { _id: id, status: 'Cancelled' };
         confirmAlert({
@@ -99,20 +213,21 @@ const BookedCars = () => {
                     onClick: async () => {
                         try {
                             setPaymentLoader(true)
-                            
                             const response = await bookingUpdater(data);
                             setTimeout(()=>{
                                 toast.success(response.message);
                                 setPaymentLoader(false)
                                 setRefundShowModal(true)
+                                console.log("detail recieved : ", response.data)
                                 setRefundDetails(response.data)
+                                console.log("bookingInfo : ",bookingInfo)
                             }, 3000)
                             
                             
                             
                         } catch (error: any) {
                             setPaymentLoader(false)
-                            console.error('Error deleting car:', error);
+                            console.log('Error deleting car:', error);
                             toast.error(error.message);
                         }
                     },
@@ -126,9 +241,9 @@ const BookedCars = () => {
             ],
         });
     };
-    const paymentLoading = (value: boolean)=>{
-        setPaymentLoader(value)
-    }
+    // const paymentLoading = (value: boolean)=>{
+    //     setPaymentLoader(value)
+    // }
 
     return (
         <>
@@ -163,6 +278,7 @@ const BookedCars = () => {
                                                 <div className="col-4">
                                                     <div className="image">
                                                         <img src={bookings.carId.thumbnailImg} style={{ width: '100%', height: 'auto' }} alt="Car" />
+
                                                     </div>
                                                 </div>
                                                 <div className="col-5">
@@ -222,12 +338,27 @@ const BookedCars = () => {
                                                 </div>
                                                 <div className="col-3">
                                                     <div className="buttons d-flex flex-column justify-content-center align-items-center">
-                                                        <Button className="ms-5" onClick={() => setShowModal(true)}>
-                                                            Report an issue
-                                                        </Button>
-                                                        <Button variant="info" onClick={() => handleBookingCancel(bookings._id, bookings.carId.name, bookings.transaction.amount)} className="ms-5 mt-4">
-                                                            View More
-                                                        </Button>
+                                                        {
+                                                            bookings.status === 'Cancelled' ? (
+                                                                <>
+                                                                </>
+                                                            ) : (
+                                                                <>
+                                                                <Button className="ms-5" onClick={() => setShowModal(true)}>
+                                                                    Report an issue
+                                                                </Button>
+                                                                <Button variant="danger" onClick={() => handleBookingCancel(bookings._id, bookings.carId.name, bookings.transaction.amount || 0)} className="ms-5 mt-4">
+                                                                    Cancel booking
+                                                                </Button>
+                                                                <Button variant="dark" onClick={()=>rescheduleBooking(bookings)}>
+                                                                    ReSechdule Date
+                                                                </Button>
+                                                                </>
+                                                            )
+                                                        }
+                                                                
+                                                               
+                        
                                                         <div className="status-container ms-5 mt-4">
                                                             <p className={`status ${bookings.status.replace(/\s+/g, '-').toLowerCase()}`}>
                                                                 {bookings.status}
@@ -258,6 +389,56 @@ const BookedCars = () => {
                                                     </Modal.Footer>
                                                 </Modal>
                                             )}
+
+                                            <Modal show={showReSchedule} onHide={() => setReschedule(false)} className="animated-modal">
+                                                <Modal.Header closeButton>
+                                                    <Modal.Title>Reschedule Booking</Modal.Title>
+                                                </Modal.Header>
+                                                <Modal.Body>
+                                                    <div className="d-flex justify-content-center align-items-center">
+                                                    <Form onSubmit={formik.handleSubmit} className="form-submission">
+                                                        <h5 className="mb-2">Select Start Date :</h5>
+                                                        <div className="Reschedule-calendar mb-1">
+                                                        <input
+                                                            type="date"
+                                                            min={currentDate}
+                                                            onChange={(e) => {
+                                                                const dateString = e.target.value;
+                                                                const dateValue = dateString ? new Date(dateString) : null;
+                                                                formik.setFieldValue("start", dateValue?.toISOString().split('T')[0]);
+                                                            }}
+                                                            onBlur={formik.handleBlur}
+                                                            value={formik.values.start}
+                                                        />
+                                                        {formik.touched.start && formik.errors.start && (
+                                                                <div style={{ color: 'red' }}>{formik.errors.start}</div>
+                                                            )}
+                                                        </div>
+                                                        <h5 className="mt-4">Select End Date :</h5>
+                                                        <div className="Reschedule-calendar mb-1">
+                                                        <input
+                                                            type="date"
+                                                            min={currentDate}
+                                                            onChange={(e) => {
+                                                                const dateString = e.target.value;
+                                                                const dateValue = dateString ? new Date(dateString) : null;
+                                                                formik.setFieldValue("end", dateValue?.toISOString().split('T')[0]);
+                                                            }}
+                                                            
+                                                            value={formik.values.end}
+                                                        />
+                                                        {formik.touched.end && formik.errors.end && (
+                                                                <div style={{ color: 'red' }}>{formik.errors.end}</div>
+                                                            )}
+                                                        </div>
+                                                        <div className="mt-2">Amount :{additionalCharge}</div>
+                                                        <Button className="mt-3" type="submit">
+                                                        Submit
+                                                        </Button>
+                                                    </Form>
+                                                    </div>
+                                                </Modal.Body>
+                                            </Modal>
                                         </div>
                                     ))
                                 ) : (
@@ -324,14 +505,36 @@ const BookedCars = () => {
                                                 </div>
                                             </div>
                                             <div className="col-3">
-                                                <div className="buttons d-flex flex-column justify-content-center align-items-center">
+                                                <div className="buttons-items d-flex flex-column justify-content-center align-items-center">
+                                               {
+                                                bookingInfo.status === 'Cancelled' ? (
+                                                    <>
+                                                    </>
+                                                ) : (
+                                                  <>
                                                     <Button className="ms-5" onClick={() => setShowModal(true)}>
+                                                        Report an issue
+                                                    </Button>
+                                                    <Button variant="danger" onClick={() => handleBookingCancel(bookingInfo._id, bookingInfo.carId.name, bookingInfo.transaction.amount || 0)} className="ms-5 mt-2">
+                                                        Cancel booking
+                                                    </Button>
+                                                    <Button variant="dark" onClick={()=>rescheduleBooking(bookingInfo)} className="ms-5 mt-2">
+                                                        ReSechdule Date
+                                                    </Button>
+                                                  </>  
+                                                )
+                                               }
+                                                                
+                                                                
+                                                                
+                                                             
+                                                    {/* <Button className="ms-5" onClick={() => setShowModal(true)}>
                                                         Report an issue
                                                     </Button>
                                                     <Button variant="danger" onClick={() => handleBookingCancel(bookingInfo._id, bookingInfo.carId.name, bookingInfo.transaction.amount)} className="ms-5 mt-3">
                                                         Cancel booking
-                                                    </Button>
-                                                    <div className="status-container ms-5 mt-4">
+                                                    </Button> */}
+                                                    <div className="status-container ms-5 mt-2">
                                                         <p className={`status ${bookingInfo.status.replace(/\s+/g, '-').toLowerCase()}`}>
                                                             {bookingInfo.status}
                                                         </p>
@@ -361,9 +564,76 @@ const BookedCars = () => {
                                                 </Modal.Footer>
                                             </Modal>
                                         )}
+                                        <Modal show={showReSchedule} onHide={() => {setReschedule(false)
+                                            formik.resetForm()
+                                            setAdditionalCharge('0')
+                                        }} className="animated-modal">
+                                            <Modal.Header closeButton>
+                                                <Modal.Title>Reschedule Booking</Modal.Title>
+                                            </Modal.Header>
+                                            <Modal.Body className="modal-body">
+                                                <div className="d-flex justify-content-center align-items-center">
+                                                <Form onSubmit={formik.handleSubmit} className="form-submission mt-3">
+                                                    <h5 className="mb-2">Select Start Date :</h5>
+                                                    <div className="Reschedule-calendar mb-1">
+                                                    <input
+                                                        type="date"
+                                                        min={currentDate}
+                                                        onChange={(e) => {
+                                                            const dateString = e.target.value;
+                                                            const dateValue = dateString ? new Date(dateString) : null;
+                                                            formik.setFieldValue("start", dateValue?.toISOString().split('T')[0]);
+                                                        }}
+                                                        onBlur={formik.handleBlur}
+                                                        value={formik.values.start}
+                                                    />
+                                                    {formik.touched.start && formik.errors.start && (
+                                                            <div style={{ color: 'red' }}>{formik.errors.start}</div>
+                                                        )}
+                                                    </div>
+                                                    <h5 className="mt-4">Select End Date :</h5>
+                                                    <div className="Reschedule-calendar mb-1">
+                                                    <input
+                                                        type="date"
+                                                        min={currentDate}
+                                                        onChange={(e) => {
+                                                            const dateString = e.target.value;
+                                                            const dateValue = dateString ? new Date(dateString) : null;
+                                                            formik.setFieldValue("end", dateValue?.toISOString().split('T')[0]);
+                                                        }}
+                                                        
+                                                        value={formik.values.end}
+                                                    />
+                                                    {formik.touched.end && formik.errors.end && (
+                                                            <div style={{ color: 'red' }}>{formik.errors.end}</div>
+                                                        )}
+                                                    </div>
+                                                    <div className="mt-3">
+                                                        Paid Amount : ₹{bookingInfo.transaction.amount}
+                                                    </div>
+                                                    <div className="mt-3" style={{fontFamily:'Kanit', fontSize: 'large'}}>
+                                                        Additional Amount : ₹ {additionalCharge}
+                                                    </div>
+                                                    <Button className="mt-3" type="submit">
+                                                    Proceed To Pay
+                                                    </Button>
+                                                </Form>
+                                                </div>
+                                            </Modal.Body>
+                                        </Modal>
                                     </div>
                                 )
                             )}
+
+                            {
+                                (Array.isArray(bookingInfo) && bookingInfo.length === 0) ||
+                                (bookingInfo && typeof bookingInfo === 'object' && !Array.isArray(bookingInfo) && (!bookingInfo._id || !bookingInfo.transaction._id)) ? (
+                                    <h1>No booking Found</h1>
+                                ) : (
+                                    <>
+                                    </>
+                                )
+                            }
                         </div>
                     </div>
                 </div>
@@ -385,7 +655,7 @@ const BookedCars = () => {
                                     <p><strong>Card:</strong> {refundDetails.card.brand} ending in {refundDetails.card.last4}</p>
                                     <p><strong>Expiry:</strong> {refundDetails.card.exp_month}/{refundDetails.card.exp_year}</p>
                                     <p><strong>Status:</strong> {refundDetails.status}</p>
-                                    <p><strong>Transaction ID:</strong> {refundDetails.transactionId}</p>
+                                    <p><strong>Transaction ID:</strong> {refundDetails.transaction.transactionId}</p>
                                     <p><strong>Created:</strong> {new Date(refundDetails.created).toLocaleString()}</p>
                                 </div>
                             </>

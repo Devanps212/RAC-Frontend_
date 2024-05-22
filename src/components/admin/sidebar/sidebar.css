@@ -1,119 +1,137 @@
 #sidebar {
-    grid-area: sidebar;
-    height: 100%;
-    width: 240px;
-    background-color: #263043;
-    overflow-y: auto;
-    transition: all 0.5s;
-    -webkit-transition: all 0.5s;
-    z-index: 2; /* Set a higher z-index */
+  grid-area: sidebar;
+  height: 100%;
+  width: 240px;
+  background-color: #263043;
+  overflow-y: auto;
+  transition: all 0.5s;
+  -webkit-transition: all 0.5s;
+  z-index: 2; 
 }
 
-.sidebar-title {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 15px 20px 10px 20px;
-    margin-bottom: 15px;
+.sidebar-titles {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 15px 20px 10px 20px;
+  margin-bottom: 15px;
+  margin-top: 5rem;
 }
 
-.sidebar-title > span {
-    display: none;
-}
 
 .sidebar-brand {
-    font-size: 20px;
-    font-weight: 700;
-    color: #ffffff;
+  font-size: 20px;
+  font-weight: 700;
+  color: #ffffff;
 }
 
 .sidebar-list {
-    padding: 0;
-    list-style-type: none;
+  padding: 0;
+  list-style-type: none;
 }
 
 .sidebar-list-item {
-    padding: 15px 20px;
-    font-size: 16px;
-    transition: background-color 0.3s;
+  padding: 15px 20px;
+  font-size: 16px;
+  transition: background-color 0.3s;
 }
 
 .sidebar-list-item:hover {
-    background-color: rgba(255, 255, 255, 0.1);
-    cursor: pointer;
+  background-color: rgba(255, 255, 255, 0.1);
+  cursor: pointer;
 }
 
-.sidebar-list-item > a {
-    text-decoration: none;
-    color: #ffffff;
-}
 
-/* Responsive Styles */
+
 
 .sidebar-responsive {
-    display: none;
+  display: none;
 }
 
 @media only screen and (max-width: 768px) {
-    #sidebar {
-        width: 86px; 
-    }
+  #sidebar {
+      width: 86px; 
+  }
 
-    .sidebar-list-item {
-        padding: 15px;
-        text-align: center;
-    }
+  .sidebar-list-item {
+      padding: 15px;
+      text-align: center;
+  }
 
-    #nameCompany{
-        display: none;
-    }
+  .sidebar-list-item a span {
+      display: none; 
+  }
 
-    .sidebar-list-item a span {
-        display: none; 
-    }
+  .sidebar-list-item:hover a span {
+      display: block; 
+  }
+  
 
-    .sidebar-list-item:hover a span {
-        display: block; /* Show the text content on hover */
-    }
-    
+  .sidebar-list-item:hover {
+      background-color: transparent;
+  }
 
-    .sidebar-list-item:hover {
-        background-color: transparent;
-    }
+  .sidebar-title > span {
+      display: inline;
+      font-size: 20px;
+      cursor: pointer;
+  }
 
-    .sidebar-title > span {
-        display: inline;
-        font-size: 20px;
-        cursor: pointer;
-    }
+  .sidebar-list .icon {
+      display: flex;
+      padding-right: 30px;
+      width: 50px;
+      height: 30px;
+      display: block;
+  }
 
-    .sidebar-list .icon {
-        display: flex;
-        padding-right: 30px;
-        width: 50px;
-        height: 30px;
-        display: block;
-    }
+  .sidebar-responsive {
+      display: inline-block !important;
+  }
 
-    .sidebar-responsive {
-        display: inline-block !important;
-    }
-
-    .sidebar-list-item:hover a span {
-        display: block; /* Show the text content on hover */
-        position: absolute;
-        right: 100%; /* Position the text to the right of the icon */
-        top: 50%;
-        transform: translateY(-50%);
-        background-color: #263043; /* Background color for the comic message */
-        padding: 5px 10px;
-        border-radius: 5px;
-        color: rgb(255, 0, 0);
-        font-size: 14px;
-    }
-    .sidebar-list-item:hover a span {
-        opacity: 1; /* Set opacity to 1 on hover */
-    }
+  .sidebar-list-item:hover a span {
+      display: block; 
+      position: absolute;
+      right: 100%;
+      top: 50%;
+      transform: translateY(-50%);
+      background-color: #263043; 
+      padding: 5px 10px;
+      border-radius: 5px;
+      color: rgb(255, 0, 0);
+      font-size: 14px;
+  }
+  .sidebar-list-item:hover a span {
+      opacity: 1; 
+  }
 }
 
+.sidebar {
+  width: 250px;
+  position: relative;
+}
+
+.sidebar-list-item .dropdown-menu {
+  width: 100%;
+  left: 0;
+  right: 0;
+  top: 100%;
+  position: absolute;
+  background-color: #fff;
+  border: none;
+  box-shadow: none;
+}
+
+.sidebar-list-item .dropdown-toggle::after {
+  margin-left: auto;
+}
+
+.sidebar-list-item .dropdown-item {
+  padding: 0.5rem 1.5rem;
+  color: #000;
+}
+
+.sidebar-list-item .dropdown-item:hover {
+  background-color: #f8f9fa;
+}
 

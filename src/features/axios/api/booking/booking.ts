@@ -1,5 +1,5 @@
 import axios, { AxiosRequestConfig } from "axios";
-import { backendBooking, bookingInterface, detailBooking } from "../../../../types/bookingInterface";
+import { backendBooking, bookingInterface, bookingInterfaceReschedule, detailBooking } from "../../../../types/bookingInterface";
 import apiConfig from "../../../../utils/apiConfig";
 
 export const filterCarsBooking = async(Data: bookingInterface)=>{
@@ -91,6 +91,7 @@ export const bookingFindingBasedOnRole = async(bookingData:Partial<detailBooking
         }
 
         const response = await axios(bookingConfig)
+        console.log(response)
         return response
         
     } catch(error:any) {
@@ -113,7 +114,24 @@ export const bookingUpdater = async(data: Partial<detailBooking>)=>{
         console.log("response from frontend : ", response.data)
         return response.data
     } catch(error: any){
-        console.log("error: ", error.response.data)
-        throw new Error(error.response.data.message)
+        console.log("errorMessage: ", error.response.data)
+        throw new Error(error.response.data.errorMessage)
+    }
+}
+
+export const bookingRescheduler = async(data: Partial<bookingInterfaceReschedule>, userId : string)=>{
+    try{
+        const reschedularConfig : AxiosRequestConfig = {
+            url: apiConfig.bookingRescheduler,
+            method: 'patch',
+            data:{data, userId}
+        }
+
+        const response = await axios(reschedularConfig)
+        console.log(response)
+        return response.data
+    } catch (error: any) {
+        console.log(error.message)
+        throw new Error(error.message)
     }
 }

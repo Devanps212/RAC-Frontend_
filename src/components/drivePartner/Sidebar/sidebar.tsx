@@ -53,7 +53,7 @@ const PartnerSidebar: React.FC = () => {
                         <NavDropdown.Item href="/partner/bookingHistory">Booking History</NavDropdown.Item>
                     </NavDropdown>
                 </li>
-                <li className="sidebar-list-item">
+                {/* <li className="sidebar-list-item">
                     <NavDropdown
                         title={
                             <span>
@@ -66,8 +66,8 @@ const PartnerSidebar: React.FC = () => {
                         <NavDropdown.Item href="/partner/invoices">Invoices</NavDropdown.Item>
                         <NavDropdown.Item href="/partner/payments">Payments</NavDropdown.Item>
                     </NavDropdown>
-                </li>
-                <li className="sidebar-list-item">
+                </li> */}
+                {/* <li className="sidebar-list-item">
                     <NavDropdown
                         title={
                             <span>
@@ -80,17 +80,17 @@ const PartnerSidebar: React.FC = () => {
                         <NavDropdown.Item href="/partner/usageReports">Usage Reports</NavDropdown.Item>
                         <NavDropdown.Item href="/partner/customerFeedback">Customer Feedback</NavDropdown.Item>
                     </NavDropdown>
-                </li>
-                <li className="sidebar-list-item">
+                </li> */}
+                {/* <li className="sidebar-list-item">
                     <a href="#">
                         <BsGear className="icon" /> <span>Settings</span>
                     </a>
-                </li>
-                <li className="sidebar-list-item">
+                </li> */}
+                {/* <li className="sidebar-list-item">
                     <a href="#">
                         <BsQuestionCircle className="icon" /> <span>Support</span>
                     </a>
-                </li>
+                </li> */}
             </ul>
         </aside>
     );

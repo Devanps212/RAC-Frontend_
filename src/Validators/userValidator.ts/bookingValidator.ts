@@ -1,4 +1,8 @@
+import { FormikHelpers, useFormik } from "formik";
 import { bookingInterface } from "../../types/bookingInterface";
+import { DateRange } from "../../types/bookingInterface";
+import * as Yup from 'yup'
+
 
 export const bookingValidator = (data: bookingInterface) => {
     const error: any = {};
@@ -41,3 +45,46 @@ export const bookingValidator = (data: bookingInterface) => {
 
     return null; // Return null if no errors
 };
+
+interface DateInterface {
+    start : string,
+    end: string,
+}
+const initialValue : DateInterface = {
+    start: new Date().toISOString(),
+    end: new Date().toISOString(),
+}
+
+const DateSchema = Yup.object().shape({
+    start: Yup.string()
+        .required('Please provide a valid start date'),
+    end: Yup.string()
+        .required('Please provide a valid end date')
+        .when('start', ([start], schema) => {
+            return schema.test({
+                name: 'is-after-start',
+                exclusive: false,
+                message: 'End date must be after start date',
+                test: function (value: string) {
+                    if (!start || !value) return true;
+                    return Date.parse(value) > Date.parse(start);
+                },
+            });
+        }),
+});
+
+export type BookingOnSubmitType = (values : DateInterface, formikHelpers : FormikHelpers<DateInterface>)=>void
+
+const DateDetailForm = (onSubmit: BookingOnSubmitType, initialValuesOverride?: DateInterface) => {
+    return useFormik({
+        initialValues: {
+            start: initialValue.start.split('T')[0], 
+            end: initialValue.end.split('T')[0],    
+            ...initialValuesOverride,
+        },
+        validationSchema: DateSchema,
+        onSubmit,
+    });
+};
+
+export default DateDetailForm

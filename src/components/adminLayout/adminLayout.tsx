@@ -9,15 +9,15 @@ interface AdminLayoutProps {
 
 const AdminLayout: React.FC<AdminLayoutProps> = ({ children }) => {
   return (
-    <div className="admins-container">
-      <Header />
-      <div className="wrapper">
-        <Sidebar />
-        <div className="contents-wrapper">
-          <div className="content">{children}</div>
-        </div>
+    <div className="admin-containers">
+    <Header />
+    <div className="content-wrappers">
+    <Sidebar />
+      <div className="content">
+        {children}
       </div>
     </div>
+  </div>
   );
 };
 

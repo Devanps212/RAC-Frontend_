@@ -30,15 +30,6 @@ function Home() {
   const [pickUpDate, setPickupDate] = useState<Date>(new Date())
   const [dropOffDate, setDropOffDate] = useState<Date>(new Date())
   const navigate = useNavigate()
-
-  // useEffect(()=>{
-  //   axios.get("https://ipapi.co/json")
-  //   .then((response:any)=>{
-  //     console.log(response.data)
-  //     console.log("response : ", response.data.city)
-  //     setSelectedCity(response.data.city)
-  //   })
-  // }, [])
   
   const handleSearch = async(locations: string, purpose: string)=>{
     try

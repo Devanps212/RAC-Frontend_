@@ -43,7 +43,7 @@ const UserHeader = () => {
           <Offcanvas.Body className="navbar-offcanvas-body">
             <Nav className="justify-content-md-between align-items-center me-auto ms-5">
               <Nav.Link className="button-Header-user me-3" as={Link} to="/users/home">Home</Nav.Link>
-              <Nav.Link className="me-3" href="#about">About Us</Nav.Link>
+              <Nav.Link className="me-3" href="/users/profile">Profile</Nav.Link>
               <Nav.Link className="me-3" href="/users/BookedCars">Your Deals</Nav.Link>
               <NavDropdown className="me-2" title="Dropdown" id="offcanvasNavbarDropdown-expand-lg">
                 <NavDropdown.Item href="#action3">Action</NavDropdown.Item>

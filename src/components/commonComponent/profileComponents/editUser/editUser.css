@@ -1,0 +1,71 @@
+.switch-container {
+    position: relative;
+    display: inline-block;
+    cursor: pointer;
+  }
+  
+  .switch {
+    position: relative;
+    width: 150px;
+    height: 30px;
+    background-color: #ccc;
+    border-radius: 30px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 5px;
+    box-sizing: border-box;
+    transition: background-color 0.3s;
+  }
+  
+  .switch.on {
+    background-color: #4caf50;
+  }
+  
+  .switch .slider {
+    position: absolute;
+    width: 60px;
+    height: 26px;
+    background-color: #fff;
+    border-radius: 30px;
+    top: 2px;
+    left: 2px;
+    transition: transform 0.3s;
+  }
+  
+  .switch.on .slider {
+    transform: translateX(86px);
+  }
+  
+  .switch-text {
+    font-size: 14px;
+    transition: color 0.3s;
+    user-select: none;
+  }
+  
+  .left-text {
+    margin-left: 10px;
+    z-index: 1;
+  }
+  
+  .right-text {
+    margin-right: 10px;
+    z-index: 1;
+  }
+
+  input[type="number"] {
+    -moz-appearance: textfield;
+    appearance: textfield;
+}
+
+input[type="number"]::-webkit-outer-spin-button,
+input[type="number"]::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+
+input[type="number"]::-moz-outer-spin-button,
+input[type="number"]::-moz-inner-spin-button {
+    -moz-appearance: none;
+    margin: 0;
+}

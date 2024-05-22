@@ -55,7 +55,7 @@ export interface DateRange {
     end: Date;
   }
   
-  interface TimeRange {
+  export interface TimeRange {
     start: string;
     end: string;
   }
@@ -66,9 +66,9 @@ export interface DateRange {
   }
   
   interface Transaction {
-    _id: string
-    transaction: string;
-    amount: number;
+    _id?: string
+    transactionId?: string;
+    amount?: number;
   }
 
 export interface BookingDetail {
@@ -90,5 +90,20 @@ export interface RefundDetailsInterface {
     created: number;
     currency: string;
     status: string;
-    transactionId: string;
+    transaction: Transaction;
+}
+
+
+export interface bookingInterfaceReschedule {
+    pickupLocation?: string;
+    dropOffLocation?: string;
+    startDate?: Date;
+    endDate?: Date;
+    pickupTime?: string;
+    dropOffTime?: string
+    amount?:number
+    discount?:number
+    total?:number
+    bookingId?:string,
+    carId: showCarInterface
 }

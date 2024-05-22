@@ -149,20 +149,9 @@ const UserManagement = ()=>{
                          <p>Date Of Birth: {selectedUser?.DOB?.toLocaleDateString() ?? <span style={{ color: 'red' }}>DOB not given</span>}</p>
                          <p>Address:</p>
                          {selectedUser?.address ? (
-                         selectedUser.address.length > 0 ? (
-                         selectedUser.address.map((address, index) => (
-                         <div key={index}>
-                          <p>Country: {address.country ?? <span style={{ color: 'red' }}>Not specified</span>}</p>
-                          <p>Street: {address.street ?? <span style={{ color: 'red' }}>Not specified</span>}</p>
-                          <p>City: {address.city ?? <span style={{ color: 'red' }}>Not specified</span>}</p>
-                          <p>State: {address.state ?? <span style={{ color: 'red' }}>Not specified</span>}</p>
-                          <p>Pincode: {address.pincode ?? <span style={{ color: 'red' }}>Not specified</span>}</p>
-                          <p>Phone: {address.phone ?? <span style={{ color: 'red' }}>Not specified</span>}</p>
-                          <p>Alternate Number: {address.alternateNumber ?? <span style={{ color: 'red' }}>Not specified</span>}</p>
-                          <p>Landmark: {address.landmark ?? <span style={{ color: 'red' }}>Not specified</span>}</p>
-                         </div>
-                        ))) : (
-                        <p style={{ color: 'red' }}>Address not given</p>)
+                            <>
+                            {selectedUser.address}
+                            </>
                         ) : (
                         <p style={{ color: 'red' }}>Address not given</p>
                         )}

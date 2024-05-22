@@ -44,3 +44,17 @@ export const partnerSignUpPayment = async(partnerData: partnerData)=>{
     }
     
 }
+
+export const findAllPartner = async()=>{
+    try{
+        const partnerConfig : AxiosRequestConfig = {
+            url: apiConfig.partnerAll,
+            method: 'get'
+        }
+
+        const response = await axios(partnerConfig)
+        return response.data.data
+    } catch(error: any){
+        throw new Error(error.message)
+    }
+}

@@ -29,7 +29,7 @@ const Header = () => {
 
         <Navbar.Collapse className='justify-content-end' id='navbar-contents'>
           <Nav className="ml-auto">
-            <Nav.Link href='#'>Dashboard</Nav.Link>
+            <Nav.Link href='/admin/Dashboard'>Dashboard</Nav.Link>
             <Nav.Link href='#'>Profile</Nav.Link>
             <Nav.Link href='#'>Sales Report</Nav.Link>
 
