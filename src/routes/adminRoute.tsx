@@ -11,6 +11,7 @@ import CarRoutes from "./carRoute.js";
 import UserAdminRouter from "./userAdminRoute.js";
 import BookingRoutes from "./bookingRoutes";
 const AdminDashBoard = lazy(()=>import('../pages/admin/dashBoard'))
+import AdminOfferManage from "../pages/user/offerMangement";
 
 const AdminRoutes = ()=>{
 
@@ -25,7 +26,8 @@ const AdminRoutes = ()=>{
                 <Route path="/car/*" element={<CarRoutes/>}/>
                 <Route path="/user/*" element={<UserAdminRouter/>}/>
                 <Route path="/booking/*" element={<BookingRoutes/>}/>
-                <Route path='/Dashboard' element={<AdminDashBoard/>}/>
+                <Route path="/Dashboard" element={<AdminDashBoard/>}/>
+                <Route path="/OfferManagement" element={<AdminOfferManage/>}/>
             </Routes>
         </Suspense>
     )

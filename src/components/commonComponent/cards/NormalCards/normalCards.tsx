@@ -3,7 +3,6 @@ import { Carousel, Card, Col, Row, Button } from 'react-bootstrap';
 import { FaArrowCircleDown, FaStar } from "react-icons/fa";
 import './normalCards.css';
 import { showCarInterface } from "../../../../types/carAdminInterface";
-import { Link } from "react-router-dom";
 import { bookingInterface } from "../../../../types/bookingInterface";
 
 const CarCards: React.FC<{ cars: showCarInterface[], bookings: bookingInterface | null }> = ({ cars, bookings }) => {
@@ -35,9 +34,18 @@ const CarCards: React.FC<{ cars: showCarInterface[], bookings: bookingInterface 
                                         </div>
                                     </Col>
                                 </Row>
-                                <p className="text-start price-font">
-                                    Price: <span>{car.rentPricePerDay}₹ /Day</span>
-                                </p>
+                                {
+                                    car.offer && car.offer.price ? (
+                                        <p className="text-start price-font">
+                                            Price: <span>{car.offer.price}₹ /Day</span>
+                                        </p>
+                                    ) : (
+                                        <p className="text-start price-font">
+                                            Price: <span>{car.rentPricePerDay}₹ /Day</span>
+                                        </p>
+                                    )
+                                }
+                                
                                 <a href={`/users/carDetail?carId=${car._id}&bookingDetail=${parsedBooking}`}>
                                     <Button variant="primary" className="viewMore">
                                         View More

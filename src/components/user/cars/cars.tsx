@@ -204,7 +204,7 @@ const Cars: React.FC = () => {
     return (
         <div className="container-fluid full-container">
             <div className="contents">
-                <div className="row">
+                <div className="row" style={{marginTop:'4rem'}}>
                     <div className="col-4" style={{padding:'12px'}}>
                         <div className="left-contents">
                             <div className="row d-flex flex-column justify-content-center align-items-center">

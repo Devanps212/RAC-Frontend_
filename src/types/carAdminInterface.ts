@@ -36,7 +36,8 @@ export interface carInterface {
     addedById?:Types.ObjectId | string;
     comments?:commentsInterface[];
     thumbnailImg?:File[];
-    seats?:number
+    seats?:number,
+    offer: Offer
 }
 
 export interface showCarInterface {
@@ -61,9 +62,15 @@ export interface showCarInterface {
     addedBy?: string;
     comments?:commentsInterface[]
     thumbnailImg?:string;
-    seats?:number
+    seats?:number;
+    offer: Offer
+    
 }
 
+interface Offer {
+    discount: number;
+    price?: number | null;
+}
 export interface category {
     _id?:Types.ObjectId,
     name:string,

@@ -45,15 +45,26 @@ const BookingUI = () => {
                     const startDate = new Date(parsedBooking.startDate)
                     const endDate = new Date(parsedBooking.endDate)
                     const durationInDays = Math.ceil((endDate.getTime() - startDate.getTime()) / (1000 * 60 * 60 * 24));
-                    const amount = durationInDays * response.rentPricePerDay;
-                    console.log('Amount:', amount);
-                    const discountPercentage = 0.1;
-                    const discount = 10
-                    const discountAmount = amount * discountPercentage;
+                    let amount: number;
+                    let discount: number;
+                    let total : number;
+                    let updatedBooking;
+                    if(response.offer.price && response.offer.discount){
+                        amount = durationInDays * response.offer.price;
+                        discount = response.offer.discount
+                        total = amount
+                            
+                    } else {
+                        amount = durationInDays * response.rentPricePerDay;
+                        discount = 0;
+                        total = amount
 
-                    const total = amount - discountAmount;
-                    const updatedBooking = {...parsedBooking, amount, total, discount}
+                    }
+                    updatedBooking = {...parsedBooking, amount, total, discount}
+
                     setBookings(updatedBooking)
+
+                    
                 } else {
                     toast.error("no start date or end date not found")
                 }

@@ -24,7 +24,9 @@ const apiConfig = {
     findCars:`${configKeys.API_URL}cars/getCars`,
     deleteCar: `${configKeys.API_URL}cars/deleteCar`,
     editCar : `${configKeys.API_URL}cars/editCar`,
-
+    carBasedOnrole: `${configKeys.API_URL}cars/CarsFromRole`,
+    carUpdatePartial:`${configKeys.API_URL}cars/partialUpdate`
+,
     getAllUsers:`${configKeys.API_URL}admin/allUsers`,
     UBuser:`${configKeys.API_URL}admin/UBUser`,
     findOneUser:`${configKeys.API_URL}admin/userFind`,

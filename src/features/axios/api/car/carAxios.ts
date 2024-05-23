@@ -1,5 +1,5 @@
 import axios, {AxiosRequestConfig} from "axios";
-import { carInterface } from "../../../../types/carAdminInterface";
+import { carInterface, showCarInterface } from "../../../../types/carAdminInterface";
 import apiConfig from "../../../../utils/apiConfig";
 import { setAdminInterceptor, setPartnerInterceptor, setUserInterceptor } from "../../axios_Interceptor/Interceptor";
 
@@ -95,6 +95,7 @@ export const deleteCar = async(carId: string, role: string)=>{
 export const editCar = async(carData: any, role: string)=>{
     try
     {
+        console.log(carData.offer)
         setInterceptor(role)
         console.log("formData in edit car :",carData)
         const editCarConfig : AxiosRequestConfig = {
@@ -110,5 +111,38 @@ export const editCar = async(carData: any, role: string)=>{
     {
         console.log(error.response.data.message)
         throw new Error(error.response.data.message)
+    }
+}
+
+export const carBasedOnRole = async(role: string)=>{
+    try{
+        const data = role.toLowerCase()
+        setInterceptor(data)
+        const carConfig : AxiosRequestConfig = {
+            url: `${apiConfig.carBasedOnrole}?role=${role}`,
+            method:'get'
+        }
+        const response = await axios(carConfig)
+        return response.data.data
+    } catch(error: any) {
+        throw new Error(error.message)
+    }
+}
+
+export const carUpdateBasedOnRole = async(data: Partial<showCarInterface>, role: string)=>{
+    try{
+        const part = role.toLowerCase()
+        setInterceptor(part)
+        const carConfig : AxiosRequestConfig = {
+            url:apiConfig.carUpdatePartial,
+            method:'patch',
+            data:data
+        }
+
+        const response = await axios(carConfig)
+        console.log("data : ", response)
+        return response.data.data
+    } catch(error: any){
+        throw new Error(error.message)
     }
 }

@@ -31,6 +31,7 @@ export interface detailBooking {
     carId: showCarInterface;
     userId: string;
     owner: string;
+    ownerRole: string,
     status: string;
     date: DateRange;
     time: TimeRange;

@@ -17,7 +17,7 @@ const PartnerSidebar: React.FC = () => {
             </div>
             <ul className="sidebar-list">
                 <li className="sidebar-list-item">
-                    <a href="#">
+                    <a href="/partner/Dashboard">
                         <BsGrid1X2Fill className="icon" /> <span>Dashboard</span>
                     </a>
                 </li>
