@@ -44,7 +44,12 @@ const apiConfig = {
     bookingCompletion:`${configKeys.API_URL}booking/completion`,
     bookingBasedOnRole:`${configKeys.API_URL}booking/BasedOnRole`,
     bookingUpdater:`${configKeys.API_URL}booking/updater`,
-    bookingRescheduler: `${configKeys.API_URL}booking/rescheduler`
+    bookingRescheduler: `${configKeys.API_URL}booking/rescheduler`,
+
+    couponGenerator:`${configKeys.API_URL}coupon/Generate`,
+    findAllCoupon:`${configKeys.API_URL}coupon/findAll`,
+    updateCoupon:`${configKeys.API_URL}coupon/updateCoupon`,
+    applcoupon:`${configKeys.API_URL}coupon/applyCoupon`,
 }
 
 export default apiConfig

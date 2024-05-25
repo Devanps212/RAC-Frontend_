@@ -249,7 +249,7 @@ const BookedCars = () => {
         <>
             {paymentLoader && <PaymentFlow />}
             <div className="container-fluid" style={{ paddingTop: '8rem' }}>
-                <div className="main-contents">
+                <div className="mains-contents">
                     <div className="row">
                         <div className="col-4">
                             <div className="left-side-contents d-flex flex-column align-items-center">

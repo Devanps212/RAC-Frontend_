@@ -12,6 +12,7 @@ import UserAdminRouter from "./userAdminRoute.js";
 import BookingRoutes from "./bookingRoutes";
 const AdminDashBoard = lazy(()=>import('../pages/admin/dashBoard'))
 import AdminOfferManage from "../pages/user/offerMangement";
+import CouponRoute from "./couponRoute";
 
 const AdminRoutes = ()=>{
 
@@ -28,6 +29,7 @@ const AdminRoutes = ()=>{
                 <Route path="/booking/*" element={<BookingRoutes/>}/>
                 <Route path="/Dashboard" element={<AdminDashBoard/>}/>
                 <Route path="/OfferManagement" element={<AdminOfferManage/>}/>
+                <Route path="/coupon/*" element={<CouponRoute/>}/>
             </Routes>
         </Suspense>
     )

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { ChangeEvent, useEffect, useState } from "react";
 import './booking.css';
 import { FaCar, FaChair, FaGasPump } from "react-icons/fa";
 import { BiCategory } from "react-icons/bi";
@@ -12,6 +12,10 @@ import { loadStripe } from '@stripe/stripe-js'
 import { bookingPaymentUI } from "../../../../features/axios/api/booking/booking";
 import { decodeToken } from "../../../../utils/tokenUtil";
 import { toast } from "react-toastify";
+import { couponInterface } from "../../../../types/couponInterface";
+import { useSelector } from "react-redux";
+import { RootState } from "../../../../features/axios/redux/reducers/reducer";
+import { applyCoupon } from "../../../../features/axios/api/coupon/coupon";
 
 const BookingUI = () => {
 
@@ -19,10 +23,13 @@ const BookingUI = () => {
     const [car, setCar] = useState<showCarInterface>({} as showCarInterface)
     const [category, setCategory] = useState<categoryInterface>()
     const [bookings, setBookings] = useState<bookingInterface | null>(null)
+    const [coupon, setCoupon] = useState<Partial<couponInterface>| null>(null)
+    const [recievedCoupon, setRecievedCoupon] = useState<Partial<couponInterface | null>>(null)
     const searchParams = new URLSearchParams(location.search)
     const carId = searchParams.get('carId')
     const bookingDetail = searchParams.get('bookingDetail')
     let parsedBooking : bookingInterface | null = null;
+    const userPayload = useSelector((root: RootState)=>root.token.token)
     if (bookingDetail) {
         try {
         parsedBooking = JSON.parse(bookingDetail);
@@ -52,12 +59,12 @@ const BookingUI = () => {
                     if(response.offer.price && response.offer.discount){
                         amount = durationInDays * response.offer.price;
                         discount = response.offer.discount
-                        total = amount
+                        total = parseFloat(amount.toFixed(2))
                             
                     } else {
                         amount = durationInDays * response.rentPricePerDay;
                         discount = 0;
-                        total = amount
+                        total = parseFloat(amount.toFixed(2))
 
                     }
                     updatedBooking = {...parsedBooking, amount, total, discount}
@@ -92,15 +99,54 @@ const BookingUI = () => {
         // {
         //     toast.success(result)
         // }
-        
-
-       
     }
+
+    const handleApplyCoupon = async()=>{
+        try{
+        const userToken = userPayload
+        const userId = await decodeToken(userToken as string).payload
+        console.log(userId)
+        if(coupon && coupon.coupon){
+            const apply = await applyCoupon(coupon.coupon, userId)
+            if(apply.status === "failed" ){
+                toast.error(apply.data.message)
+            } else {
+                const coupon = apply.data
+                if (coupon.length > 0) {
+                    const couponObject = coupon[0];
+                    setRecievedCoupon(couponObject)
+                    const discountAmount = bookings?.amount ? (bookings.amount * (couponObject.discountData.percentage / 100)) : 0;
+                    const newTotal = bookings?.amount ? bookings.amount - discountAmount : 0;
+                    setBookings({
+                        ...bookings,
+                        discount: couponObject.discountData.percentage,
+                        total: newTotal
+                    });
+                  } else {
+                    toast.error("No data found in apply.data");
+                  }
+            }
+        }
+    }catch(error: any){
+        console.log(error.message)
+        toast.error(error.message)
+    }
+        
+    }
+
+    useEffect(()=>{
+        console.log(recievedCoupon)
+    }, [recievedCoupon])
+
+    const handleCouponChange = (e: ChangeEvent<HTMLInputElement>) => {
+        setCoupon({ ...coupon, coupon: e.target.value });
+      };
+    
     
 
     return (
         <div className="container-fluid main-container" style={{ padding: "0px" }}>
-            <div className="main-contents">
+            <div className="main-content-parts">
                 <div className="row d-flex flex-column justify-content-center align-items-center">
                     <div className="col-12 position-relative" style={{padding:'0'}}>
                         <img
@@ -179,14 +225,14 @@ const BookingUI = () => {
                                     </div>
                                 </div>
                                 <div className="col-3">
-                                    <div className="rigth-contents">
+                                    <div className="right-contents">
                                         <div className="d-flex justify-content-center align-items-center">
                                             <div className="rightside-contents">
                                                 <div>
                                                     <h4>Payment Details</h4>
                                                 </div>
                                                 <div className="row">
-                                                <div className="contents d-flex flex-column align-items-center justify-content-center">
+                                                    <div className="contents d-flex flex-column align-items-center justify-content-center">
                                                         <strong>Price Summary</strong>
                                                         <div className="col-12 d-flex justify-content-between align-items-center mt-4">
                                                             <strong>Rent price:</strong> <span>₹ {bookings?.amount}</span>
@@ -196,24 +242,38 @@ const BookingUI = () => {
                                                         </div>
                                                         <hr className="col-12 mt-1" />
                                                         <div className="col-12 d-flex justify-content-between align-items-center mt-4">
-                                                            <strong>Total :</strong> <span>{bookings?.total}</span>
+                                                            <strong>Total :</strong> <span>₹ {bookings?.total}</span>
+                                                        </div>
+                                                        <div className="col-12 mt-4">
+                                                            <input
+                                                                type="text"
+                                                                placeholder="Enter coupon code"
+                                                                value={coupon?.coupon}
+                                                                onChange={handleCouponChange}
+                                                                className="form-control"
+                                                            />
+                                                            <Button
+                                                                onClick={handleApplyCoupon}
+                                                                style={{ width: '100%', marginTop: '10px' }}
+                                                            >
+                                                                Apply Coupon
+                                                            </Button>
                                                         </div>
                                                     </div>
                                                 </div>
                                             </div>
                                         </div>
-                                       
                                     </div>
                                 </div>
                                 <div className="col-3">
-                                    <div className="rigth-contents">
+                                    <div className="right-contents">
                                         <div className="d-flex justify-content-center align-items-center">
                                             <div className="rightside-contents">
                                                 <div>
                                                     <h4>Online Payment</h4>
                                                 </div>
                                                 <div className="row">
-                                                <div className="contents d-flex flex-column align-items-center justify-content-center">  
+                                                <div className="contents-parts d-flex flex-column align-items-center justify-content-center">  
                                                         <div className="col-12">
                                                             <img src="https://res.cloudinary.com/dlkrxem40/image/upload/v1715002718/others/t4tzk737jgilgpbb53mt.png" style={{width:'100%'}}/>
                                                         </div>

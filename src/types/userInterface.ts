@@ -1,4 +1,5 @@
 import { Types } from "mongoose"
+import { couponInterface } from "./couponInterface"
 
 export interface userAdminInterface {
     _id: Types.ObjectId
@@ -23,4 +24,5 @@ export interface userInterface {
     isActive?:boolean,
     isGoogleUser?:boolean,
     address?:string
+    coupons?:string[] | couponInterface[]
 }
