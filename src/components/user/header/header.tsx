@@ -7,6 +7,7 @@ import { clearToken } from "../../../features/axios/redux/slices/user/tokenSlice
 import { toast } from 'react-toastify'
 import { auth } from "../../../../firebase/firebase";
 import "./headers.css";
+import { BiSolidUserCircle } from "react-icons/bi";
 
 const UserHeader = () => {
 
@@ -43,22 +44,22 @@ const UserHeader = () => {
           <Offcanvas.Body className="navbar-offcanvas-body">
             <Nav className="justify-content-md-between align-items-center me-auto ms-5">
               <Nav.Link className="button-Header-user me-3" as={Link} to="/users/home">Home</Nav.Link>
-              <Nav.Link className="me-3" href="/users/profile">Profile</Nav.Link>
+              <Nav.Link className="button-Header-user me-3" as={Link} to={'#'}>about Us</Nav.Link>
               <Nav.Link className="me-3" href="/users/BookedCars">Your Deals</Nav.Link>
-              <NavDropdown className="me-2" title="Dropdown" id="offcanvasNavbarDropdown-expand-lg">
+              <Nav.Link className="custom-nav-link me-3" as={Link} to="/partner/PartnerUI">Become Partner</Nav.Link>
+              {/* <NavDropdown className="me-2" title="Dropdown" id="offcanvasNavbarDropdown-expand-lg">
                 <NavDropdown.Item href="#action3">Action</NavDropdown.Item>
                 <NavDropdown.Item href="#action4">Another action</NavDropdown.Item>
                 <NavDropdown.Divider />
                 <NavDropdown.Item href="#action5">Something else here</NavDropdown.Item>
-              </NavDropdown>
+              </NavDropdown> */}
             </Nav>
             <img
               src="/assets/Logos/CompanyLogo/[removal.ai]_4ca5cd5b-8c5e-4a2a-b090-63d31c75e6a6-qcoku1709465106.png"
               alt="Company Logo"
-              style={{ height: "71px", width: "73px" }} // Adjust height as needed
+              style={{ height: "71px", width: "73px", marginRight:'7rem' }}
             />
             <Nav className="d-flex align-items-center ms-auto me-5">
-            <Nav.Link className="custom-nav-link me-3" as={Link} to="/partner/PartnerUI">Become Partner</Nav.Link>
             <div className="nav-link-container me-3">
             <Nav.Link className="custom-nav-link">Get In Touch</Nav.Link>
             </div>
@@ -72,6 +73,7 @@ const UserHeader = () => {
               }
               
             </div>
+            <Nav.Link as={Link} to={'/users/profile'} className="custom-nav-link"><BiSolidUserCircle style={{fontSize:'42px'}}/></Nav.Link>
             </Nav>
 
           </Offcanvas.Body>

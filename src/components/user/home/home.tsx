@@ -9,9 +9,10 @@ import { useNavigate } from 'react-router-dom';
 import { bookingInterface } from '../../../types/bookingInterface';
 import { locationFinding } from '../../../features/axios/api/user/userAuthentication';
 import { LocationSuggestion } from '../../../types/bookingInterface';
-import { filterCarsBooking } from '../../../features/axios/api/booking/booking';
 import { bookingValidator } from "../../../Validators/userValidator.ts/bookingValidator";
-
+import CollaboratedPartners from '../../commonComponent/partners/partners';
+import CustomerFav from '../../commonComponent/customerFavorite/customerFavorite';
+import Footer from '../../drivePartner/footer/footer';
 
 
 function Home() {
@@ -189,10 +190,15 @@ function Home() {
       pickUpDate={pickUpDate}
       dropOffDate={dropOffDate}
       handleFormSubmission={handleSubMission}/>
-      <h1 className='text-center mt-5 mb-3'>Cars</h1>
-      <Cards 
+      {/* <h1 className='text-center mt-5 mb-3'>Cars</h1> */}
+      <CollaboratedPartners/>
+      <div className='customerFavour'>
+        <CustomerFav/>
+      </div>
+      <Footer/>
+      {/* <Cards 
       cars={cars}
-      setSelectedCar={setSelectedCar}/>
+      setSelectedCar={setSelectedCar}/> */}
     </div>
   );
 }

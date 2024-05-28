@@ -33,7 +33,7 @@ export const findBookings = async(bookingData : string)=>{
         return response.data
     }
     catch(error:any){
-        console.log(error)
+        console.log("error : ", error)
         throw new Error(error)
     }
 }

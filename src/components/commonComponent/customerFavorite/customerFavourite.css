@@ -1,0 +1,26 @@
+
+.customer {
+    border: solid 1px darkgrey;
+    padding: 35px;
+    margin-bottom: 20px;
+    text-align: center;
+    margin-left: 1rem;
+    background: rgb(221,251,255);
+    background: linear-gradient(232deg, rgba(221,251,255,0.6531862745098039) 0%, rgba(231,255,205,0.44870448179271705) 100%);
+}
+
+.customer svg {
+    border-radius: 50%;
+    border: 2px solid darkgrey;
+    padding: 10px;
+    background-color: white;
+}
+
+.heading {
+    display: block;
+    margin-top: 10px;
+}
+
+.paragraph {
+    margin-top: 10px;
+}

@@ -63,7 +63,8 @@ export interface showCarInterface {
     comments?:commentsInterface[]
     thumbnailImg?:string;
     seats?:number;
-    offer: Offer
+    offer?: Offer
+    addedById?:string
     
 }
 

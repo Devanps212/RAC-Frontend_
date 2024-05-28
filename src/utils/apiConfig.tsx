@@ -35,6 +35,7 @@ const apiConfig = {
     PartneraddCar:`${configKeys.API_URL}partner/addCar`,
     PartnerSignUp:`${configKeys.API_URL}partner/SignUp`,
     partnerAll:`${configKeys.API_URL}partner/All`,
+    partnerOne : `${configKeys.API_URL}partner/findOne`,
 
     locationFinding: `${configKeys.API_URL}user-auth/location`,
 
@@ -50,6 +51,10 @@ const apiConfig = {
     findAllCoupon:`${configKeys.API_URL}coupon/findAll`,
     updateCoupon:`${configKeys.API_URL}coupon/updateCoupon`,
     applcoupon:`${configKeys.API_URL}coupon/applyCoupon`,
+
+    getConversations:`${configKeys.API_URL}messenger-conversation`,
+    getMessages: `${configKeys.API_URL}messenger-message`,
+    
 }
 
 export default apiConfig

@@ -57,6 +57,8 @@
     "react-toastify": "^10.0.4",
     "redux": "^5.0.1",
     "slick-carousel": "^1.8.1",
+    "socket.io-client": "^4.7.5",
+    "timeago.js": "^4.0.2",
     "yup": "^1.4.0"
   },
   "devDependencies": {

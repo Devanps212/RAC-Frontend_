@@ -3,6 +3,8 @@
     width: 100vw;
 }
 
+
+
 .left-contents{
     border: solid 1px grey;
     width: max-content;
@@ -151,6 +153,4 @@
       opacity: 1;
     }
   }
-  
-
 

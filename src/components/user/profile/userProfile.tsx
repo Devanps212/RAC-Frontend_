@@ -7,13 +7,22 @@ import { decodeToken } from "../../../utils/tokenUtil";
 import { findUser, saveUserDetails } from "../../../features/axios/api/user/user";
 import { userDetailPayload } from "../../../types/payloadInterface";
 import { toast } from "react-toastify";
+import { useSelector } from "react-redux";
+import { RootState } from "../../../features/axios/redux/reducers/reducer";
+import { detailBooking } from "../../../types/bookingInterface";
+import { bookingFindingBasedOnRole } from "../../../features/axios/api/booking/booking";
+import { carBasedOnRole, findAllCars } from "../../../features/axios/api/car/carAxios";
+import { showCarInterface } from "../../../types/carAdminInterface";
 
 
 const UserProfile = () => {
     
     const [showEditUser, setShowEditUser] = useState(false);
     const [userData, setUserData] = useState<userDetailPayload | null>(null)
+    const [bookings, setBookings] = useState<detailBooking[]>()
     const [showLoad, setShowLoad] = useState(false)
+    const [uniqueCars, setUniqueCars] = useState<showCarInterface>()
+    const tokenPayload = useSelector((root: RootState)=> root.token.token) ?? ''
 
     const toggleEditUser = () => {
         setShowEditUser((prevShowEditUser) => !prevShowEditUser);
@@ -25,10 +34,77 @@ const UserProfile = () => {
         setIsOn(!isOn);
     };
 
+
+    const findBookings = async()=>{
+        try{
+            const userId = await decodeToken(tokenPayload).payload
+
+            const data : Partial<detailBooking> = {
+                userId:userId
+            }
+            
+            const bookings = await bookingFindingBasedOnRole(data)
+            const bookingDetail = bookings.data.data
+    
+            setBookings(bookingDetail)
+
+            // console.log("settingCar")
+            // console.log("carId  :", bookingDetail.carId._id)
+            // console.log("car finding")
+            // const cars = await carBasedOnRole(bookingDetail.carId._id)
+            // console.log(cars)
+            
+        }catch(error: any){
+            toast.error(error)
+        }
+
+    }
+    const findCars = async()=>{
+        try{if (bookings && bookings.length > 0) {
+
+    const carCountMap = bookings.reduce((countMap, booking) => {
+        const carId = booking.carId._id as string;
+        countMap.set(carId, (countMap.get(carId) || 0) + 1);
+        return countMap;
+    }, new Map<string, number>());
+
+
+    let mostCommonCarId = '';
+    let maxCount = 0;
+
+    carCountMap.forEach((count, carId) => {
+        if (count > maxCount) {
+            maxCount = count;
+            mostCommonCarId = carId;
+        }
+    });
+
+    console.log(`Most common car ID: ${mostCommonCarId}, Count: ${maxCount}`);
+
+    const mostCommonCars = bookings.filter(booking => booking.carId._id === mostCommonCarId);
+
+    const uniqueMostCommonCars = Array.from(new Set(mostCommonCars.map(booking => booking.carId)));
+   
+    setUniqueCars(uniqueMostCommonCars[0])
+
+} else {
+    console.log('No bookings available or bookings is empty.');
+}
+
+            
+            
+
+        } catch(error: any){
+            toast.error(error.message)
+        }
+    }
+    useEffect(()=>{
+        findCars()
+    }, [bookings])
+
     const userFinding = async()=>{
-        const tokenPayload = localStorage.getItem('token')
+        
         const token = await decodeToken(tokenPayload ?? '').payload
-        console.log(token)
 
         const userFindings = await findUser(token)
         console.log(userFindings.data)
@@ -89,6 +165,7 @@ const UserProfile = () => {
 
     useEffect(()=>{
         userFinding()
+        findBookings()
     }, [])
 
     return (
@@ -131,7 +208,7 @@ const UserProfile = () => {
                             <div className="d-flex justify-content-center align-items-center stats">
                                 <div className="px-3">
                                     <h5 className="text-heading">Cars Booked</h5>
-                                    <p className="text-center text-sub mt-3">4</p>
+                                    <p className="text-center text-sub mt-3">{bookings && bookings.length}</p>
                                 </div>
                                 <div className="px-3">
                                     <h5 className="text-heading">Negotiation Savings</h5>
@@ -183,15 +260,17 @@ const UserProfile = () => {
                     </div>
                     <div className="col-md-5 px-4">
                         <div className="right-side-contents">
-                            <h4>Favourite Car</h4>
+                            <h4 className="text-dark">Most Booked Car</h4>
+                            <h3 className="text-success">{uniqueCars?.name}</h3>
                             <div className="d-flex justify-content-center align-items-center mt-3">
                                 <img
-                                    src="/assets/Logos/User_placeholder/pngwing.com (1).png"
+                                    src={uniqueCars?.thumbnailImg}
                                     className="favorite-car-img"
                                     alt="Favorite Car"
                                 />
                             </div>
                         </div>
+
                     </div>
                 </div>
             </div>

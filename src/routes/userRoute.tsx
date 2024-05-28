@@ -13,7 +13,9 @@ const Cars = lazy(()=>import('../pages/user/carPage'))
 const SuccessfullTransaction = lazy(()=>import('../pages/user/successFullTransacrtion'))
 const BookedCars = lazy(()=>import('../pages/user/bookedCars'))
 const Profile = lazy(()=>import('../pages/user/profile'))
+const Negotiate = lazy(()=>import('../pages/user/negotiate'))
 import { UserRouteProtection, UserSignInSignupProtection, BlockedRoutes } from './protectedRoutes/routeProtection';
+
 
 const UserRouter = () => {
   return (
@@ -31,6 +33,7 @@ const UserRouter = () => {
         <Route path='/TransactionSuccess' element={<SuccessfullTransaction/>}/>
         <Route path='/BookedCars/' element={<BookedCars/>}/>
         <Route path='/profile' element={<Profile/>}/>
+        <Route path='/negotiate/:userId/:partnerId/:carId' element={<Negotiate/>}/>
       </Routes>
     </Suspense>
     </>

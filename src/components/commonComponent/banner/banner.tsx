@@ -50,6 +50,10 @@ const Banner: React.FC<BannerProps> = ({search, PickupPlaces, click, value, Drop
   return (
     <Carousel className="Banner with-shadow position-relative" interval={3000} controls={false} indicators={false}>
       <Carousel.Item className="inset-shadow">
+      <div className="text-overlay">
+            <h1>Don't Dream Just Drive</h1>
+            <p>Find the perfect vehicle for your journey with our convenient booking system.</p>
+          </div>
         <img className="bannerImg with-shadow" src="/assets/admin/banner/242725.jpg" alt="banner"/>
         <div className="selection-T position-absolute translate-middle-y">
           <div>

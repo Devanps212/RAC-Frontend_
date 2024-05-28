@@ -140,10 +140,6 @@ const Login = () => {
 
         <button type='submit' className="login-btn">Sign In</button>
 
-        <p className="new-account">
-          Not a member? <a href="#">Sign Up now!</a>
-        </p>
-
         <br />
 
         <p className="f-pass">

@@ -60,7 +60,6 @@ export const findAllCars = async(carData:string, role:string)=>{
         }
 
         const response = await axios(findConfig)
-        console.log("response  :", response.data.response)
         return response.data.response
     }
     catch(error:any)

@@ -2,7 +2,7 @@ import React, { ReactNode } from "react";
 import { Navigate } from "react-router-dom";
 import { decodeToken } from "../../utils/tokenUtil";
 import { tokenInterface } from "../../types/payloadInterface";
-
+import { clearToken } from "../../features/axios/redux/slices/user/tokenSlice";
 
 interface RouteProtectionProps {
   children: ReactNode;
@@ -63,6 +63,7 @@ export const UserSignInSignupProtection : React.FC<RouteProtectionProps> = ({chi
       if(Date.now() >= exp * 1000)
         {
           console.log("token exopired message from middleware")
+          clearToken()
           return <Navigate to={"/users/signIn"}/>
         }
       const Buser = localStorage.getItem('BlockedUsers')

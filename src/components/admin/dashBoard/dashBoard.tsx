@@ -47,6 +47,7 @@ const Dashboard: React.FC = () => {
         const fetchBookings = async () => {
             try {
                 const response = await findBookings('all');
+                console.log("response : ", response)
                 
                 const bookings: detailBooking[] | detailBooking | null = response.data;
 
@@ -165,6 +166,7 @@ const Dashboard: React.FC = () => {
                     ]
                 });
             } catch (error: any) {
+                console.log(error)
                 toast.error(error.message);
             }
         }

@@ -350,7 +350,7 @@ const BookedCars = () => {
                                                                 <Button variant="danger" onClick={() => handleBookingCancel(bookings._id, bookings.carId.name, bookings.transaction.amount || 0)} className="ms-5 mt-4">
                                                                     Cancel booking
                                                                 </Button>
-                                                                <Button variant="dark" onClick={()=>rescheduleBooking(bookings)}>
+                                                                <Button variant="dark" onClick={()=>rescheduleBooking(bookings)} className="ms-5 mt-2">
                                                                     ReSechdule Date
                                                                 </Button>
                                                                 </>

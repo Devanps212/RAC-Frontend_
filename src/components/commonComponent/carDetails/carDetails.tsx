@@ -9,14 +9,23 @@ import { carInterface, showCarInterface } from "../../../types/carAdminInterface
 import { categoryInterface } from "../../../types/categoryInterface";
 import ImageSelector from "../ImageSelector/imageSelector";
 import { bookingInterface } from "../../../types/bookingInterface";
+import { useSelector } from "react-redux";
+import { RootState } from "../../../features/axios/redux/reducers/reducer";
+import { findOneUser } from "../../../features/axios/api/admin/adminUser";
+import { decodeToken } from "../../../utils/tokenUtil";
+import { userInterface } from "../../../types/userInterface";
+
 
 
 const CarDetails = () => {
 
     const [car, setCar] = useState<showCarInterface>()
+    const [user, setUser] = useState<userInterface>()
     const [category , setCategory] = useState<categoryInterface>()
     const [bigImg, setBigImg] = useState('')
     const [smallImg, setSmallImg] = useState<any[]>([])
+    const userToken = useSelector((root: RootState)=>root.token.token) ?? ''
+    console.log("userToken  :", userToken)
     const navigate = useNavigate()
 
 
@@ -33,6 +42,10 @@ const CarDetails = () => {
         const fetchCarData = async()=>{
             try
             {
+                const userId = await decodeToken(userToken).payload
+                const findUser = await findOneUser(userId)
+                console.log("user found for stroing in backend :", findUser.user)
+                setUser(findUser.user)
                 const response = await findAllCars(carId, 'user')
                 setCar(response)
                 setCategory(response.category)
@@ -111,10 +124,21 @@ const CarDetails = () => {
                             </ul>
                         </div>
                         <div className="d-flex justify-content-center align-items-center">
-                        <button className="position-relative negotiate me-3" style={{ zIndex: 1 }}>
-                            <FaLock className="position-absolute top-50 start-50 translate-middle" style={{ transform: "translate(-50%, -50%)" }} />
-                            <span className="position-relative" style={{filter: "blur(1.5px)", zIndex: 2 }}>Negotiate</span>
-                        </button>
+                            {
+                                user && user.coupons && user.coupons.length === 0 ? (
+                                    <button className="position-relative negotiate me-3" style={{ zIndex: 1 }}>
+                                        <FaLock className="position-absolute top-50 start-50 translate-middle" style={{ transform: "translate(-50%, -50%)" }} />
+                                        <span className="position-relative" style={{filter: "blur(1.5px)", zIndex: 2 }}>Negotiate</span>
+                                    </button>
+                                ) : (
+                                    <Link to={`/users/negotiate/${user?._id}/${car.addedById}/${car._id}`} style={{ textDecoration: 'none' }}>
+                                        <button className="negotiate me-3" style={{ zIndex: 1 }}>
+                                            <span className="position-relative">Negotiate</span>
+                                        </button>
+                                    </Link>
+                                )
+
+                                }
                         <Link to={`/users/bookingUI?carId=${car._id}&bookingDetail=${bookingDetail}`}>
                         <button className="book-now">Book now</button>
                         </Link>

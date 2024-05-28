@@ -58,3 +58,18 @@ export const findAllPartner = async()=>{
         throw new Error(error.message)
     }
 }
+
+export const findOnePartner = async(data: string)=>{
+    try{
+        const partnerConfig : AxiosRequestConfig = {
+            url:`${apiConfig.partnerOne}?id=${data}`,
+            method:'get'
+        }
+
+        const response = await axios(partnerConfig)
+        return response.data
+    } catch(error: any){
+        console.log(error.response.data)
+        throw new Error(error.response.data.message)
+    }
+}
