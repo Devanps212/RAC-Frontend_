@@ -7,6 +7,7 @@ export interface partnerLoginInterface {
 
 export interface partnerDetailInterface extends partnerLoginInterface {
     _id:Types.ObjectId;
+    name?:string
     mobile?: number | null;
     password?: string;
     profilePic?: string;

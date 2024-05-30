@@ -12,8 +12,8 @@
     height: 30rem;
     border: 1px solid grey;
     border-radius: 5px;
-    background: rgb(0,207,255);
-    background: linear-gradient(232deg, rgba(0, 207, 255, 1) 0%, rgba(0, 121, 247, 1) 100%);
+    background: rgb(55,246,212);
+    background: linear-gradient(232deg, rgba(55,246,212,0.9753151260504201) 0%, rgba(62,160,244,1) 100%);
     padding: 1rem;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
     animation: fadeIn 1s ease-in-out;

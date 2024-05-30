@@ -14,6 +14,7 @@ import { RootState } from "../../../features/axios/redux/reducers/reducer";
 import { findOneUser } from "../../../features/axios/api/admin/adminUser";
 import { decodeToken } from "../../../utils/tokenUtil";
 import { userInterface } from "../../../types/userInterface";
+import { findUser } from "../../../features/axios/api/user/user";
 
 
 
@@ -43,9 +44,9 @@ const CarDetails = () => {
             try
             {
                 const userId = await decodeToken(userToken).payload
-                const findUser = await findOneUser(userId)
-                console.log("user found for stroing in backend :", findUser.user)
-                setUser(findUser.user)
+                const findUsers = await findUser(userId)
+                console.log("user found for stroing in backend :", findUsers.data)
+                setUser(findUsers.data)
                 const response = await findAllCars(carId, 'user')
                 setCar(response)
                 setCategory(response.category)
@@ -131,11 +132,11 @@ const CarDetails = () => {
                                         <span className="position-relative" style={{filter: "blur(1.5px)", zIndex: 2 }}>Negotiate</span>
                                     </button>
                                 ) : (
-                                    <Link to={`/users/negotiate/${user?._id}/${car.addedById}/${car._id}`} style={{ textDecoration: 'none' }}>
+                                    <a href={`/users/negotiate/${user?._id}/${car.addedById}/${car._id}`} style={{ textDecoration: 'none' }}>
                                         <button className="negotiate me-3" style={{ zIndex: 1 }}>
                                             <span className="position-relative">Negotiate</span>
                                         </button>
-                                    </Link>
+                                    </a>
                                 )
 
                                 }

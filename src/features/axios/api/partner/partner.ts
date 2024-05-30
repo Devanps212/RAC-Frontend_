@@ -67,6 +67,7 @@ export const findOnePartner = async(data: string)=>{
         }
 
         const response = await axios(partnerConfig)
+        console.log(response)
         return response.data
     } catch(error: any){
         console.log(error.response.data)

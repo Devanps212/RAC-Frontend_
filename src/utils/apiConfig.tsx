@@ -52,8 +52,8 @@ const apiConfig = {
     updateCoupon:`${configKeys.API_URL}coupon/updateCoupon`,
     applcoupon:`${configKeys.API_URL}coupon/applyCoupon`,
 
-    getConversations:`${configKeys.API_URL}messenger-conversation`,
-    getMessages: `${configKeys.API_URL}messenger-message`,
+    getConversations:`${configKeys.API_URL}messenger-conversation/send`,
+    getMessages: `${configKeys.API_URL}messenger-conversation`,
     
 }
 

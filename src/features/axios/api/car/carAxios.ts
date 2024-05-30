@@ -50,9 +50,7 @@ export const createCar = async(carData:any, role:string)=>{
 export const findAllCars = async(carData:string, role:string)=>{
     try
     {
-        console.log(role)
         setInterceptor(role)
-        console.log("carData : ", carData)
         
         const findConfig: AxiosRequestConfig = {
             url:`${apiConfig.findCars}?carData=${carData}`,

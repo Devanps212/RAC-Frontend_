@@ -30,3 +30,9 @@
   font-size: 12px;
   color: white;
 }
+
+.round-image {
+  border-radius: 50%;
+  width: 45px;
+  height: 45px;
+}

@@ -11,6 +11,7 @@ export const findUser = async(data:string)=>{
         }
 
         const response = await axios(userConfig)
+
         return response.data
     }
     catch(error: any){
