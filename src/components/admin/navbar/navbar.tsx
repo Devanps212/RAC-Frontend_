@@ -5,6 +5,7 @@ import { adminLogout } from '../../../features/axios/redux/slices/admin/adminLog
 import {clearAdminToken } from '../../../features/axios/redux/slices/admin/tokenSlice';
 import { useDispatch } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
+import { FaUser } from 'react-icons/fa';
 
 
 const Header = () => {
@@ -29,18 +30,18 @@ const Header = () => {
 
         <Navbar.Collapse className='justify-content-end' id='navbar-contents'>
           <Nav className="ml-auto">
-            <Nav.Link href='/admin/Dashboard'>Dashboard</Nav.Link>
-            <Nav.Link href='#'>Profile</Nav.Link>
-            <Nav.Link href='#'>Sales Report</Nav.Link>
+            {/* <Nav.Link href='/admin/Dashboard'>Dashboard</Nav.Link> */}
+            <Nav.Link href='#' className='me-3'><FaUser className='me-1'/>  Profile</Nav.Link>
+            {/* <Nav.Link href='#'>Sales Report</Nav.Link> */}
 
-            <NavDropdown title="Management" id="basic-nav-dropdown" className='management'>
-            {/* Nested NavDropdown for Car Management */}
+            {/* <NavDropdown title="Management" id="basic-nav-dropdown" className='management'>
+            
             <NavDropdown title="Car Management" id="car-management-submenu" drop='start' className='nested-dropdown'>
               <NavDropdown.Item href='/admin/car/addCar'>Add Car</NavDropdown.Item>
               <NavDropdown.Item href='/admin/car/carManagement'>Manage Car</NavDropdown.Item>
             </NavDropdown>
 
-            {/* Other NavDropdown items */}
+            
             <NavDropdown title="User Management" id="user-management-submenu" drop='start' className='nested-dropdown'>
               <NavDropdown.Item href='#'>Add User</NavDropdown.Item>
               <NavDropdown.Item href='/admin/user/userManagement'>Manage User</NavDropdown.Item>
@@ -60,7 +61,7 @@ const Header = () => {
               <NavDropdown.Item href='/admin/addCategory'>Add Category</NavDropdown.Item>
               <NavDropdown.Item href='/admin/manageCategory'>Manage Category</NavDropdown.Item>
             </NavDropdown>
-          </NavDropdown>
+          </NavDropdown> */}
 
 
           <Button id='logout' variant="outline-dark" onClick={handleLogout}>Logout</Button>

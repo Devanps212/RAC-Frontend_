@@ -118,11 +118,11 @@
   width: 100% !important;
 }
 
-.carousel-item {
+.inset-shadow {
   position: relative;
 }
 
-.carousel-item::before {
+.inset-shadow::before {
   content: "";
   position: absolute;
   top: 0;

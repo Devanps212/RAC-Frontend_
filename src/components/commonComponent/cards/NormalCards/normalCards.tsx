@@ -46,7 +46,7 @@ const CarCards: React.FC<{ cars: showCarInterface[], bookings: bookingInterface 
                                     )
                                 }
                                 
-                                <a href={`/users/carDetail?carId=${car._id}&bookingDetail=${parsedBooking}`}>
+                                <a href={`/carDetail?carId=${car._id}&bookingDetail=${parsedBooking}`}>
                                     <Button variant="primary" className="viewMore">
                                         View More
                                     </Button>

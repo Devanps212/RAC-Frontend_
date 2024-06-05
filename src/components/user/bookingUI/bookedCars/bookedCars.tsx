@@ -118,16 +118,19 @@ const BookedCars = () => {
     };
 
     const submitIssue = async (bookingId: string) => {
+        console.log("submitting")
         setSingleBooking(PrevState => ({
             ...PrevState,
             _id: bookingId
         }));
         if (singleBooking && singleBooking.issues && singleBooking._id) {
             const response = await bookingUpdater(singleBooking);
-            if (response && 'message' in response) {
-                toast.error(response.message);
-            } else {
+            console.log("booking response  :", response)
+            if (response && response.status === 'success') {
                 toast.success("Booking issue successfully submitted! We will get back to you");
+                setShowModal(false)
+            } else {
+                toast.error(response.message);
             }
             setSingleBooking(null);
         }
@@ -200,7 +203,6 @@ const BookedCars = () => {
     };
 
 
-    //Cancel Booking
 
     const handleBookingCancel = async (id: string, carName: string, totalAmount: number) => {
         const data: Partial<detailBooking> = { _id: id, status: 'Cancelled' };
@@ -213,13 +215,16 @@ const BookedCars = () => {
                     onClick: async () => {
                         try {
                             setPaymentLoader(true)
-                            const response = await bookingUpdater(data);
+                            const response = await bookingUpdater(data, 'refund');
                             setTimeout(()=>{
                                 toast.success(response.message);
                                 setPaymentLoader(false)
                                 setRefundShowModal(true)
                                 console.log("detail recieved : ", response.data)
                                 setRefundDetails(response.data)
+                                setTimeout(()=>{
+                                    window.location.reload()
+                                }, 1000)
                                 console.log("bookingInfo : ",bookingInfo)
                             }, 3000)
                             
@@ -228,7 +233,7 @@ const BookedCars = () => {
                         } catch (error: any) {
                             setPaymentLoader(false)
                             console.log('Error deleting car:', error);
-                            toast.error(error.message);
+                            toast.error(error);
                         }
                     },
                 },
@@ -328,7 +333,7 @@ const BookedCars = () => {
                                                         <div className="col-5 mr-3">
                                                             <div style={{ width: 'max-content' }}>
                                                                 <p className="mb-1">To:</p>
-                                                                <p className="mb-1">{bookings.location.end}</p>
+                                                                <p className="mb-1">{bookings.location.end.substring(0, 16)}...</p>
                                                                 <small>
                                                                     {new Date(bookings.date.end).toLocaleString()}, {bookings.time.end}
                                                                 </small>
@@ -347,11 +352,11 @@ const BookedCars = () => {
                                                                 <Button className="ms-5" onClick={() => setShowModal(true)}>
                                                                     Report an issue
                                                                 </Button>
-                                                                <Button variant="danger" onClick={() => handleBookingCancel(bookings._id, bookings.carId.name, bookings.transaction.amount || 0)} className="ms-5 mt-4">
+                                                                <Button variant="danger" onClick={() => handleBookingCancel(bookings._id, bookings.carId.name, bookings.transaction.amount || 0)} className="ms-5 mt-2">
                                                                     Cancel booking
                                                                 </Button>
-                                                                <Button variant="dark" onClick={()=>rescheduleBooking(bookings)} className="ms-5 mt-2">
-                                                                    ReSechdule Date
+                                                                <Button variant="dark" onClick={()=>rescheduleBooking(bookings)} style={{width:'60%'}} className="ms-5 mt-2">
+                                                                    ReSechdule
                                                                 </Button>
                                                                 </>
                                                             )
@@ -359,7 +364,7 @@ const BookedCars = () => {
                                                                 
                                                                
                         
-                                                        <div className="status-container ms-5 mt-4">
+                                                        <div className="status-container ms-5 mt-3">
                                                             <p className={`status ${bookings.status.replace(/\s+/g, '-').toLowerCase()}`}>
                                                                 {bookings.status}
                                                             </p>
@@ -655,7 +660,7 @@ const BookedCars = () => {
                                     <p><strong>Card:</strong> {refundDetails.card.brand} ending in {refundDetails.card.last4}</p>
                                     <p><strong>Expiry:</strong> {refundDetails.card.exp_month}/{refundDetails.card.exp_year}</p>
                                     <p><strong>Status:</strong> {refundDetails.status}</p>
-                                    <p><strong>Transaction ID:</strong> {refundDetails.transaction.transactionId}</p>
+                                    <p><strong>Transaction ID:</strong> {refundDetails.transactionId}</p>
                                     <p><strong>Created:</strong> {new Date(refundDetails.created).toLocaleString()}</p>
                                 </div>
                             </>

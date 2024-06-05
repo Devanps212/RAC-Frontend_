@@ -9,6 +9,7 @@ import LineChart from "../../commonComponent/chart/lineChart/lineChart";
 import { AxiosResponse } from "axios";
 
 const PartnerDashboard: React.FC = () => {
+    console.log("partner token = ", localStorage.getItem("partnerToken"))
     const [totalBookings, setTotalBookings] = useState<number>(0);
     const [totalPartners, setTotalPartners] = useState<number>(0);
     const [totalEarnings, setTotalEarnings] = useState<number>(0);
@@ -27,14 +28,12 @@ const PartnerDashboard: React.FC = () => {
             const data: Partial<detailBooking> = { ownerRole: 'Partner' };
             const response: AxiosResponse = await bookingFindingBasedOnRole(data);
             const bookings: detailBooking[] = response.data.data;
-            console.log("bookings :", bookings);
 
             if (bookings.length > 0) {
                 setNoBookings(false);
 
                 // Filter bookings based on owner role 'Partner'
                 const partnerBookings = bookings.filter((booking: any) => booking.ownerRole === 'Partner');
-                console.log("partner bookings : ", partnerBookings);
 
                 // Calculate total bookings and total earnings
                 const totalBookings = partnerBookings.length;

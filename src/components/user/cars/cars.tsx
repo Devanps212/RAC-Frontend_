@@ -412,6 +412,7 @@ const Cars: React.FC = () => {
 
                                 <div className="col-12 mt-4">
                                     <h5>Cars</h5>
+                                    <div className="right-bottom-contents">
                                     {selectedCars.length > 0 ? (
                                             <CarCards cars={selectedCars} bookings={bookingDetails}/>
                                         ) : (
@@ -421,6 +422,7 @@ const Cars: React.FC = () => {
                                             </div>
                                             
                                         )}
+                                    </div>
                                 </div>
                             </div>
                         </div>

@@ -84,7 +84,17 @@ const Chat = () => {
     }, 100);
   }, [messages]);
 
-  
+  useEffect(() => {
+    const handleMessage = (newMessage: conversationInterface) => {
+      setMessages((prevMessages) => [...prevMessages, newMessage]);
+    };
+
+    socket?.on("newMessage", handleMessage);
+
+    return () => {
+      socket?.off("newMessage", handleMessage);
+    };
+  }, [socket]);
 
   const sendNewMessage = async (messageText: string) => {
     try {

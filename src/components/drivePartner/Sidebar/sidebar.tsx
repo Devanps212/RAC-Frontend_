@@ -6,6 +6,7 @@ import {
 } from 'react-icons/bs';
 import { NavDropdown } from 'react-bootstrap';
 import './sidebar.css';
+import { Link } from 'react-router-dom';
 
 const PartnerSidebar: React.FC = () => {
     return (
@@ -17,33 +18,33 @@ const PartnerSidebar: React.FC = () => {
             </div>
             <ul className="sidebar-list">
                 <li className="sidebar-list-item">
-                    <a href="/partner/Dashboard">
-                        <BsGrid1X2Fill className="icon" /> <span>Dashboard</span>
-                    </a>
+                    <Link to={"/partner/Dashboard"} className='text-link-side'>
+                        <BsGrid1X2Fill className="icon" /> <span className='text-item-side'>Dashboard</span>
+                    </Link>
                 </li>
                 <li className="sidebar-list-item">
-                    <a href="#">
-                        <BsBoundingBoxCircles className="icon" /> <span>Customers</span>
-                    </a>
+                    <Link to={"#"} className='text-link-side'>
+                        <BsBoundingBoxCircles className="icon" /> <span className='text-item-side'>Customers</span>
+                    </Link>
                 </li>
                 <li className="sidebar-list-item">
                     <NavDropdown
                         title={
                             <span>
-                                <BsCardList className="icon" /> <span>Vehicles</span>
+                                <BsCardList className="icon" /> <span className='text-item-side'>Vehicles</span>
                             </span>
                         }
                         id="nav-dropdown"
                     >
                         <NavDropdown.Item href="/partner/addCar">Add Vehicle</NavDropdown.Item>
-                        <NavDropdown.Item href="/partner/">Manage Vehicles</NavDropdown.Item>
+                        <NavDropdown.Item href="/partner/manageCar">Manage Vehicles</NavDropdown.Item>
                     </NavDropdown>
                 </li>
                 <li className="sidebar-list-item">
                     <NavDropdown
                         title={
                             <span>
-                                <BsFileText className="icon" /> <span>Bookings</span>
+                                <BsFileText className="icon" /> <span className='text-item-side'>Bookings</span>
                             </span>
                         }
                         id="nav-dropdown"

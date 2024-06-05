@@ -40,8 +40,13 @@
     cursor: pointer;
 }
 
+.text-link-side{
+    text-decoration: none;
+}
 
-
+.icon{
+    color: white;
+}
 
 .sidebar-responsive {
     display: none;
@@ -134,3 +139,7 @@
     background-color: #f8f9fa;
 }
 
+
+.text-item-side{
+    color: white;
+}

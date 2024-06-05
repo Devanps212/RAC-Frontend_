@@ -73,7 +73,7 @@ const BookingManagementTable = () => {
                                 <td>Booking {booking.status}</td>
                                 <td> ₹ {booking.transaction.amount}</td>
                                 <td>
-                                    <Link to={'/admin/booking/BookingMessages'}>
+                                    <Link to={`/admin/booking/BookingMessages?bookingId=${booking._id}`}>
                                     <Button variant="primary" size="sm">
                                         <BiSolidMessage /> Messages
                                     </Button>

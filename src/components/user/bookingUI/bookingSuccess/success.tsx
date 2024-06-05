@@ -40,7 +40,7 @@ const UserTransactionPage = () => {
       <p className="text-center mb-2">Your account has been charged <strong>₹{info?.transaction.amount}</strong> for this booking.</p>
       <p className="text-center mb-5">Thank you for choosing our service. You can now view your booking details in your account.</p>
       <strong className="text-center mb-2">View Booking Details</strong>
-      <Link className="btn btn-light login-success-button" to={`/users/BookedCars`}>View Bookings</Link>
+      <Link className="btn btn-light login-success-button" to={`/BookedCars`}>View Bookings</Link>
 
     </div>
   );

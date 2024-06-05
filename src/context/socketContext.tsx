@@ -15,22 +15,21 @@ const SocketContext = createContext<SocketContextType>({
   onlineUsers: [],
 });
 
-export const useSocketContext = () =>{
-  return useContext(SocketContext)
+export const useSocketContext = () => {
+  return useContext(SocketContext);
 }
 
 const SocketContextProvider: FC<{ children: ReactNode }> = ({ children }) => {
   const [socket, setSocket] = useState<Socket | null>(null);
   const [onlineUsers, setOnlineUsers] = useState<string[]>([]);
-  const token = useSelector((state: RootState) => state.token.token)?? '';
-  const PartnerToken = useSelector((state: RootState)=>state.partnerToken.partnerToken)
+  const userToken = useSelector((state: RootState) => state.token.token) ?? '';
+  const partnerToken = useSelector((state: RootState) => state.partnerToken.partnerToken) ?? '';
 
   useEffect(() => {
-    if (token) {
+    const connectSocket = (token: string) => {
       try {
         const decodedToken = jwtDecode<tokenInterface>(token);
-        console.log("decoded Token in context: ", decodedToken.payload)
-        const userId = decodedToken.payload;
+        const userId = decodedToken.payload
 
         const socket = io("http://localhost:5000/", {
           query: {
@@ -40,25 +39,34 @@ const SocketContextProvider: FC<{ children: ReactNode }> = ({ children }) => {
 
         setSocket(socket);
 
-        socket.on('getOnlineUsers', (users: any)=>{
-          setOnlineUsers(users)
-        })
+        socket.on('getOnlineUsers', (users: any) => {
+          setOnlineUsers(users);
+        });
 
       } catch (error) {
         console.error('Failed to decode token:', error);
       }
+    };
 
+    // Connect socket based on the available token (user or partner)
+    if (userToken) {
+      console.log("found userToken : ", userToken)
+      connectSocket(userToken);
+    } else if (partnerToken) {
+      console.log("found partner token : ", partnerToken)
+      connectSocket(partnerToken);
     } else {
-      if(socket){
-        socket.close()
-        setSocket(null)
+      // Close socket if neither token is present
+      if (socket) {
+        socket.close();
+        setSocket(null);
       }
     }
 
     return () => {
       socket?.close();
     };
-  }, [token]);
+  }, [userToken, partnerToken]);
 
   return (
     <SocketContext.Provider value={{ socket, onlineUsers }}>

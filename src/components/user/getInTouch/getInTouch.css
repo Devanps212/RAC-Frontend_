@@ -1,0 +1,137 @@
+.UPR-img {
+  width: 100%;
+  position: relative;
+  overflow: hidden;
+  height: 500px;
+}
+
+.responsive-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.5s ease-in-out;
+}
+
+.UPR-img:hover .responsive-img {
+  transform: scale(1.1);
+}
+
+.column-1{
+    background: rgb(55,117,246);
+    background: linear-gradient(232deg, rgba(55,117,246,0.9753151260504201) 0%, rgba(62,244,178,1) 83%);
+}
+
+.column-2{
+    background: rgb(47,255,75);
+    background: linear-gradient(232deg, rgba(47,255,75,1) 0%, rgba(0,213,222,0.9753151260504201) 100%);
+}
+.full-col{
+    background: rgb(255,232,110);
+    background: linear-gradient(232deg, rgba(255,232,110,1) 0%, rgba(191,255,121,0.9753151260504201) 100%);
+}
+
+.text-mess {
+  font-size: 3rem;
+  font-weight: 700;
+  color: #fff;
+  text-shadow: 1px 2px 5px rgba(0, 0, 0, 0.8);
+}
+
+.img-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.4);
+  z-index: 1;
+  transition: background-color 0.5s ease-in-out;
+}
+
+.UPR-img:hover .img-overlay {
+  background-color: rgba(0, 0, 0, 0.6);
+}
+
+.text-message-overlay {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  text-align: center;
+  color: #fff;
+  font-size: 4rem;
+  font-weight: 800;
+  filter: drop-shadow(1px 2px 5px rgba(0, 0, 0, 0.8));
+  z-index: 2;
+  animation: fade-in 1s ease-in-out;
+}
+
+@keyframes fade-in {
+  0% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+
+/* Contact Boxes */
+.first-box, .second-box {
+  padding: 55px;
+  /* border: 1px solid #ccc; */
+  /* background-color: #f7f7f7; */
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  transition: background-color 0.5s ease-in-out;
+}
+
+.first-box:hover, .second-box:hover {
+  background-color: #ebebeb;
+}
+
+.first-box h4, .second-box h4 {
+  margin-bottom: 20px;
+  font-weight: 700;
+}
+
+.first-box-contents p, .second-box-contents p {
+  margin: 10px 0;
+  font-family: 'Kanit', sans-serif;
+  color: #666;
+}
+
+.pitch-text {
+  width: 100%;
+  height: 77px;
+  padding: 10px;
+  /* border: 1px solid #ccc; */
+  border-radius: 5px;
+  /* margin-top: 10px; */
+  font-family: 'Kanit', sans-serif;
+  /* resize: vertical; */
+}
+
+button {
+  padding: 10px 20px;
+  border: none;
+  background-color: #007bff;
+  color: white;
+  border-radius: 5px;
+  cursor: pointer;
+  font-family: 'Archivo', sans-serif;
+  transition: background-color 0.5s ease-in-out;
+}
+
+button:hover {
+  background-color: #0056b3;
+}
+
+/* Responsive Styles */
+@media (max-width: 768px) {
+  .text-message-overlay {
+    font-size: 2rem;
+  }
+
+  .first-box, .second-box {
+    margin-bottom: 20px;
+  }
+}

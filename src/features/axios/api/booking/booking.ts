@@ -39,7 +39,7 @@ export const findBookings = async(bookingData : string)=>{
 }
 export const bookingPaymentUI = async(bookingDetail : bookingInterface | null, carId: string | undefined, userId: string)=>{
     try{
-        console.log(bookingDetail)
+        console.log("booking detail : ", bookingDetail)
         const dataString = JSON.stringify(bookingDetail)
         console.log(dataString, carId)
         const paymentUIConfig : AxiosRequestConfig = {
@@ -101,13 +101,14 @@ export const bookingFindingBasedOnRole = async(bookingData:Partial<detailBooking
 }
 
 
-export const bookingUpdater = async(data: Partial<detailBooking>)=>{
+export const bookingUpdater = async(data: Partial<detailBooking>, purpose: string='nothing')=>{
     try {
         const updaterConfig : AxiosRequestConfig = {
             url:apiConfig.bookingUpdater,
             method:'patch',
             data: {
-                data
+                data, 
+                purpose
             }
         }
         const response = await axios(updaterConfig)
@@ -115,7 +116,7 @@ export const bookingUpdater = async(data: Partial<detailBooking>)=>{
         return response.data
     } catch(error: any){
         console.log("errorMessage: ", error.response.data)
-        throw new Error(error.response.data.errorMessage)
+        throw new Error(error.response.data)
     }
 }
 

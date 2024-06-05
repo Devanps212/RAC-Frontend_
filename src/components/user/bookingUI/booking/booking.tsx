@@ -83,22 +83,16 @@ const BookingUI = () => {
 
 
     const handlePayNow  = async()=>{
+        console.log("entered booking")
         const stripe = await loadStripe('pk_test_51PDiVJSFg3h3pm8hFZ9xw2Duq8djIUTp0t5I6M5yMguU8KpIdUnUt0epBFvTkOx0jWV3NWOQkE402iZat4c2JX8P00Hl0S8Igy');
         const token = localStorage.getItem('token') ?? ''
         const userId = await decodeToken(token).payload
         const bookingPayment = await bookingPaymentUI(bookings, car._id, userId)
         
-        console.log(bookingPayment)
+        console.log("bookingdetail : ", bookingPayment)
         const result = await stripe?.redirectToCheckout({
             sessionId: bookingPayment
         });
-        // if(result){
-        //     const bookings = await findAllCars('all', 'user')
-        //     console.log(bookings)
-        // } else
-        // {
-        //     toast.success(result)
-        // }
     }
 
     const handleApplyCoupon = async()=>{

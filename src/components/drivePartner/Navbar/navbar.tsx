@@ -1,27 +1,46 @@
-import React from 'react';
-import { Navbar, Nav, Container, NavDropdown, Button } from 'react-bootstrap';
+import React, { useEffect, useState } from 'react';
+import { Navbar, Nav, Container, Button } from 'react-bootstrap';
 import './nav.css';
-import { partnerLogout } from '../../../features/axios/redux/slices/partner/partnerLogin';
-import { clearPartnerToken } from '../../../features/axios/redux/slices/partner/tokenSlice';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import { FaUserAlt } from 'react-icons/fa';
+import { BiSolidMessage } from 'react-icons/bi';
+import { useSocketContext } from '../../../context/socketContext';
+import { clearPartnerToken } from '../../../features/axios/redux/slices/partner/tokenSlice';
+import { RootState } from '../../../features/axios/redux/reducers/reducer';
+import { partnerLogout } from '../../../features/axios/redux/slices/partner/partnerLogin';
 
+const PartnerHeader: React.FC = () => {
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+  const { socket } = useSocketContext();
+  const [unreadMessages, setUnreadMessages] = useState<number>(0);
+  const partnerToken = useSelector((state: RootState) => state.partnerToken.partnerToken);
 
-const PartnerHeader = () => {
-
-  const dispatch = useDispatch()
-  const navigate = useNavigate()
-
-
-  const handleLogout = ()=>{
+  const handleLogout = () => {
     dispatch(partnerLogout())
-    console.log("clearing token ")
-    dispatch(clearPartnerToken())
-    console.log("logout :",partnerLogout())
-    navigate('/partner/login')
+    dispatch(clearPartnerToken());
+  };
 
-  }
+  useEffect(() => {
+    if (!socket) return;
+
+    socket.on("newMessage", (messageData: any) => {
+      console.log("Message received for partner: ", messageData);
+      setUnreadMessages(prevState => prevState + 1);
+    });
+
+    return () => {
+      socket.off("newMessage");
+    };
+  }, [socket]);
+
+  useEffect(() => {
+    if (partnerToken === null) {
+      navigate('/partner/login');
+    }
+  }, [partnerToken, navigate]);
+
   return (
     <Navbar bg="light" expand="lg">
       <Container style={{ minHeight: '57px' }}>
@@ -41,12 +60,10 @@ const PartnerHeader = () => {
             <Nav.Link href='#' className='nav-link'>
               <FaUserAlt className='icon' /> Profile
             </Nav.Link>
-
-              <NavDropdown title="Profile" id="category-management-submenu" drop='down' className='nested-dropdown'>
-                <NavDropdown.Item href='#'>Partner Profile</NavDropdown.Item>
-                <NavDropdown.Item href='#'>Details</NavDropdown.Item>
-              </NavDropdown>
-
+            <Nav.Link href="#" className="nav-link">
+              <BiSolidMessage className="partnerMessage" /> Messages{' '}
+              {unreadMessages > 0 && `(${unreadMessages})`}
+            </Nav.Link>
             <Button id='logout' variant="outline-dark" onClick={handleLogout} className='nav-button'>
               Logout
             </Button>
@@ -55,6 +72,6 @@ const PartnerHeader = () => {
       </Container>
     </Navbar>
   );
-}
+};
 
 export default PartnerHeader;

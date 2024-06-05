@@ -14,12 +14,12 @@ const Sidebar = () => {
             </div>
             <ul className="sidebar-list">
                 <li className="sidebar-list-item">
-                    <Link to="/admin/Dashboard">
+                    <Link to="/admin/Dashboard" className="link-texts">
                         <BsGrid1X2Fill className="icon" /> <span>Dashboard</span>
                     </Link>
                 </li>
                 <li className="sidebar-list-item">
-                    <Link to="/admin/user/userManagement">
+                    <Link to="/admin/user/userManagement" className="link-texts">
                         <BsGrid3X3 className="icon" /> <span>User</span>
                     </Link>
                 </li>
@@ -27,22 +27,22 @@ const Sidebar = () => {
                     <NavDropdown
                         title={
                             <span>
-                                <BsCardList className="icon" /> <span>Car</span>
+                                <BsCardList className="icon" style={{color:'white'}} /> <span style={{color:'white'}}>Car</span>
                             </span>
                         }
                         id="nav-dropdown"
                     >
-                        <NavDropdown.Item href='/admin/car/addCar'>Add Car</NavDropdown.Item>
-                        <NavDropdown.Item href='/admin/car/carManagement'>Manage Car</NavDropdown.Item>
+                        <NavDropdown.Item style={{color:'white'}} href='/admin/car/addCar'><span style={{color:"black"}}>Add Car</span></NavDropdown.Item>
+                        <NavDropdown.Item style={{color:'white'}} href='/admin/car/carManagement'><span style={{color:"black"}}>Manage Car</span></NavDropdown.Item>
                     </NavDropdown>
                 </li>
                 <li className="sidebar-list-item">
-                    <Link to="/admin/booking/BookingManagement">
+                    <Link to="/admin/booking/BookingManagement" className="link-texts">
                         <BsPerson className="icon" /> <span>Manage Booking</span>
                     </Link>
                 </li>
                 <li className="sidebar-list-item">
-                    <Link to="/admin/OfferManagement">
+                    <Link to="/admin/OfferManagement" className="link-texts">
                         <BsGrid3X3 className="icon" /> <span>Offer Manage</span>
                     </Link>
                 </li>
@@ -50,7 +50,7 @@ const Sidebar = () => {
                     <NavDropdown
                         title={
                             <span>
-                                <BsCardList className="icon" /> <span>Category</span>
+                                <BsCardList className="icon" style={{color:'white'}} /> <span style={{color:'white'}}>Category</span>
                             </span>
                         }
                         id="nav-dropdown"
@@ -58,11 +58,6 @@ const Sidebar = () => {
                         <NavDropdown.Item href='/admin/addCategory'>Add Category</NavDropdown.Item>
                         <NavDropdown.Item href='/admin/manageCategory'>Manage Category</NavDropdown.Item>
                     </NavDropdown>
-                </li>
-                <li className="sidebar-list-item">
-                    <Link to="/admin/booking">
-                        <BsFileText className="icon" /> <span>Booking</span>
-                    </Link>
                 </li>
             </ul>
         </aside>

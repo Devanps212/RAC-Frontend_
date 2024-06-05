@@ -124,7 +124,7 @@ const UserLogin = () => {
                   dispatch(loginSuccess())
                   toast.success('login success')
                   setIsLoading(false)
-                  navigate('/users/home')
+                  navigate('/')
                 }
               })
               .catch((error) => {
@@ -153,7 +153,7 @@ const UserLogin = () => {
           dispatch(setToken(response.token))
           dispatch(loginSuccess())
           setTimeout(()=>{
-            navigate('/users/home')
+            navigate('/')
           }, 1000)
         }
         else
@@ -231,7 +231,7 @@ const UserLogin = () => {
 
               <div className="text-center">
                 <span className="text-xs text-gray-400 font-semibold">Dont have an account?</span>
-                <Link to={'/users/signUp'} className="text-xs font-semibold text-purple-700" >Sign up</Link>
+                <Link to={'/signUp'} className="text-xs font-semibold text-purple-700" >Sign up</Link>
               </div>
             </div>
 

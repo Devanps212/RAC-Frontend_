@@ -75,8 +75,19 @@
     }
 }
 
-.user-details, .right-side-contents {
-    background-color: #ffffff;
+.user-details {
+    background: rgb(255,234,148);
+    background: linear-gradient(232deg, rgba(255,234,148,1) 0%, rgba(172,214,255,1) 100%);
+    border-radius: 10px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    padding: 24px;
+    animation: fadeIn 0.5s ease-in-out;
+    width: 100%;
+}
+
+.right-side-contents{
+    background: rgb(255,189,240);
+    background: linear-gradient(232deg, rgba(255,189,240,1) 0%, rgba(191,244,226,1) 50%, rgba(182,192,247,1) 100%);
     border-radius: 10px;
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
     padding: 24px;
@@ -205,6 +216,21 @@
     background-size: 200% 100%;
     animation: wave 1.5s infinite linear;
   }
+
+  .no-car-found {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    color: #dc3545
+}
+
+.no-car-icon {
+    font-size: 3rem;
+    margin-bottom: 1rem;
+    animation: shake 0.5s ease-in-out;
+    animation-iteration-count: 3;
+}
   
   @keyframes wave {
     0% {
@@ -214,6 +240,20 @@
       background-position: -200% 0;
     }
   }
+
+  @keyframes shake {
+    0%,
+    100% {
+        transform: translateX(0);
+    }
+    25%,
+    75% {
+        transform: translateX(-5px);
+    }
+    50% {
+        transform: translateX(5px);
+    }
+}
   
 
 

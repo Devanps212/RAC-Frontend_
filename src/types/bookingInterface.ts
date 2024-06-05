@@ -91,8 +91,15 @@ export interface RefundDetailsInterface {
     created: number;
     currency: string;
     status: string;
-    transaction: Transaction;
+    transactionId: string;
 }
+
+export interface Refund {
+    Amount: number;
+    paymentId: string;
+    createdAt: Date;
+    updatedAt: Date;
+  }
 
 
 export interface bookingInterfaceReschedule {

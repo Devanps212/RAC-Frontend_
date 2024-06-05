@@ -13,6 +13,11 @@ import { detailBooking } from "../../../types/bookingInterface";
 import { bookingFindingBasedOnRole } from "../../../features/axios/api/booking/booking";
 import { carBasedOnRole, findAllCars } from "../../../features/axios/api/car/carAxios";
 import { showCarInterface } from "../../../types/carAdminInterface";
+import { BsFillExclamationCircleFill } from "react-icons/bs";
+import { Button } from "react-bootstrap";
+import CouponComponent from "../../commonComponent/coupons/coupons";
+import { userInterface } from "../../../types/userInterface";
+import { couponInterface } from "../../../types/couponInterface";
 
 
 const UserProfile = () => {
@@ -22,7 +27,10 @@ const UserProfile = () => {
     const [bookings, setBookings] = useState<detailBooking[]>()
     const [showLoad, setShowLoad] = useState(false)
     const [uniqueCars, setUniqueCars] = useState<showCarInterface>()
+    const [userCoupons, setUserCoupons] = useState<couponInterface[] | null>(null);
+    const [showComponent, setShowComponent] = useState(true)
     const tokenPayload = useSelector((root: RootState)=> root.token.token) ?? ''
+
 
     const toggleEditUser = () => {
         setShowEditUser((prevShowEditUser) => !prevShowEditUser);
@@ -47,52 +55,58 @@ const UserProfile = () => {
             const bookingDetail = bookings.data.data
     
             setBookings(bookingDetail)
-
-            // console.log("settingCar")
-            // console.log("carId  :", bookingDetail.carId._id)
-            // console.log("car finding")
-            // const cars = await carBasedOnRole(bookingDetail.carId._id)
-            // console.log(cars)
             
         }catch(error: any){
             toast.error(error)
         }
 
     }
-    const findCars = async()=>{
-        try{if (bookings && bookings.length > 0) {
-
-    const carCountMap = bookings.reduce((countMap, booking) => {
-        const carId = booking.carId._id as string;
-        countMap.set(carId, (countMap.get(carId) || 0) + 1);
-        return countMap;
-    }, new Map<string, number>());
-
-
-    let mostCommonCarId = '';
-    let maxCount = 0;
-
-    carCountMap.forEach((count, carId) => {
-        if (count > maxCount) {
-            maxCount = count;
-            mostCommonCarId = carId;
+    const findCoupons = async () => {
+        try {
+            const userId = await decodeToken(tokenPayload).payload;
+            const data = await findUser(userId);
+            console.log("data :", data.data)
+            const user : userInterface = data.data
+            console.log("users : ", user)
+            const coupons = user.coupons?.map(coupon => typeof coupon === 'string' ? { coupon } as couponInterface : coupon) ?? [];
+            console.log("coupon : ", coupons)
+            setUserCoupons(coupons);
+        } catch (error: any) {
+            toast.error(error.message);
         }
-    });
+    };
+    const findCars = async()=>{
+        try{
+            if (bookings && bookings.length > 0) {
 
-    console.log(`Most common car ID: ${mostCommonCarId}, Count: ${maxCount}`);
+                const carCountMap = bookings.reduce((countMap, booking) => {
+                    const carId = booking.carId._id as string;
+                    countMap.set(carId, (countMap.get(carId) || 0) + 1);
+                    return countMap;
+                }, new Map<string, number>());
 
-    const mostCommonCars = bookings.filter(booking => booking.carId._id === mostCommonCarId);
 
-    const uniqueMostCommonCars = Array.from(new Set(mostCommonCars.map(booking => booking.carId)));
-   
-    setUniqueCars(uniqueMostCommonCars[0])
+                let mostCommonCarId = '';
+                let maxCount = 0;
 
-} else {
-    console.log('No bookings available or bookings is empty.');
-}
+                carCountMap.forEach((count, carId) => {
+                    if (count > maxCount) {
+                        maxCount = count;
+                        mostCommonCarId = carId;
+                    }
+                });
 
+                console.log(`Most common car ID: ${mostCommonCarId}, Count: ${maxCount}`);
+
+                const mostCommonCars = bookings.filter(booking => booking.carId._id === mostCommonCarId);
+
+                const uniqueMostCommonCars = Array.from(new Set(mostCommonCars.map(booking => booking.carId)));
             
-            
+                setUniqueCars(uniqueMostCommonCars[0])
+
+            } else {
+                console.log('No bookings available or bookings is empty.');
+            }
 
         } catch(error: any){
             toast.error(error.message)
@@ -153,6 +167,7 @@ const UserProfile = () => {
             if (userSave.data.status === "success" && userData && userData.profilePic) {
                 userData.profilePic = userSave.data.data.profilePic;
                 console.log(userSave.data.data.profilePic)
+                toast.success("userProfile updated successfully")
                 setShowLoad(false)
             } else {
                 toast.error("Profile picture Upload failed")
@@ -166,6 +181,7 @@ const UserProfile = () => {
     useEffect(()=>{
         userFinding()
         findBookings()
+        findCoupons()
     }, [])
 
     return (
@@ -222,53 +238,77 @@ const UserProfile = () => {
                         </div>
                     </div>
                 </div>
+                <div className="d-flex justify-content-center align-items-center mt-5">
+                            <Button onClick={()=>setShowComponent(true)} style={{borderRadius:'0px'}}>
+                                userData
+                            </Button>
+                            <Button onClick={()=>setShowComponent(false)} style={{borderRadius:'0px'}}>
+                                coupon
+                            </Button>
+                        </div>
                 <div className="row d-flex justify-content-center align-items-start mt-5">
-                    <div className="col-md-5 px-4">
-                    <div className="d-flex justify-content-end mb-4">
-                        {
-                            isUserDataComplete(userData) ? (
-                                <>
-                                </>
-                            ) : (
-                                <div className="switch-container" onClick={()=>{
-                                    toggleEditUser()
-                                    toggleSwitch()
-                                    }}>
-                                    <div className={`switch ${isOn ? 'on' : 'off'}`}>
-                                        <div className="slider"></div>
-                                        <span className="switch-text left-text">Detail</span>
-                                        <span className="switch-text right-text">Edit</span>
+                {
+                        showComponent? (
+                            <div className="col-md-5 px-4">
+                            <div className="d-flex justify-content-end mb-4">
+                                {isUserDataComplete(userData)? (
+                                <></>
+                                ) : (
+                                <div className="switch-container" onClick={() => {
+                                    toggleEditUser();
+                                    toggleSwitch();
+                                }}>
+                                    <div className={`switch ${isOn? 'on' : 'off'}`}>
+                                    <div className="slider"></div>
+                                    <span className="switch-text left-text">Detail</span>
+                                    <span className="switch-text right-text">Edit</span>
                                     </div>
                                 </div>
-                            )
-                        }
-                                
+                                )}
                             </div>
-                            {userData ? (
-                                isUserDataComplete(userData) ?(
-                                    <AddDetails  userDetails={userData} handleSuccess={handleUpdateUserData}/>
-                                ) :
-                                showEditUser ? (
-                                    <EditUser userDetails={userData} handleSuccess={handleUpdateUserData}/>
+
+                            {userData? (
+                                isUserDataComplete(userData)? (
+                                <AddDetails userDetails={userData} handleSuccess={handleUpdateUserData} />
+                                ) : showEditUser? (
+                                <EditUser userDetails={userData} handleSuccess={handleUpdateUserData} />
                                 ) : (
-                                    <UserDetails userDetails={userData} />
+                                <UserDetails userDetails={userData} />
                                 )
                             ) : (
                                 <p>Loading user data...</p>
                             )}
-                        
-                    </div>
+                            </div>
+                        ) : (
+                            <div className="col-md-5 px-4">
+                                <CouponComponent coupons={userCoupons} />
+                            </div>
+                        )
+                    }
+                    
                     <div className="col-md-5 px-4">
                         <div className="right-side-contents">
                             <h4 className="text-dark">Most Booked Car</h4>
-                            <h3 className="text-success">{uniqueCars?.name}</h3>
-                            <div className="d-flex justify-content-center align-items-center mt-3">
-                                <img
-                                    src={uniqueCars?.thumbnailImg}
-                                    className="favorite-car-img"
-                                    alt="Favorite Car"
-                                />
-                            </div>
+                            {
+                                uniqueCars && uniqueCars.name ? (
+                                    <>
+                                    <h3 className="text-success">{uniqueCars?.name}</h3>
+                                    <div className="d-flex justify-content-center align-items-center mt-3">
+                                        <img
+                                            src={uniqueCars?.thumbnailImg}
+                                            className="favorite-car-img"
+                                            alt="Favorite Car"
+                                        />
+                                    </div>
+                                    </>
+                                ) : (
+                                    <div className="no-car-found">
+                                        <BsFillExclamationCircleFill className="no-car-icon" />
+                                        <p>No car found</p>
+                                    </div>
+                                )
+                            }
+                            
                         </div>
 
                     </div>

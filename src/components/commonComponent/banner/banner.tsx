@@ -90,7 +90,7 @@ const Banner: React.FC<BannerProps> = ({search, PickupPlaces, click, value, Drop
               <input
                   className="input-location form-control"
                   type="text"
-                  placeholder="DropOff location"
+                  placeholder="Drop-Off location"
                   onChange={(e)=>handleFunc(e, 'DropOff')}
                   value={DropOffValue}
                 />

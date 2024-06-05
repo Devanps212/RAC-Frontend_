@@ -8,6 +8,7 @@ import { RootState } from '../../../features/axios/redux/reducers/reducer';
 import { adminLogin } from '../../../features/axios/api/admin/adminAuthentication';
 import Loading from '../../loading/loading';
 import { useNavigate } from 'react-router-dom';
+import { FaRegEye, FaRegEyeSlash } from 'react-icons/fa';
 
 const Login = () => {
 
@@ -30,7 +31,7 @@ const Login = () => {
 
           if (AdminLogin) {
             console.log("Admin is not logged out");
-            navigate('/admin/home');
+            navigate('/admin/Dashboard');
           }
         } 
         catch (error) 
@@ -78,7 +79,7 @@ const Login = () => {
           dispatch(isAdminLogin())
           toast.success(response.message)
           setIsLoading(false)
-          navigate('/admin/home')
+          navigate('/admin/Dashboard')
         }
       }
     }
@@ -126,12 +127,12 @@ const Login = () => {
 
             <span className="eye" onClick={togglePasswordVisibility}>
               {showPassword ? (
-                <span role="img" aria-label="hide-password">
-                  🙈
+                <span role="img" className='ms-2' aria-label="hide-password">
+                  <FaRegEye/>
                 </span>
               ) : (
-                <span role="img" aria-label="show-password">
-                  🙉
+                <span role="img" className='ms-2' aria-label="show-password">
+                  <FaRegEyeSlash/>
                 </span>
               )}
             </span>

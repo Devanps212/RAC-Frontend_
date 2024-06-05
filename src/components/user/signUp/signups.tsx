@@ -15,7 +15,7 @@ import Loading from '../../loading/loading'
 
 
 const SignUp = ()=>{
-    
+  
   const dispacth = useDispatch()
   const navigate = useNavigate()
   const [load, setLoad] = useState(false)
@@ -64,7 +64,7 @@ const SignUp = ()=>{
                   console.log("resposne : ", response)
                   sessionStorage.setItem('otp', userData.otp)
                   sessionStorage.setItem('usersDetails', JSON.stringify(userData))
-                  navigate('/users/OTP')
+                  navigate('/OTP')
                 }
               })
               .catch((error:any)=>{
@@ -99,7 +99,7 @@ const SignUp = ()=>{
           dispacth(setToken(response.token))
           dispacth(loginSuccess())
           setTimeout(()=>{
-            navigate('/users/home')
+            navigate('/')
           }, 1000)
         }
         else
@@ -201,7 +201,7 @@ const SignUp = ()=>{
       
                   <div className="text-center">
                     <span className="text-xs text-gray-400 font-semibold">Already Have An Account?</span>
-                    <Link to={'/users/signIn'} className="text-xs font-semibold text-purple-700">Sign in</Link>
+                    <Link to={'/signIn'} className="text-xs font-semibold text-purple-700">Sign in</Link>
                   </div>
                 </div>
       

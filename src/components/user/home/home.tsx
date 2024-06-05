@@ -1,8 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import './home.css';
 import Banner from '../../commonComponent/banner/banner';
-import Cards from '../../commonComponent/cards/cards';
-import { findAllCars } from '../../../features/axios/api/car/carAxios';
 import { toast } from 'react-toastify';
 import { showCarInterface } from '../../../types/carAdminInterface';
 import { useNavigate } from 'react-router-dom';
@@ -13,6 +11,8 @@ import { bookingValidator } from "../../../Validators/userValidator.ts/bookingVa
 import CollaboratedPartners from '../../commonComponent/partners/partners';
 import CustomerFav from '../../commonComponent/customerFavorite/customerFavorite';
 import Footer from '../../drivePartner/footer/footer';
+import { useSelector } from 'react-redux';
+import { RootState } from '../../../features/axios/redux/reducers/reducer';
 
 
 function Home() {
@@ -30,6 +30,7 @@ function Home() {
   const [dropOffTime, setDropOffTime] = useState<string>('')
   const [pickUpDate, setPickupDate] = useState<Date>(new Date())
   const [dropOffDate, setDropOffDate] = useState<Date>(new Date())
+  const token = useSelector((state: RootState)=>state.token.token)
   const navigate = useNavigate()
   
   const handleSearch = async(locations: string, purpose: string)=>{
@@ -103,6 +104,9 @@ function Home() {
     pickupTime: string,
     dropOffTime: string)=>{
 
+      if(!token){
+        return toast.warning('Please login for renting a car')
+      }
       const data = {
         pickupLocation: value,
         dropOffLocation: DropOffValue,
@@ -127,52 +131,11 @@ function Home() {
       if(bookingData){
         
         const encodedBookingData = encodeURIComponent(JSON.stringify(bookingData));
-        navigate(`/users/Allcars?bookingData=${encodedBookingData}`);
+        navigate(`/Allcars?bookingData=${encodedBookingData}`);
         setBookingData(null)
       }
     }, [bookingData, navigate])
 
-
-
-
-  useEffect(()=>{
-    const findCars = async()=>{
-      try{
-        const response = await findAllCars('all', 'user')
-        if(response){
-            const groupCars = response.reduce((acc:{[key:string]: showCarInterface[]}, car:showCarInterface)=>{
-              let categoryName : string;
-              if(car.category && typeof car.category === 'object' && 'name' in car.category){
-                  categoryName = car.category.name
-                }
-                else{
-                  categoryName = 'Unrecognized'
-                }if(!acc[categoryName]){
-                    acc[categoryName] = []
-                  }acc[categoryName].push(car)
-          
-                  return acc
-          },{})
-
-            setCars(groupCars)
-          } 
-      }catch(error:any){
-        toast.error(error.message)
-      }
-    }
-    findCars()
-  }, [])
-
-
-
-  useEffect(()=>{
-    if(selectedCar){
-      navigate(`/users/carDetail?carId=${selectedCar}`)
-    }
-  }, [selectedCar])
-
-  
-  
 
   return (
     <div className="home">

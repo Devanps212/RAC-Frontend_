@@ -22,7 +22,7 @@ export const CheckPurpose = async (): Promise<{ message: string, error?: string 
         if (response.status === "success") 
         {
           sessionStorage.removeItem('usersDetails')
-          return { message: 'signUp success' }
+          return { message: 'signUp success', token: response.token }
         }
       } 
       catch (error:any) 

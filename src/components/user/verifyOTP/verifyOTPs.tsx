@@ -40,7 +40,7 @@ const Votp = () => {
       }
       if(isLoggedIn == true)
       {
-        navigate('/users/home')
+        navigate('/')
       }
     }, [])
   
@@ -53,8 +53,6 @@ const Votp = () => {
         {
           console.log("otp : ",response.OTP)
           setTotp(response.OTP)
-          console.log(typeof totp)
-          console.log(typeof otp)
         }
       } catch (error:any) {
         console.error('Error generating OTP:', error.message);
@@ -89,40 +87,30 @@ const Votp = () => {
           {
             toast.success('OTP is valid');
 
-            const result = await CheckPurpose()
-            console.log(result)
-            if(result)
-            {
-              if(result && 'token' in result)
-              {
-                if(result.message == "Login success")
-                {
-                  sessionStorage.removeItem('otp')
-                  const token = result.token
+            const result = await CheckPurpose();
+            console.log(result);
 
-                  console.log("token : ", token)
-                  dispatch(setToken(token))
-                  dispatch(loginSuccess())
-                  toast.success('login success')
-                  setTimeout(()=>{
-                    navigate('/users/home')
-                  }, 1000)
+            if (result) {
+              if ('token' in result) {
+                sessionStorage.removeItem('otp');
+                const token = result.token;
+
+                console.log("token: ", token);
+                dispatch(setToken(token));
+                dispatch(loginSuccess());
+
+                if(result.message === "Login success") {
+                  toast.success('Login success');
+                }else if (result.message === "signUp success") {
+                  toast.success('SignUp success');
                 }
-              }
-              else if (result.message === 'signUp success')
-              {
-                toast.success(result.message)
-                navigate('/users/signIn')
-              }
-              else
-              {
-                console.log(result.message)
-                toast.warning(result.error)
+                navigate('/');
+              } else {
+                console.log(result.message);
+                toast.warning(result.error);
               }
             }
-          } 
-          else 
-          {
+          } else {
             toast.error('Incorrect OTP');
           }
         }
@@ -136,7 +124,7 @@ const Votp = () => {
 
   return (
     <>
-    <div className="container-fluid">
+    <div className="container-fluid full-body-container">
       <div className="row justify-content-center align-items-center min-vh-100 bg-gray-200 py-5 pt-5">
         <div className="col-md-8" style={{backgroundColor:"#fff"}}>
           <div className="row shadow" style={{marginRight:"-24px"}}>

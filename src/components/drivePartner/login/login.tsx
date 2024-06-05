@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react';
 import { useState } from 'react';
 import { Form, Button, Col, Row, Container } from 'react-bootstrap';
-import { UseDispatch, useDispatch, useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import { isPartnerLogin } from '../../../features/axios/redux/slices/partner/partnerLogin';
 import { setPartnerToken } from '../../../features/axios/redux/slices/partner/tokenSlice';
@@ -15,7 +15,7 @@ const PartnerLogin = () => {
 
   const dispatch = useDispatch()
   const navigate = useNavigate()
-  const token = localStorage.getItem('partnerToken')
+  const token = useSelector((root: RootState)=>root.partnerToken.partnerToken)
   const state = useSelector((state:RootState)=>state.partnerLogin.isLoggedIn)
   const [isLoading, setIsLoading] = useState(false)
 
@@ -24,10 +24,11 @@ const PartnerLogin = () => {
       dispatch(isPartnerLogin());
     }
 
-    if (state) {
-      console.log("partner is not logged out");
-      navigate('/partner/home');
-    }
+    console.log("state : ", state)
+    // if (state) {
+    //   console.log("partner is not logged out");
+    //   navigate('/partner/Dashboard');
+    // }
   }, [dispatch, navigate, token, state]);
     const [formData, setFormdata] = useState({
       email:'',
@@ -122,7 +123,8 @@ const PartnerLogin = () => {
                   dispatch(isPartnerLogin())
                   toast.success(response.message)
                   setIsLoading(false)
-                  navigate('/partner/home')
+                  console.log("logging into dashboard")
+                  navigate('/partner/Dashboard')
                 })
                 .catch((error:any)=>{
                   console.log(error.message)

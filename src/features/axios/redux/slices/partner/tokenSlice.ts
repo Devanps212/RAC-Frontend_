@@ -1,57 +1,47 @@
 import { PayloadAction, createSlice } from "@reduxjs/toolkit";
 
-interface tokenState {
-    partnerToken : string | null
+interface TokenState {
+    partnerToken: string | null;
 }
 
-const loadTokenFromLocalStorage = () : string | null=>{
-    try
-    {
-        const token = localStorage.getItem('Token')
-        return token ? token : ''
-    }
-    catch(error)
-    {
-        console.log("error getting token from session storage")
-        return null
+const loadTokenFromLocalStorage = (): string | null => {
+    try {
+        const token = localStorage.getItem('partnerToken');
+        return token ? token : '';
+    } catch (error) {
+        console.log("Error getting token from local storage");
+        return null;
     }
 }
 
-const initialState : tokenState = {
-    partnerToken : loadTokenFromLocalStorage()
+const initialState: TokenState = {
+    partnerToken: loadTokenFromLocalStorage(),
 }
 
 const partnerTokenSlice = createSlice({
-    name:'partner-token',
+    name: 'partner-token',
     initialState,
-    reducers:{
-        setPartnerToken : (state, action:PayloadAction<string>)=>{
-            state.partnerToken = action.payload
+    reducers: {
+        setPartnerToken: (state, action: PayloadAction<string>) => {
+            state.partnerToken = action.payload;
 
-            try
-            {
-                localStorage.setItem('partnerToken', action.payload)
-            }
-            catch(error)
-            {
-                console.log("error string token in localStorage")
+            try {
+                localStorage.setItem('partnerToken', action.payload);
+            } catch (error) {
+                console.log("Error storing token in localStorage");
             }
         },
-        clearPartnerToken : (state)=>{
-            state.partnerToken = null
-            try
-            {
-                localStorage.removeItem('partnerToken')
-                console.log("Partner token removed")
+        clearPartnerToken: (state) => {
+            state.partnerToken = null;
+            try {
+                localStorage.removeItem('partnerToken');
+                console.log("Partner token removed");
+            } catch (error) {
+                console.log("Error removing partner token");
             }
-            catch(error)
-            {
-                console.log("error removing partner token")
-            }
-        }
-
+        },
     }
-})
+});
 
-export const {setPartnerToken, clearPartnerToken} = partnerTokenSlice.actions
-export default partnerTokenSlice.reducer
+export const { setPartnerToken, clearPartnerToken } = partnerTokenSlice.actions;
+export default partnerTokenSlice.reducer;

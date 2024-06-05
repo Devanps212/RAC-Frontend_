@@ -27,7 +27,7 @@ const UserHeader = () => {
       console.log(error)
       toast.error(error.message)
     })
-  navigate('/users/signIn')
+  navigate('/')
   }
   return (
     <Navbar expand="lg" className="bg-body-tertiary" style={{position:"fixed", width:'100%', zIndex:'1000'}}>
@@ -42,18 +42,23 @@ const UserHeader = () => {
             <Offcanvas.Title id="offcanvasNavbarLabel-expand-lg">Offcanvas</Offcanvas.Title>
           </Offcanvas.Header>
           <Offcanvas.Body className="navbar-offcanvas-body">
-            <Nav className="justify-content-md-between align-items-center me-auto ms-5">
-              <Nav.Link className="button-Header-user me-3" as={Link} to="/users/home">Home</Nav.Link>
-              <Nav.Link className="button-Header-user me-3" as={Link} to={'#'}>about Us</Nav.Link>
-              <Nav.Link className="me-3" href="/users/BookedCars">Your Deals</Nav.Link>
-              <Nav.Link className="custom-nav-link me-3" as={Link} to="/partner/PartnerUI">Become Partner</Nav.Link>
-              {/* <NavDropdown className="me-2" title="Dropdown" id="offcanvasNavbarDropdown-expand-lg">
-                <NavDropdown.Item href="#action3">Action</NavDropdown.Item>
-                <NavDropdown.Item href="#action4">Another action</NavDropdown.Item>
-                <NavDropdown.Divider />
-                <NavDropdown.Item href="#action5">Something else here</NavDropdown.Item>
-              </NavDropdown> */}
-            </Nav>
+            {
+              token ? (
+                <Nav className="justify-content-md-between align-items-center me-auto ms-5">
+                  <Nav.Link className="button-Header-user me-3" as={Link} to="/">Home</Nav.Link>
+                  <Nav.Link className="button-Header-user me-3" as={Link} to={'#'}>about Us</Nav.Link>
+                  <Nav.Link className="me-3" href="/BookedCars">Your Deals</Nav.Link>
+                  <Nav.Link className="custom-nav-link me-3" as={Link} to="/partner/PartnerUI">Become Partner</Nav.Link>
+                </Nav>
+              ) : (
+                <Nav className="justify-content-md-between align-items-center me-auto ms-5">
+                  <Nav.Link className="button-Header-user me-3" as={Link} to="/">Home</Nav.Link>
+                  <Nav.Link className="button-Header-user me-3" as={Link} to={'#'}>about Us</Nav.Link>
+                  <Nav.Link className="custom-nav-link me-3" as={Link} to="/partner/PartnerUI">Become Partner</Nav.Link>
+                </Nav>
+              )
+            }
+            
             <img
               src="/assets/Logos/CompanyLogo/[removal.ai]_4ca5cd5b-8c5e-4a2a-b090-63d31c75e6a6-qcoku1709465106.png"
               alt="Company Logo"
@@ -61,7 +66,7 @@ const UserHeader = () => {
             />
             <Nav className="d-flex align-items-center ms-auto me-5">
             <div className="nav-link-container me-3">
-            <Nav.Link className="custom-nav-link">Get In Touch</Nav.Link>
+            <Nav.Link as={Link} to={"/getInTouch"} className="custom-nav-link">Get In Touch</Nav.Link>
             </div>
             <div className="nav-link-container me-3">
               {
@@ -69,11 +74,14 @@ const UserHeader = () => {
                   <Nav.Link className="custom-nav-link" onClick={handleLogout}>SignOut</Nav.Link>
                 )
                 :
-                <Nav.Link className="custom-nav-link">SignUp/SignIn</Nav.Link>
+                <Nav.Link as={Link} to={'/signIn'} className="custom-nav-link">SignUp/SignIn</Nav.Link>
               }
               
             </div>
-            <Nav.Link as={Link} to={'/users/profile'} className="custom-nav-link"><BiSolidUserCircle style={{fontSize:'42px'}}/></Nav.Link>
+            {
+              token && <Nav.Link as={Link} to={'/profile'} className="custom-nav-link"><BiSolidUserCircle style={{fontSize:'42px'}}/></Nav.Link>
+            }
+            
             </Nav>
 
           </Offcanvas.Body>
