@@ -6,7 +6,7 @@ const Home = lazy(()=>import('../pages/admin/home.js'))
 const AddCategory = lazy(()=>import('../pages/admin/addCategory.js'))
 const ManageCategory = lazy(()=>import('../pages/admin/CategoryManage.js'))
 const EditCategory = lazy(()=>import('../pages/admin/editCategory.js'))
-import {AdminRouteProtection} from "./protectedRoutes/routeProtection.js";
+const Profile = lazy(()=>import('../pages/admin/profile'))
 import CarRoutes from "./carRoute.js";
 import UserAdminRouter from "./userAdminRoute.js";
 import BookingRoutes from "./bookingRoutes";
@@ -37,10 +37,6 @@ const AdminRoutes = ()=>{
                 <Route path="/OfferManagement" element={<AdminOfferManage/>}/>
                 <Route path="/coupon/*" element={<CouponRoute/>}/> */}
                 <Route path="/signIn" element={<AdminLogin />} />
-                {/* <Route
-                path="/home"
-                element={isValid ? <Home /> : <Navigate to="/admin/signIn" />}
-                /> */}
                 <Route
                 path="/addCategory"
                 element={isValid ? <AddCategory /> : <Navigate to="/admin/signIn" />}
@@ -53,6 +49,7 @@ const AdminRoutes = ()=>{
                 path="/editCategory/:categoryId"
                 element={isValid ? <EditCategory /> : <Navigate to="/admin/signIn" />}
                 />
+                <Route path="/profile" element={isValid ? <Profile/> : <Navigate to="/admin/signIn" />}/>
                 <Route path="/car/*" element={isValid ? <CarRoutes /> : <Navigate to="/admin/signIn" />} />
                 <Route path="/user/*" element={isValid ? <UserAdminRouter /> : <Navigate to="/admin/signIn" />} />
                 <Route path="/booking/*" element={<BookingRoutes />} />

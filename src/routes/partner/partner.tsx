@@ -8,9 +8,11 @@ import CarManagePartner from "../../pages/partner/carManagement.js";
 import CarEditPartner from "../../pages/partner/editCar.js";
 import TransactionComplete from "../../pages/partner/transactionComplete.js";
 import DashboardPartner from "../../pages/partner/dashboard.js";
+import BookingPartner from "../../pages/partner/booking.js";
 import { jwtDecode } from "jwt-decode";
 import { useSelector } from "react-redux";
 import { RootState } from "../../features/axios/redux/reducers/reducer.js";
+import BookingHistory from "../../pages/partner/bookingHistory.js";
 
 
 const PartnerRoute = ()=>{
@@ -30,6 +32,8 @@ const PartnerRoute = ()=>{
             <Route path="/editsPartnerCar" element={isValid ? <CarEditPartner/> : <Navigate to={'/partner/login'}/>}/>
             <Route path="/success/:transactionId/:userId" element={<TransactionComplete/>}/>
             <Route path="/Dashboard" element={isValid ? <DashboardPartner/> : <Navigate to={'/partner/login'}/>}/>
+            <Route path="/bookings" element={isValid ? <BookingPartner/> : <Navigate to={'/partner/login'}/>}/>
+            <Route path="/bookingHistory" element={isValid ? <BookingHistory/> : <Navigate to={'/partner/login'}/>}/>
         </Routes>
     )
 }

@@ -10,17 +10,25 @@ import Loading from "../../../loading/loading";
 
 import { toast } from "react-toastify";
 import CarImageComponent from "../../../commonComponent/carImage/carImage";
-import { decodeToken } from "../../../../utils/tokenUtil";
-
+import { useSelector } from "react-redux";
+import { RootState } from "../../../../features/axios/redux/reducers/reducer";
+import { jwtDecode } from "jwt-decode";
+import { tokenInterface } from "../../../../types/payloadInterface";
+import { useNavigate } from "react-router-dom";
 const AddCar = ()=>{
 
-    const [formData, setFormData] = useState<carInterface>({} as carInterface)
+    const adminToken = useSelector((root: RootState)=>root.adminToken.adminToken) ?? ''
+    const [formData, setFormData] = useState<carInterface>({
+        addedById: adminToken
+    } as carInterface)
     const [category, setCategory] = useState<categoryInterface[]>([])
     const [validationErrors, setValidationErrors] = useState<Partial<Record<string, string>>>({})
     const [SelectedImg, setSelectedImg] = useState<File | null>(null)
     const [createdCar, setCreatedCar] = useState<Partial<showCarInterface>>({})
     const [isLoading, setIsLoading] = useState(false)
     const [showModal, setShowModal] = useState(false)
+    const navigate = useNavigate()
+    
     
 
     useEffect(()=>{
@@ -89,28 +97,29 @@ const AddCar = ()=>{
 
                 if(!isSizeValid)
                 {
-                    window.alert(`File size should be up to ${fileSizeMb}MB`)
+                    toast.warning(`File size should be up to ${fileSizeMb}MB`)
                     e.currentTarget.value = ''
                     return
                 }
 
                 if(files.length < 2)
                     {
-                        window.alert("Please select 2 Images in interior")
+                        window.alert()
+                        toast.warning("Please select 2 Images in interior")
                         return
                     }
                 setFormData((prevState)=>({...prevState, [name] : Array.from(files)}))
             }
             else
             {
-                window.alert("Please select image files")
+                toast.warning("Please select image files")
                 e.currentTarget.value = '';
                 return 
             }
         }
         else
         {
-            window.alert("2 images should upload")
+            toast.warning("2 images should upload")
             e.currentTarget.value = ''; 
             return  
         }
@@ -126,15 +135,14 @@ const AddCar = ()=>{
             const fileSizeMb = 1
             if(!file.type.startsWith('image/'))
             {
-                window.alert('Selected file should be an image')
+                toast.warning('Selected file should be an image')
                 e.currentTarget.value = ''
                 return
             }
 
-            console.log("files size : ", file.size)
             if(file.size > fileSizeMb * 1024 * 1024)
             {
-                window.alert(`Selected file should have the size less than ${fileSizeMb}MB`)
+                toast.warning(`Selected file should have the size less than ${fileSizeMb}MB`)
                 e.currentTarget.value = ''
                 return
             }
@@ -147,6 +155,7 @@ const AddCar = ()=>{
         }
         
     }
+
 
     const handleExterior = (e:React.ChangeEvent<HTMLInputElement>)=>{
         e.preventDefault()
@@ -166,27 +175,28 @@ const AddCar = ()=>{
 
                 if(!isSizeValid)
                     {
-                        window.alert(`File size should be up to ${fileSizeMb}MB`)
+                        toast.warning(`File size should be up to ${fileSizeMb}MB`)
                         e.currentTarget.value = ''
                         return
                     }
 
                 if(files.length < 2)
                     {
-                        window.alert("Please select 2 Images in exterior")
+                        toast.warning("Please select 2 Images in exterior")
                         return
                     }
                 setFormData((prevState)=>({...prevState, [name]: Array.from(files)}))
             }
             else
             {
-                window.alert("Please select image files")
+                window.alert()
+                toast.warning("Please select image files")
                 e.currentTarget.value = '';
             }
         }
         else
         {
-            window.alert("2 images should upload")
+            toast.warning("2 images should upload")
             e.currentTarget.value = ''
             return
         }
@@ -225,9 +235,7 @@ const AddCar = ()=>{
             });
         }
         
-          const adminToken = localStorage.getItem('admintoken') ?? ''
-          console.log("admin Toke found :", adminToken)
-          setFormData({...formData, addedById : adminToken})
+          
 
           setFormData((prevFormData) => {
             console.log("form status : ", prevFormData.status, {...prevFormData});
@@ -272,7 +280,6 @@ const AddCar = ()=>{
                     toast.success(response.message)
                     setIsLoading(false)
                     setValidationErrors({})
-                    return true
                 } 
                 else 
                 {
@@ -597,7 +604,9 @@ const AddCar = ()=>{
             </Modal>
         </Container>
 
-        <Modal show={showModal} onHide={() => setShowModal(false)}>
+        <Modal show={showModal} onHide={() => {
+        setShowModal(false);
+        navigate('/admin/car/carManagement')}}>
             <Modal.Header closeButton>
                 <h4>Car Added successfully</h4>
             </Modal.Header>

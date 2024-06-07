@@ -3,7 +3,7 @@ import { confirmAlert } from 'react-confirm-alert';
 import './bookedCars.css';
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
-import PaymentFlow from "../../../paymentLoader/paymetnLoader"; // Adjust import path as necessary
+import PaymentFlow from "../../../paymentLoader/paymetnLoader";
 import { FaArrowRight, FaCalendarTimes, FaCar, FaChair, FaGasPump, FaLocationArrow } from "react-icons/fa";
 import { Button, Form, Modal } from "react-bootstrap";
 import { BiSolidLocationPlus } from "react-icons/bi";
@@ -86,6 +86,19 @@ const BookedCars = () => {
         console.log("currentBookings : ", booking)
         setCurrentBoking(booking)
         setReschedule(true)
+    }
+
+    const handleBookingCompleted = async(bookingId: string)=>{
+        try{
+            const data : Partial<detailBooking> = {
+                _id: bookingId,
+                status:'Completed'
+            }
+            const updateBooking = await bookingUpdater(data)
+            console.log("updated booking :", updateBooking)
+        } catch(error: any){
+            toast.error(error.message)
+        }
     }
     
 
@@ -180,10 +193,10 @@ const BookedCars = () => {
     useEffect(() => {
         fetchBookingDetail();
     }, []);
-
     //Date Setting
 
     const handleDate = (date: Date | null) => {
+        console.log("date setting")
         setSelectedDate(date);
         if (date && Array.isArray(bookingInfo) && filteredBookingInfo !== null) {
             let filteredData: detailBooking[];
@@ -198,6 +211,7 @@ const BookedCars = () => {
                     return bookingStartDate.toDateString() === date.toDateString();
                 });
             }
+            console.log(filteredData)
             setBookingInfo(filteredData);
         }
     };
@@ -246,9 +260,6 @@ const BookedCars = () => {
             ],
         });
     };
-    // const paymentLoading = (value: boolean)=>{
-    //     setPaymentLoader(value)
-    // }
 
     return (
         <>
@@ -343,24 +354,33 @@ const BookedCars = () => {
                                                 </div>
                                                 <div className="col-3">
                                                     <div className="buttons d-flex flex-column justify-content-center align-items-center">
-                                                        {
-                                                            bookings.status === 'Cancelled' ? (
-                                                                <>
-                                                                </>
-                                                            ) : (
-                                                                <>
-                                                                <Button className="ms-5" onClick={() => setShowModal(true)}>
-                                                                    Report an issue
-                                                                </Button>
-                                                                <Button variant="danger" onClick={() => handleBookingCancel(bookings._id, bookings.carId.name, bookings.transaction.amount || 0)} className="ms-5 mt-2">
-                                                                    Cancel booking
-                                                                </Button>
-                                                                <Button variant="dark" onClick={()=>rescheduleBooking(bookings)} style={{width:'60%'}} className="ms-5 mt-2">
-                                                                    ReSechdule
-                                                                </Button>
-                                                                </>
-                                                            )
-                                                        }
+                                                    {
+                                                        bookings.status === 'Cancelled' ? (
+                                                            <>
+                                                            </>
+                                                        ) : (
+                                                            <>
+                                                                {new Date(bookings.date.end) <= new Date() ? (
+                                                                    
+                                                                    <Button variant="success" onClick={() => handleBookingCompleted(bookings._id)}>
+                                                                        Booking Completed
+                                                                    </Button>
+                                                                ) : (
+                                                                    <>
+                                                                        <Button className="ms-5" onClick={() => setShowModal(true)}>
+                                                                            Report an issue
+                                                                        </Button>
+                                                                        <Button variant="danger" onClick={() => handleBookingCancel(bookings._id, bookings.carId.name, bookings.transaction.amount || 0)} className="ms-5 mt-2">
+                                                                            Cancel booking
+                                                                        </Button>
+                                                                        <Button variant="dark" onClick={() => rescheduleBooking(bookings)} style={{ width: '60%' }} className="ms-5 mt-2">
+                                                                            Reschedule
+                                                                        </Button>
+                                                                    </>
+                                                                )}
+                                                            </>
+                                                        )
+                                                    }
                                                                 
                                                                
                         

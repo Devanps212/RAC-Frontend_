@@ -45,41 +45,57 @@ const BookingUI = () => {
         const fetchCar = async () => {
             if (carId !== null) {
                 const response = await findAllCars(carId, 'user');
-                console.log(response);
                 setCar(response);
+
                 setCategory(response.category);
-                if(parsedBooking?.startDate && parsedBooking.endDate && response.rentPricePerDay){
-                    const startDate = new Date(parsedBooking.startDate)
-                    const endDate = new Date(parsedBooking.endDate)
+
+                if (parsedBooking?.startDate && parsedBooking.endDate && response.rentPricePerDay) {
+                    const startDate = new Date(parsedBooking.startDate);
+                    const endDate = new Date(parsedBooking.endDate);
                     const durationInDays = Math.ceil((endDate.getTime() - startDate.getTime()) / (1000 * 60 * 60 * 24));
-                    let amount: number;
-                    let discount: number;
-                    let total : number;
-                    let updatedBooking;
-                    if(response.offer.price && response.offer.discount){
-                        amount = durationInDays * response.offer.price;
-                        discount = response.offer.discount
-                        total = parseFloat(amount.toFixed(2))
-                            
+                
+                    if (durationInDays === 0) {
+
+                        let amount = response.rentPricePerDay;
+                        let discount = 0;
+                        let total = parseFloat(amount.toFixed(2));
+                
+                        const updatedBooking = {...parsedBooking, amount, total, discount};
+                        setBookings(updatedBooking);
                     } else {
-                        amount = durationInDays * response.rentPricePerDay;
-                        discount = 0;
-                        total = parseFloat(amount.toFixed(2))
-
+                        
+                        let amount: number;
+                        let discount: number;
+                        let total: number;
+                
+                        if (response.offer.price && response.offer.discount) {
+                            console.log("Offer found");
+                            amount = durationInDays * response.offer.price;
+                            discount = response.offer.discount;
+                            total = parseFloat(amount.toFixed(2));
+                            console.log(amount, discount, total);
+                        } else {
+                            console.log("Offer not found");
+                            amount = durationInDays * response.rentPricePerDay;
+                            discount = 0;
+                            total = parseFloat(amount.toFixed(2));
+                        }
+                
+                        const updatedBooking = {...parsedBooking, amount, total, discount};
+                        setBookings(updatedBooking);
                     }
-                    updatedBooking = {...parsedBooking, amount, total, discount}
-
-                    setBookings(updatedBooking)
-
-                    
                 } else {
-                    toast.error("no start date or end date not found")
+                    toast.error("No start date or end date found");
                 }
+                
                 
             }
         };
         fetchCar();
     }, []);
+    useEffect(()=>{
+        console.log("booking: ", bookings)
+    })
 
 
     const handlePayNow  = async()=>{

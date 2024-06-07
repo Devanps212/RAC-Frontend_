@@ -49,8 +49,7 @@ const PartnerSidebar: React.FC = () => {
                         }
                         id="nav-dropdown"
                     >
-                        <NavDropdown.Item href="/partner/newBookings">New Bookings</NavDropdown.Item>
-                        <NavDropdown.Item href="/partner/manageBookings">Manage Bookings</NavDropdown.Item>
+                        <NavDropdown.Item href="/partner/bookings">Bookings</NavDropdown.Item>
                         <NavDropdown.Item href="/partner/bookingHistory">Booking History</NavDropdown.Item>
                     </NavDropdown>
                 </li>

@@ -14,6 +14,7 @@ import { RootState } from "../../../features/axios/redux/reducers/reducer";
 import { decodeToken } from "../../../utils/tokenUtil";
 import { userInterface } from "../../../types/userInterface";
 import { findUser } from "../../../features/axios/api/user/user";
+import { OverlayTrigger, Tooltip } from "react-bootstrap";
 
 
 
@@ -31,7 +32,10 @@ const CarDetails = () => {
     const searchParams = new URLSearchParams(location.search);
     const carId = searchParams.get('carId') ?? '';
 
+    const placement = 'bottom'
+
     const bookingDetail = searchParams.get('bookingDetail');
+    console.log("booking detail : ", bookingDetail)
 
     useEffect(() => {
         const fetchCarData = async () => {
@@ -166,12 +170,46 @@ const CarDetails = () => {
                                         <span className="position-relative" style={{ filter: "blur(1.5px)", zIndex: 2 }}>Negotiate</span>
                                     </button>
                                 ) : (
-                                    <Link to={`/negotiate/${user?._id}/${car?.addedById}/${car?._id}`} style={{ textDecoration: 'none' }}>
-                                        <button className="negotiate me-3" style={{ zIndex: 1 }}>
-                                            <span className="position-relative">Negotiate</span>
-                                        </button>
-                                    </Link>
-                                )}
+                                    car && car.owner === 'Admin' ? (
+                                        <OverlayTrigger
+                                            key={placement}
+                                            placement={placement}
+                                            overlay={
+                                                <Tooltip id={`tooltip-${placement}`}>
+                                                    Car owned by Admin. Negotiation not available.
+                                                </Tooltip>
+                                            }
+                                        >
+                                            <button className="position-relative negotiate me-3" style={{ zIndex: 1 }}>
+                                                <FaLock className="position-absolute top-50 start-50 translate-middle" style={{ transform: "translate(-50%, -50%)" }} />
+                                                <span className="position-relative" style={{ filter: "blur(1.5px)", zIndex: 2 }}>Negotiate</span>
+                                            </button>
+                                        </OverlayTrigger>
+                                    ) : (
+                                        <>
+                                            {user && user.refund && user.refund.length === 0 ? (
+                                                <OverlayTrigger
+                                                    key={placement}
+                                                    placement={placement}
+                                                    overlay={
+                                                        <Tooltip id={`tooltip-${placement}`}>
+                                                            Please rent a car first to access negotiation.
+                                                        </Tooltip>
+                                                    }
+                                                >
+                                                    <button className="negotiate me-3" style={{ zIndex: 1 }}>
+                                                        <span className="position-relative">Negotiate</span>
+                                                    </button>
+                                                </OverlayTrigger>
+                                            ): (
+                                                <Link to={`/negotiate/${user?._id}/${car?.addedById}/${car?._id}`} style={{ textDecoration: 'none' }}>
+                                                    <button className="negotiate me-3" style={{ zIndex: 1 }}>
+                                                        <span className="position-relative">Negotiate</span>
+                                                    </button>
+                                                </Link>
+                                            )}
+                                        </>
+                                    ))}
                                 <Link to={`/bookingUI?carId=${car?._id}&bookingDetail=${bookingDetail}`}>
                                     <button className="book-now">Book now</button>
                                 </Link>

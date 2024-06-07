@@ -1,9 +1,11 @@
 import axios, { AxiosRequestConfig } from "axios";
 import apiConfig from "../../../../utils/apiConfig";
 import { userDetailPayload } from "../../../../types/payloadInterface";
+import { setUserInterceptor } from "../../axios_Interceptor/Interceptor";
 
 export const findUser = async(data:string)=>{
     try{
+      setUserInterceptor()
         console.log(data)
         const userConfig : AxiosRequestConfig = {
             url:`${apiConfig.userFind}?data=${data}`,
@@ -21,6 +23,7 @@ export const findUser = async(data:string)=>{
 
 export const saveUserDetails = async (data: Partial<userDetailPayload> | FormData) => {
     try {
+      setUserInterceptor()
       if (data instanceof FormData) {
         const name = data.get('name');
         const profilePic = data.get('profilePic');
@@ -69,6 +72,7 @@ export const saveUserDetails = async (data: Partial<userDetailPayload> | FormDat
 
   export const findAllUsers = async()=>{
     try{
+      setUserInterceptor()
       const userConfig : AxiosRequestConfig = {
         url : apiConfig.mongoUsers,
         method:'get'

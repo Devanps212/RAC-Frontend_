@@ -3,11 +3,11 @@ import { couponInterface } from "./couponInterface"
 import { Refund } from "./bookingInterface"
 
 export interface userAdminInterface {
-    _id: Types.ObjectId
+    _id: string
     name:string,
     email:string,
     mobile:number | undefined,
-    profilePic?:string | undefined,
+    profilePic?:string | File,
     isActive?:boolean,
 }
 

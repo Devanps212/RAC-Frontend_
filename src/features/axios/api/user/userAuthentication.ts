@@ -1,6 +1,7 @@
 import axios, { Axios, AxiosRequestConfig, AxiosResponse } from 'axios'
 import { signInPayload, signUpPayload } from '../../../../types/payloadInterface'
 import apiConfig from '../../../../utils/apiConfig'
+import { setUserInterceptor } from '../../axios_Interceptor/Interceptor'
 
 
 
@@ -107,6 +108,7 @@ export const GoogleVerification = async(credentials : string)=>{
 export const locationFinding = async(location: string)=>{
     try
     {
+        setUserInterceptor()
         console.log("This is location ==>",location)
         const locationConfig :  AxiosRequestConfig = {
             url: apiConfig.locationFinding,

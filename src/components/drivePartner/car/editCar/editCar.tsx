@@ -7,7 +7,7 @@ import { carValidator } from "../../../../Validators/adminValidators.ts/addCarVa
 import { carInterface } from "../../../../types/carAdminInterface";
 import { categoryInterface } from "../../../../types/categoryInterface";
 import { toast } from "react-toastify";
-import { useLocation } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import Loading from "../../../loading/loading";
 
 
@@ -26,6 +26,7 @@ const PartnerEditCar = ()=>{
     const [exteriorImg, setImg] = useState<File[]>([])
     const [interiorImg, setIntImg] = useState<File[]>([])
     const [thumbnail, setThumbnail] = useState<File[]>([])
+    const navigate = useNavigate()
     const location = useLocation()
     const {id} = location.state
 
@@ -69,7 +70,7 @@ const PartnerEditCar = ()=>{
             try {
                 const response = await getCategory();
                 const categories: categoryInterface[] = response.allData;
-                console.log(response);
+                console.log("category  :", response);
                 setCategory(categories);
             } catch (error) {
                 console.log(error);
@@ -300,6 +301,7 @@ const PartnerEditCar = ()=>{
                         setIsLoading(false)
                         setShowModal(true);
                         toast.success(response.message);
+                        navigate('/partner/manageCar')
                     } else {
                         setIsLoading(false)
                         toast.error("Error uploading car");

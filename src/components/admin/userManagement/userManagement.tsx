@@ -103,7 +103,7 @@ const UserManagement = ()=>{
                                     <td>{user.name}</td>
                                     <td>{user.email}</td>
                                     <td>{user.mobile ? user.mobile : <span className="text-danger">Mobile not given</span>}</td>
-                                    <td>{user.profilePic ?
+                                    <td>{user.profilePic && typeof user.profilePic === 'string' ?
                                     <img
                                     src={user.profilePic}
                                     alt={`Profile of ${user.name}`}

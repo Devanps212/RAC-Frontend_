@@ -7,7 +7,7 @@ import { carValidator } from "../../../../Validators/adminValidators.ts/addCarVa
 
 import { categoryInterface } from "../../../../types/categoryInterface";
 import { toast } from "react-toastify";
-import { useLocation } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 
 
 const EditCar = ()=>{
@@ -24,6 +24,7 @@ const EditCar = ()=>{
     const [exteriorImg, setImg] = useState<File[]>([])
     const [interiorImg, setIntImg] = useState<File[]>([])
     const [thumbnail, setThumbnail] = useState<File[]>([])
+    const navigate = useNavigate()
     const location = useLocation()
     const {id} = location.state
 
@@ -93,13 +94,13 @@ const EditCar = ()=>{
             }
             else
             {
-                window.alert("Please select image files")
+                toast.warning("Please select image files")
                 e.currentTarget.value = '';
             }
         }
         else
         {
-            window.alert('Please select a maximum of three image files')
+            toast.warning('Please select a maximum of three image files')
             e.currentTarget.value = '';
         }
     }
@@ -127,7 +128,7 @@ const EditCar = ()=>{
             }
             else
             {
-                window.alert("Please select image files")
+                toast.warning("Please select image files")
                 e.currentTarget.value = '';
             }
         }
@@ -153,7 +154,7 @@ const EditCar = ()=>{
             const fileSizeMb = 1
             if(!file.type.startsWith('image/'))
             {
-                window.alert('Selected file should be an image')
+                toast.warning('Selected file should be an image')
                 e.currentTarget.value = ''
                 return
             }
@@ -161,14 +162,14 @@ const EditCar = ()=>{
             console.log("files size : ", file.size)
             if(file.size > fileSizeMb * 1024 * 1024)
             {
-                window.alert(`Selected file should have the size less than ${fileSizeMb}MB`)
+                toast.warning(`Selected file should have the size less than ${fileSizeMb}MB`)
                 e.currentTarget.value = ''
                 return
             }
             console.log("file length : ", e.target.files?.length)
             if(e.target.files && e.target.files.length > 1)
                 {
-                    window.alert(`Only single file allowed to upload`)
+                    toast.warning(`Only single file allowed to upload`)
                     e.currentTarget.value = ''
                     return
                 }
@@ -305,6 +306,7 @@ const EditCar = ()=>{
                         setCreatedCar(response.carCreate);
                         setShowModal(true);
                         toast.success(response.message);
+                        navigate('/admin/car/carManagement')
                     } else {
                         toast.error("Error uploading car");
                     }

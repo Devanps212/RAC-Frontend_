@@ -11,6 +11,8 @@ const apiConfig = {
 
     googleVerification: `${configKeys.API_URL}user-auth/Google-SignIn-Up`,
     adminLogin : `${configKeys.API_URL}admin-auth/login`,
+    findOneAdmin : `${configKeys.API_URL}admin-auth/findOne`,
+    adminUpdate:`${configKeys.API_URL}admin-auth/updateAdmin`,
 
     createCategory :`${configKeys.API_URL}category/createCateg`,
     findAllCategory :`${configKeys.API_URL}category/findAllCategory`, 

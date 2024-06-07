@@ -31,7 +31,7 @@ const Header = () => {
         <Navbar.Collapse className='justify-content-end' id='navbar-contents'>
           <Nav className="ml-auto">
             {/* <Nav.Link href='/admin/Dashboard'>Dashboard</Nav.Link> */}
-            <Nav.Link href='#' className='me-3'><FaUser className='me-1'/>  Profile</Nav.Link>
+            <Nav.Link href='/admin/profile' className='me-3'><FaUser className='me-1'/>  Profile</Nav.Link>
             {/* <Nav.Link href='#'>Sales Report</Nav.Link> */}
 
             {/* <NavDropdown title="Management" id="basic-nav-dropdown" className='management'>

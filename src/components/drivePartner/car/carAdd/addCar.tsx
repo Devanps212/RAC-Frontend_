@@ -9,19 +9,27 @@ import CarImageComponent from "../../../commonComponent/carImage/carImage";
 import Loading from "../../../loading/loading";
 import './carAdd.css'
 import { toast } from "react-toastify";
+import { useSelector } from "react-redux";
+import { RootState } from "../../../../features/axios/redux/reducers/reducer";
+import { useNavigate } from "react-router-dom";
 
 const PartnerAddCar = ()=>{
 
-    const [formData, setFormData] = useState<carInterface>({} as carInterface)
+    const partnerToken = useSelector((root: RootState)=>root.partnerToken.partnerToken) ?? ''
+    console.log(partnerToken)
+    const [formData, setFormData] = useState<carInterface>({
+        addedById:partnerToken
+    } as carInterface)
     const [category, setCategory] = useState<categoryInterface[]>([])
     const [validationErrors, setValidationErrors] = useState<Partial<Record<string, string>>>({})
     const [SelectedImg, setSelectedImg] = useState<File | null>(null)
     const [isLoading, setIsLoading] = useState(false)
     const [createdCar, setCreatedCar] = useState<Partial<showCarInterface>>({})
     const [showModal, setShowModal] = useState(false)
+    const navigate = useNavigate()
 
-    const partnerToken = localStorage.getItem('partnerToken') ?? '';
-    console.log("partner token  :", partnerToken)
+    
+
 
     useEffect(() => {
         getCategory()
@@ -74,15 +82,14 @@ const PartnerAddCar = ()=>{
             const fileSizeMb = 1
             if(!file.type.startsWith('image/'))
             {
-                window.alert('Selected file should be an image')
+                toast.warning('Selected file should be an image')
                 e.currentTarget.value = ''
                 return
             }
 
-            console.log("files size : ", file.size)
             if(file.size > fileSizeMb * 1024 * 1024)
             {
-                window.alert(`Selected file should have the size less than ${fileSizeMb}MB`)
+                toast.warning(`Selected file should have the size less than ${fileSizeMb}MB`)
                 e.currentTarget.value = ''
                 return
             }
@@ -181,32 +188,35 @@ const PartnerAddCar = ()=>{
         e.preventDefault()
         setIsLoading(true)
         console.log("formData before update:", formData)
+
+        if (!formData.status) 
+        {
+            setFormData({
+              ...formData,
+              status: 'available',
+            });
+        }
         
-        setFormData(prevFormdata => {
-            return {...prevFormdata, status: 'available', addedById: partnerToken};
-        });
-        
-        setFormData((prevFormData) => {
-            console.log("form status : ", prevFormData.status, prevFormData);
+        // const decode : tokenInterface = jwtDecode(partnerToken) ?? ''
+        // // const partnerId = decode.payload
+        // //   setFormData({...formData, addedById : partnerToken})
+
+          setFormData((prevFormData) => {
+            console.log("form status : ", prevFormData.status, {...prevFormData});
             return prevFormData;
           });
-          console.log("owner of car :", formData.owner)
-          if(formData.status === undefined)
-          {
-            setFormData({...formData, owner:'User'})
-            console.log("owner setted")
-          }
-          
+
+        console.log("form data after update : ",formData)
         console.log("creating car")
         const valid = await carValidator(formData)
         if(Object.keys(valid).length === 0)
         {
             try{
-                console.log("formData: ", formData)
+                console.log("Datas appended to formData : ",formData)
                 const sendData = new FormData()
                 for(let [key, value] of Object.entries(formData))
                 {
-                    if(key ==='interior' || key=== 'exterior')
+                    if(key ==='interior' || key=== 'exterior' ||key=== 'thumbnailImg')
                     {
                         if(Array.isArray(value))
                         {
@@ -221,16 +231,19 @@ const PartnerAddCar = ()=>{
                         sendData.append(key, value)
                     }
                 }
-                const response = await createCar(sendData, 'partner');
-                if (response)
+                
+                console.log("sendData :",sendData)
+                const response = await createCar(sendData, 'admin');
+                if (response) 
                 {
                     console.log(response);
-                    console.log(response.carCreate)
-                    setCreatedCar(response.carCreate)
-                    toast.success(response.message)
                     setFormData({} as carInterface)
-                    setIsLoading(false)
+                    setCreatedCar(response.carCreate)
                     setShowModal(true)
+                    console.log(response.carCreate)
+                    toast.success(response.message)
+                    setIsLoading(false)
+                    setValidationErrors({})
                     return true
                 } 
                 else 
@@ -239,26 +252,24 @@ const PartnerAddCar = ()=>{
                     toast.error("Error uploading car")
                     setIsLoading(false)
                     return true
-                }
-                
+                }   
             }
             catch(error:any)
             {
-                setIsLoading(false)
                 console.log("error : ", error.message);
                 toast.error(error.message);
+                setIsLoading(false)
             }
         }
         else
         {
-            setIsLoading(false)
             console.log("error found")
             console.log(valid) 
+            setIsLoading(false)
             setValidationErrors(valid)
             console.log("validation errors :",validationErrors)
         }
     }
-
 
     return(
         <div className="addCar-body">
@@ -552,7 +563,10 @@ const PartnerAddCar = ()=>{
             </Modal>
         </Container>
 
-        <Modal show={showModal} onHide={() => setShowModal(false)}>
+        <Modal show={showModal} onHide={() => {
+            setShowModal(false)
+            navigate('/partner/manageCar')
+            }}>
             <Modal.Header closeButton>
                 <h4>Car Added successfully</h4>
             </Modal.Header>

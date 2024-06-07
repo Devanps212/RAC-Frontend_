@@ -42,7 +42,7 @@ export const getCategory = async()=>{
     }
     catch(error:any)
     {
-        console.log(error.response)
+        console.log("category error : ", error)
         throw new Error(error.response)
     }
 }
