@@ -1,148 +1,132 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { io, Socket } from 'socket.io-client';
 import { IoPaperPlaneSharp } from 'react-icons/io5';
 import { OverlayTrigger, Tooltip } from 'react-bootstrap';
 import Message from '../../messengers/user/Messsage/userMessage';
 import './partnerNegotiation.css';
 import { toast } from 'react-toastify';
 import { findOnePartner } from '../../../features/axios/api/partner/partner';
-import { findOneUser } from '../../../features/axios/api/admin/adminUser';
-import { userInterface } from '../../../types/userInterface';
 import { partnerDetailInterface } from '../../../types/partnerInterface';
-import { useParams } from 'react-router-dom';
-import { carBasedOnRole, findAllCars } from '../../../features/axios/api/car/carAxios';
-import { showCarInterface } from '../../../types/carAdminInterface';
+import ChatSidebar from '../../commonComponent/chatSidebar/chat';
+import { useSelector } from 'react-redux';
+import { RootState } from '../../../features/axios/redux/reducers/reducer';
+import { jwtDecode } from 'jwt-decode';
+import { tokenInterface } from '../../../types/payloadInterface';
+import { findUsersforConversation } from '../../../features/axios/api/user/user';
+import { userInterface } from '../../../types/userInterface';
+import { getUserConversations, getUserMessages } from '../../../features/axios/api/messenger/userConversation';
+import { conversationInterface } from '../../../types/messageInterface';
+import { useSocketContext } from '../../../context/socketContext';
 
-interface ChatProps {
-  userId: string;
-  partnerId: string;
-  carId: string;
-}
-
-const PartnerChat: React.FC<ChatProps> = ({ userId, partnerId, carId }) => {
-  const socket = useRef<Socket | null>(null);
-  const [messages, setMessages] = useState<any[]>([]);
+const PartnerNegotiate: React.FC = () => {
+  const { socket, onlineUsers } = useSocketContext();
+  const [messages, setMessages] = useState<conversationInterface[]>([]);
   const [newMessage, setNewMessage] = useState<string>('');
-  const [arrivalMessage, setArrivalMessage] = useState<any>(null);
-  const [userData, setUserData] = useState<userInterface>();
-  const [partnerData, setPartnerData] = useState<partnerDetailInterface>();
-  const [car, setCar] = useState<showCarInterface>();
+  const [arrivalMessage, setArrivalMessage] = useState<conversationInterface | null>(null);
+  const [partnerData, setPartnerData] = useState<partnerDetailInterface | null>(null);
+  const [conversationUsers, setConversationUsers] = useState<userInterface[]>([]);
+  const [selectedUserId, setSelectedUserId] = useState<string | null>(null);
   const scrollRef = useRef<HTMLDivElement>(null);
+  const partnerToken = useSelector((state: RootState) => state.partnerToken.partnerToken) ?? '';
+  const decoded: tokenInterface = jwtDecode(partnerToken);
+  const partnerId = decoded.payload;
 
   useEffect(() => {
     const findPartnerDetail = async () => {
       try {
-        const findPartner = await findOnePartner(partnerId);
+        const findPartner = await findOnePartner(partnerId as string);
         setPartnerData(findPartner);
       } catch (error: any) {
         toast.error(error.message);
       }
     };
 
-    const findUser = async () => {
-      try {
-        const findUser = await findOneUser(userId);
-        setUserData(findUser.user);
-      } catch (error: any) {
-        toast.error(error.message);
-      }
-    };
-
-    const findCar = async () => {
-      try {
-        const findcar = await findAllCars(carId, 'user');
-        setCar(findcar);
-      } catch (error: any) {
-        toast.error(error.message);
-      }
-    };
-
     findPartnerDetail();
-    findUser();
-    findCar();
-  }, [userId, partnerId, carId]);
-
-  useEffect(() => {
-    socket.current = io('http://localhost:5000/');
-    socket.current.on('connect', () => {
-      console.log('Connected to Socket.IO server');
-    });
-    socket.current.on('getMessage', (data) => {
-      setArrivalMessage({
-        sender: data.senderId,
-        text: data.text,
-        createdAt: Date.now(),
-      });
-    });
-
-    return () => {
-      socket.current?.disconnect();
-    };
-  }, []);
-
-  useEffect(() => {
-    if (arrivalMessage) {
-      setMessages((prev) => [...prev, arrivalMessage]);
-    }
-  }, [arrivalMessage]);
-
-  useEffect(() => {
-    if (partnerId) {
-      socket.current?.emit('addUser', partnerId);
-    }
   }, [partnerId]);
 
   useEffect(() => {
-    scrollRef.current?.scrollIntoView({ behavior: 'smooth' });
-  }, [messages]);
+    const findUser = async () => {
+      try {
+        const users = await findUsersforConversation(partnerId);
+        setConversationUsers(users);
+      } catch (error: any) {
+        toast.error(error.message);
+      }
+    };
+
+    findUser();
+  }, [partnerId]);
+
+  useEffect(() => {
+    if (socket) {
+      socket.on('newMessage', (newMessage: conversationInterface) => {
+        console.log("newMessage found : ", newMessage)
+        setArrivalMessage(newMessage);
+      });
+    }
+
+    return () => {
+      socket?.off('newMessage');
+    };
+  }, [socket]);
+
+  useEffect(() => {
+    if (arrivalMessage && selectedUserId === arrivalMessage.senderId) {
+      setMessages((prevMessages) => [...prevMessages, arrivalMessage]);
+      // Scroll to the latest message
+      scrollRef.current?.scrollIntoView({ behavior: 'smooth' });
+      // Reset arrivalMessage after processing
+      setArrivalMessage(null);
+    }
+  }, [arrivalMessage, selectedUserId]);
+
+  useEffect(() => {
+    if (partnerId) {
+      socket?.emit('addUser', partnerId);
+    }
+  }, [partnerId, socket]);
+
+  const handleContactSelection = async (userId: string) => {
+    setSelectedUserId(userId);
+    try {
+      const userMessages = await getUserMessages(userId, 'user');
+      setMessages(userMessages);
+    } catch (error: any) {
+      toast.error(error.message);
+    }
+  };
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    const message = {
-      senderId: partnerId,
-      receiverId: userId,
-      text: newMessage,
-    };
+    if (!selectedUserId || !newMessage) return;
 
-    socket.current?.emit('sendMessage', message);
-
-    setMessages([...messages, { ...message, createdAt: Date.now() }]);
-    setNewMessage('');
+    try {
+      const savedMessage = await getUserConversations(selectedUserId, partnerId, newMessage);
+      setMessages((prevMessages) => [...prevMessages, savedMessage]);
+      socket?.emit('sendMessage', savedMessage);
+      setNewMessage('');
+      // Scroll to the latest message after sending
+      scrollRef.current?.scrollIntoView({ behavior: 'smooth' });
+    } catch (error: any) {
+      toast.error(error.message);
+    }
   };
 
   return (
     <div className="container-fluid content-container">
       <div className="row">
-        <div className="col-12 col-md-5 left-col">
-          <div className="car-item mt-3 d-flex flex-column align-items-center">
-            <div className="image-container d-flex justify-content-center align-items-center">
-              <img 
-                src={car?.thumbnailImg} 
-                style={{ width: '50%', height: 'auto' }} 
-                alt={car?.name}
-              />
-            </div>
-            <strong className="car-name mt-3">{car?.name}</strong>
-            <div className="price-details text-center mt-3">
-              <h4>Current Price</h4>
-              {car && car.offer ? (
-                <p>Price: {car.offer.price}</p>
-              ) : (
-                <p>Price: {car?.rentPricePerDay}</p>
-              )}
-              <strong>Negotiated Price: <span>1100000</span></strong>
-            </div>
-          </div>
+        <div className="col-md-3">
+          <ChatSidebar users={conversationUsers} onSelectContact={handleContactSelection} />
         </div>
-        <div className="col-7 right-col">
+        <div className="col-md-9">
           <div className="chat-box me-3">
             <h4 className="ms-5 text-light">Chat here</h4>
             <div className="message-list">
               {messages.map((msg, index) => (
-                <div key={index} ref={scrollRef}>
+                <div key={index}>
                   <Message message={msg} own={msg.senderId === partnerId} />
                 </div>
               ))}
+              <div ref={scrollRef}></div>
             </div>
             <form onSubmit={handleSubmit} className="message-input">
               <textarea
@@ -164,4 +148,4 @@ const PartnerChat: React.FC<ChatProps> = ({ userId, partnerId, carId }) => {
   );
 };
 
-export default PartnerChat;
+export default PartnerNegotiate;

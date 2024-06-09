@@ -19,87 +19,59 @@ import { useSocketContext } from '../../../context/socketContext';
 import { Socket } from 'socket.io-client';
 
 const Chat = () => {
-  const sockets = useRef<Socket | null>(null);
+  const { socket, onlineUsers } = useSocketContext();
   const [messages, setMessages] = useState<conversationInterface[]>([]);
   const [newMessage, setNewMessage] = useState<string>('');
-  const [userData, setUserData] = useState<userInterface>();
-  const [partnerData, setPartnerData] = useState<partnerDetailInterface>();
-  const [car, setCar] = useState<showCarInterface>();
+  const [userData, setUserData] = useState<userInterface | null>(null);
+  const [partnerData, setPartnerData] = useState<partnerDetailInterface | null>(null);
+  const [car, setCar] = useState<showCarInterface | null>(null);
   const scrollRef = useRef<HTMLDivElement>(null);
   const { userId, partnerId, carId } = useParams();
   const [loading, setLoading] = useState(false);
   const userToken = useSelector((root: RootState) => root.token.token) ?? '';
-  const { onlineUsers, socket } = useSocketContext();
   const isOnline = onlineUsers.includes(partnerId as string);
 
   useEffect(() => {
-    const findPartnerDetail = async () => {
+    const fetchInitialData = async () => {
       try {
-        const findPartner = await findOnePartner(partnerId as string);
-        setPartnerData(findPartner);
-      } catch (error: any) {
-        toast.error(error.message);
-      }
-    };
+        const [partnerDetails, userDetails, carDetails, userMessages] = await Promise.all([
+          findOnePartner(partnerId as string),
+          findUser(userId as string),
+          findAllCars(carId as string, 'user'),
+          getUserMessages(partnerId as string, 'partner')
+        ]);
 
-    const findingUser = async () => {
-      try {
-        const findUsers = await findUser(userId as string);
-        setUserData(findUsers.data);
-      } catch (error: any) {
-        toast.error(error.message);
-      }
-    };
-
-    const findCar = async () => {
-      try {
-        const findCar = await findAllCars(carId as string, 'user');
-        setCar(findCar);
-      } catch (error: any) {
-        toast.error(error.message);
-      }
-    };
-
-    const getMessage = async () => {
-      try {
-        setLoading(true);
-        const userMessages = await getUserMessages(partnerId as string);
+        setPartnerData(partnerDetails);
+        setUserData(userDetails.data);
+        setCar(carDetails);
         setMessages(userMessages);
       } catch (error: any) {
         toast.error(error.message);
-      } finally {
-        setLoading(false);
       }
     };
 
-    findPartnerDetail();
-    findingUser();
-    findCar();
-    getMessage();
+    fetchInitialData();
   }, [userId, partnerId, carId]);
 
   useEffect(() => {
-    setTimeout(() => {
-      scrollRef.current?.scrollIntoView({ behavior: 'smooth' });
-    }, 100);
-  }, [messages]);
-
-  useEffect(() => {
-    const handleMessage = (newMessage: conversationInterface) => {
+    const handleNewMessage = (newMessage: conversationInterface) => {
       setMessages((prevMessages) => [...prevMessages, newMessage]);
+      scrollRef.current?.scrollIntoView({ behavior: 'smooth' });
     };
 
-    socket?.on("newMessage", handleMessage);
+    socket?.on('newMessage', handleNewMessage);
 
     return () => {
-      socket?.off("newMessage", handleMessage);
+      socket?.off('newMessage', handleNewMessage);
     };
   }, [socket]);
 
   const sendNewMessage = async (messageText: string) => {
     try {
-      const newMessage = await getUserConversations(partnerId as string, userToken, messageText);
-      setMessages(prevMessages => [...prevMessages, newMessage]);
+      const newMessage = await getUserConversations(partnerId as string, userId as string, messageText);
+      setMessages((prevMessages) => [...prevMessages, newMessage]);
+      socket?.emit('sendMessage', newMessage); // Ensure you emit the message after sending it
+      scrollRef.current?.scrollIntoView({ behavior: 'smooth' });
     } catch (error: any) {
       toast.error(error.message);
     }
@@ -107,7 +79,7 @@ const Chat = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!newMessage) return;
+    if (!newMessage.trim()) return;
     await sendNewMessage(newMessage);
     setNewMessage('');
   };
@@ -123,7 +95,7 @@ const Chat = () => {
             <strong className="car-name mt-3">{car?.name}</strong>
             <div className="price-details text-center mt-3">
               <h4>Current Price</h4>
-              {car && car.offer ? <p>Price: {car.offer.price}</p> : <p>Price: {car?.rentPricePerDay}</p>}
+              {car?.offer ? <p>Price: {car.offer.price}</p> : <p>Price: {car?.rentPricePerDay}</p>}
               <strong>Negotiated Price: <span>1100000</span></strong>
             </div>
           </div>
@@ -141,8 +113,8 @@ const Chat = () => {
 
             <div className="message-list">
               {messages.map((msg, index) => (
-                <div key={index} ref={scrollRef}>
-                  <Message message={msg} own={msg.senderId === userId} profileImage={userData?.profilePic || ''} loading={loading} />
+                <div key={index} ref={index === messages.length - 1 ? scrollRef : null}>
+                  <Message message={msg} own={msg.senderId === userId} profileImage={partnerData?.profilePic || ''} loading={loading} />
                 </div>
               ))}
             </div>

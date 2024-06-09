@@ -122,6 +122,7 @@ export const bookingUpdater = async(data: Partial<detailBooking>, purpose: strin
 
 export const bookingRescheduler = async(data: Partial<bookingInterfaceReschedule>, userId : string)=>{
     try{
+        console.log("data reSchedule : ", data)
         const reschedularConfig : AxiosRequestConfig = {
             url: apiConfig.bookingRescheduler,
             method: 'patch',

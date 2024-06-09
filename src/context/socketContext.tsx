@@ -9,7 +9,7 @@ interface SocketContextType {
   socket: Socket | null;
   onlineUsers: string[];
 }
-
+ 
 const SocketContext = createContext<SocketContextType>({
   socket: null,
   onlineUsers: [],
@@ -26,37 +26,59 @@ const SocketContextProvider: FC<{ children: ReactNode }> = ({ children }) => {
   const partnerToken = useSelector((state: RootState) => state.partnerToken.partnerToken) ?? '';
 
   useEffect(() => {
-    const connectSocket = (token: string) => {
+    const connectSocket = (token: string, role: string): Socket => {
       try {
         const decodedToken = jwtDecode<tokenInterface>(token);
-        const userId = decodedToken.payload
+        const senderId = decodedToken.payload
 
-        const socket = io("http://localhost:5000/", {
+        const newSocket = io("http://localhost:5000/", {
           query: {
-            userId,
+            senderId,
+            role,
           },
         });
 
-        setSocket(socket);
+        newSocket.on('connect', () => {
+          console.log(`Socket connected with ID: ${newSocket.id}`);
+        });
 
-        socket.on('getOnlineUsers', (users: any) => {
+        newSocket.on('getOnlineUsers', (users: any) => {
           setOnlineUsers(users);
         });
 
+        return newSocket;
       } catch (error) {
         console.error('Failed to decode token:', error);
+        throw error; // You may want to handle this error case
       }
     };
 
     // Connect socket based on the available token (user or partner)
-    if (userToken) {
-      console.log("found userToken : ", userToken)
-      connectSocket(userToken);
+    if (userToken && partnerToken) {
+      console.log("Both userToken and partnerToken are present. Handling both.");
+      const userSocket = connectSocket(userToken, 'user');
+      const partnerSocket = connectSocket(partnerToken, 'partner');
+
+      setSocket(userSocket);
+
+      return () => {
+        userSocket.close();
+        partnerSocket.close();
+      };
+    } else if (userToken) {
+      console.log("Found userToken:", userToken);
+      const userSocket = connectSocket(userToken, 'user');
+      setSocket(userSocket);
+
+      return () => userSocket.close();
     } else if (partnerToken) {
-      console.log("found partner token : ", partnerToken)
-      connectSocket(partnerToken);
+      console.log("Found partnerToken:", partnerToken);
+      const partnerSocket = connectSocket(partnerToken, 'partner');
+      setSocket(partnerSocket);
+
+      return () => partnerSocket.close();
     } else {
-      // Close socket if neither token is present
+
       if (socket) {
         socket.close();
         setSocket(null);

@@ -84,3 +84,18 @@ export const saveUserDetails = async (data: Partial<userDetailPayload> | FormDat
       throw new Error(error.message)
     }
   }
+
+  export const findUsersforConversation = async(userId: string)=>{
+    try{
+
+      const userConfig : AxiosRequestConfig = {
+        url : `${apiConfig.mongoUsers}?userId=${userId}`,
+        method:'get'
+      }
+
+      const response = await axios(userConfig)
+      return response.data.data
+    } catch(error: any){
+      throw new Error(error.message)
+    }
+  }

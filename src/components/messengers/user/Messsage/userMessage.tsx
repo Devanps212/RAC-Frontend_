@@ -13,6 +13,7 @@ interface MessageProps {
 const Message: React.FC<MessageProps> = ({ message, own, profileImage, loading }) => {
   const messageClass = own ? 'own' : 'receiver';
 
+  
   if (loading) {
     return (
       <div className={`message ${messageClass}`}>

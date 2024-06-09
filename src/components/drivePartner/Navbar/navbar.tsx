@@ -10,6 +10,7 @@ import { clearPartnerToken } from '../../../features/axios/redux/slices/partner/
 import { RootState } from '../../../features/axios/redux/reducers/reducer';
 import { partnerLogout } from '../../../features/axios/redux/slices/partner/partnerLogin';
 
+
 const PartnerHeader: React.FC = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
@@ -60,7 +61,7 @@ const PartnerHeader: React.FC = () => {
             <Nav.Link href='#' className='nav-link'>
               <FaUserAlt className='icon' /> Profile
             </Nav.Link>
-            <Nav.Link href="#" className="nav-link">
+            <Nav.Link href="/partner/negotiate" className="nav-link">
               <BiSolidMessage className="partnerMessage" /> Messages{' '}
               {unreadMessages > 0 && `(${unreadMessages})`}
             </Nav.Link>

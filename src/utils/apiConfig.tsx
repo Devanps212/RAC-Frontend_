@@ -7,7 +7,8 @@ const apiConfig = {
     otpVerify:`${configKeys.API_URL}user-auth/VerifyOTP`,
     userFind:`${configKeys.API_URL}user-auth/findUser`,
     saveUserData:`${configKeys.API_URL}user-auth/saveUser`,
-    mongoUsers:`${configKeys.API_URL}user-auth/getAll` ,
+    mongoUsers:`${configKeys.API_URL}user-auth/getAll`,
+    userForConversation : `${configKeys.API_URL}user-auth/getUserForConversation`,
 
     googleVerification: `${configKeys.API_URL}user-auth/Google-SignIn-Up`,
     adminLogin : `${configKeys.API_URL}admin-auth/login`,
