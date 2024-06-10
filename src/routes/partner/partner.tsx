@@ -34,7 +34,7 @@ const PartnerRoute = ()=>{
             <Route path="/success/:transactionId/:userId" element={<TransactionComplete/>}/>
             <Route path="/Dashboard" element={isValid ? <DashboardPartner/> : <Navigate to={'/partner/login'}/>}/>
             <Route path="/bookings" element={isValid ? <BookingPartner/> : <Navigate to={'/partner/login'}/>}/>
-            <Route path="/bookingHistory" element={isValid ? <BookingHistory/> : <Navigate to={'/partner/login'}/>}/>
+            {/* <Route path="/bookingHistory" element={isValid ? <BookingHistory/> : <Navigate to={'/partner/login'}/>}/> */}
             <Route path="/negotiate" element={isValid ? <PartnerChat/> : <Navigate to={'/partner/login'}/>}/>
         </Routes>
     )

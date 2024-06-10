@@ -1,10 +1,12 @@
 import React, { useEffect, useState } from 'react';
 import './message.css';
 import { detailBooking } from '../../../../types/bookingInterface';
-import { findBookings } from '../../../../features/axios/api/booking/booking';
+import { carReportHandle, findBookings } from '../../../../features/axios/api/booking/booking';
 import { FaEnvelope } from 'react-icons/fa';
 import { Button } from 'react-bootstrap';
 import { useSearchParams } from 'react-router-dom';
+import { showCarInterface } from '../../../../types/carAdminInterface';
+import { toast } from 'react-toastify';
 
 interface BookingMessagesProps {}
 
@@ -18,11 +20,24 @@ const BookingMessages: React.FC<BookingMessagesProps> = () => {
   const fetchAllBooking = async () => {
     if(bookingId){
       const response = await findBookings(bookingId);
-      console.log("data : ", response.data)
+      console.log("data booking : ", response.data.data)
       setBookings(response.data);
     }
     
   };
+
+  const handleReport = async(carId : string)=>{
+
+    console.log("carId : ", carId)
+    const data : Partial<showCarInterface> = {
+      _id: carId,
+      status: 'maintenance',      
+    }
+
+    const update = await carReportHandle(data, bookingId!)
+    console.log("report handle success : ", update)
+    toast.success(update.message)
+  }
 
   useEffect(() => {
     fetchAllBooking();
@@ -42,9 +57,13 @@ const BookingMessages: React.FC<BookingMessagesProps> = () => {
                     {bookings.date?.start ? new Date(bookings.date.start).toLocaleString() : ''}
                     </time>
                 </div>
-                <Button variant='danger' size='sm'>
-                    Take action
+                {
+                  !bookings._id
+                }
+                <Button variant='danger' size='sm' onClick={()=>handleReport(bookings.carId?._id!)}>
+                  Schedule maintenance for the car
                 </Button>
+
               </li>
             ) :<>
             <FaEnvelope style={{width:"100%", fontSize:'320px'}}/> 

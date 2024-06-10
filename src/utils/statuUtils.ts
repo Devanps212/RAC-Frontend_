@@ -2,7 +2,7 @@ export const getStatus = (status:string)=>{
     switch (status.toLowerCase()){
         case 'available':
             return "text-success";
-        case 'under maintenance':
+        case 'maintenance':
             return 'text-danger';
         case 'unavailable':
             return 'text-info';

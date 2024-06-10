@@ -44,9 +44,9 @@ const BarChart: React.FC<BarChartProps> = ({ data }) => {
     }, [data]);
 
     return (
-        <div className="chart">
+        <div className="chart fade-in">
             <div className="chart-header">
-                <strong style={{fontSize:'20.5px'}}>Booking based on Status</strong>
+                <strong>Booking based on Status</strong>
             </div>
             <div ref={chartRef} className="chart-canvas">
                 <canvas id="barChart" />

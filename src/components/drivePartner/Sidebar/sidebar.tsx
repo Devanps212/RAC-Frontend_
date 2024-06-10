@@ -23,11 +23,6 @@ const PartnerSidebar: React.FC = () => {
                     </Link>
                 </li>
                 <li className="sidebar-list-item">
-                    <Link to={"#"} className='text-link-side'>
-                        <BsBoundingBoxCircles className="icon" /> <span className='text-item-side'>Customers</span>
-                    </Link>
-                </li>
-                <li className="sidebar-list-item">
                     <NavDropdown
                         title={
                             <span>
@@ -41,17 +36,11 @@ const PartnerSidebar: React.FC = () => {
                     </NavDropdown>
                 </li>
                 <li className="sidebar-list-item">
-                    <NavDropdown
-                        title={
+                    <Link to={"/partner/bookings"} className='text-link-side'>
                             <span>
                                 <BsFileText className="icon" /> <span className='text-item-side'>Bookings</span>
                             </span>
-                        }
-                        id="nav-dropdown"
-                    >
-                        <NavDropdown.Item href="/partner/bookings">Bookings</NavDropdown.Item>
-                        <NavDropdown.Item href="/partner/bookingHistory">Booking History</NavDropdown.Item>
-                    </NavDropdown>
+                    </Link>
                 </li>
                 {/* <li className="sidebar-list-item">
                     <NavDropdown

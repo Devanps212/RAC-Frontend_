@@ -6,8 +6,8 @@ import BarChart from "../../commonComponent/chart/barChart/chart";
 import { detailBooking } from "../../../types/bookingInterface";
 import { toast } from "react-toastify";
 import { findBookings } from "../../../features/axios/api/booking/booking";
-import LineChart from "../../commonComponent/chart/lineChart/lineChart";
-import { findAllUsers, findUser } from "../../../features/axios/api/user/user";
+import GanttChart from "../../commonComponent/chart/granttChart/granttchart";
+import { findAllUsers } from "../../../features/axios/api/user/user";
 import { userDetailPayload } from "../../../types/payloadInterface";
 import { findAllPartner } from "../../../features/axios/api/partner/partner";
 import { partnerDetailInterface } from "../../../types/partnerInterface";
@@ -23,34 +23,34 @@ const Dashboard: React.FC = () => {
         datasets: []
     });
 
+    const [ganttData, setGanttData] = useState<any[]>([]);
+    const [ganttCategories, setGanttCategories] = useState<string[]>([]);
+
     const [totalCustomers, setTotalCustomers] = useState<number>(0);
     const [totalBookings, setTotalBookings] = useState<number>(0);
     const [totalPartners, setTotalPartners] = useState<number>(0);
     const [totalAmountEarned, setTotalAmountEarned] = useState<number>(0);
 
     useEffect(() => {
-        const fetchUsers = async()=>{
-            const response: userDetailPayload[] | userDetailPayload = await findAllUsers()
-            if(Array.isArray(response)){
-                const totalCustomerNumber = response.length
-                setTotalCustomers(totalCustomerNumber)
+        const fetchUsers = async () => {
+            const response: userDetailPayload[] | userDetailPayload = await findAllUsers();
+            if (Array.isArray(response)) {
+                const totalCustomerNumber = response.length;
+                setTotalCustomers(totalCustomerNumber);
             }
-        }
+        };
 
-
-        const fetchPartner = async()=>{
-            const response : partnerDetailInterface[] = await findAllPartner()
-            setTotalPartners(response.length)
-        }
-
+        const fetchPartner = async () => {
+            const response: partnerDetailInterface[] = await findAllPartner();
+            setTotalPartners(response.length);
+        };
 
         const fetchBookings = async () => {
             try {
                 const response = await findBookings('all');
-                console.log("response : ", response)
-                
                 const bookings: detailBooking[] | detailBooking | null = response.data;
 
+                console.log("bokings found :", bookings)
                 const statusCounts: { [key: string]: number } = {};
                 const totalAmounts: { [key: string]: number } = {};
                 const bookingsByDate: { [key: string]: number } = {};
@@ -58,8 +58,11 @@ const Dashboard: React.FC = () => {
                 let currentMonthBookings = 0;
                 let currentMonthAmount = 0;
 
+                const tasks: any[] = [];
+                const categories: string[] = [];
+
                 if (Array.isArray(bookings)) {
-                    bookings.forEach((booking: detailBooking) => {
+                    bookings.forEach((booking: detailBooking, index: number) => {
                         const status = booking.status;
                         if (statusCounts[status]) {
                             statusCounts[status]++;
@@ -85,53 +88,25 @@ const Dashboard: React.FC = () => {
                             bookingsByDate[date] = 1;
                         }
 
-                       
-
                         const bookingMonth = new Date(booking.date.start).getMonth();
                         const currentMonth = new Date().getMonth();
                         if (bookingMonth === currentMonth) {
                             currentMonthBookings++;
                             currentMonthAmount += amount;
                         }
+
+                        tasks.push({
+                            id: booking._id,
+                            start: new Date(booking.date.start).getTime(),
+                            end: new Date(booking.date.end).getTime(),
+                            name: `Booking ${booking._id}`,
+                            y: index
+                        });
+                        categories.push(booking.carId?.name ?? `Booking ${booking._id}`);
                     });
-                } else if (bookings) {
-                    const status = bookings.status;
-                    if (statusCounts[status]) {
-                        statusCounts[status]++;
-                    } else {
-                        statusCounts[status] = 1;
-                    }
-
-                    const amount = bookings.transaction?.amount ?? 0;
-                    const transactionId = bookings.transaction?.transactionId;
-
-                    if (transactionId) {
-                        if (totalAmounts[transactionId]) {
-                            totalAmounts[transactionId] += amount;
-                        } else {
-                            totalAmounts[transactionId] = amount;
-                        }
-                    }
-
-                    const date = new Date(bookings.date.start).toISOString().split('T')[0];
-                    if (bookingsByDate[date]) {
-                        bookingsByDate[date]++;
-                    } else {
-                        bookingsByDate[date] = 1;
-                    }
-
-                    
-
-                    const bookingMonth = new Date(bookings.date.start).getMonth();
-                    const currentMonth = new Date().getMonth();
-                    if (bookingMonth === currentMonth) {
-                        currentMonthBookings++;
-                        currentMonthAmount += amount;
-                    }
                 }
 
                 setTotalBookings(currentMonthBookings);
-
                 setTotalAmountEarned(currentMonthAmount);
 
                 setChartData({
@@ -153,6 +128,7 @@ const Dashboard: React.FC = () => {
                         }
                     ]
                 });
+
                 setDateChartData({
                     labels: Object.keys(bookingsByDate),
                     datasets: [
@@ -165,14 +141,17 @@ const Dashboard: React.FC = () => {
                         }
                     ]
                 });
+
+                setGanttData(tasks);
+                setGanttCategories(categories);
             } catch (error: any) {
-                console.log(error)
                 toast.error(error.message);
             }
-        }
+        };
+
+        fetchUsers();
+        fetchPartner();
         fetchBookings();
-        fetchUsers()
-        fetchPartner()
     }, []);
 
     return (
@@ -229,7 +208,7 @@ const Dashboard: React.FC = () => {
                             </div>
                             <div className="col-12 col-xl-6 chart-container">
                                 <div className="chart">
-                                    <LineChart data={dateChartData} />
+                                    <GanttChart tasks={ganttData} categories={ganttCategories} />
                                 </div>
                             </div>
                         </div>
@@ -238,6 +217,6 @@ const Dashboard: React.FC = () => {
             </div>
         </div>
     );
-}
+};
 
 export default Dashboard;

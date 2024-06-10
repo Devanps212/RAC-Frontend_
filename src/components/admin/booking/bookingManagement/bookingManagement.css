@@ -26,3 +26,14 @@ body {
     font-weight: 600;
     color: darkslategrey;
 }
+
+.message-icon{
+    position: absolute;
+    top: 0;
+    right: -8px;
+    font-size: 0.8em;
+    padding: 0.1em 0.4em;
+    border-radius: 50%;
+    background-color: red;
+    color: white;
+}

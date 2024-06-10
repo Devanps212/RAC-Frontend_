@@ -280,6 +280,7 @@ const AddCar = ()=>{
                     toast.success(response.message)
                     setIsLoading(false)
                     setValidationErrors({})
+                    navigate('/admin/car/carManagement')
                 } 
                 else 
                 {

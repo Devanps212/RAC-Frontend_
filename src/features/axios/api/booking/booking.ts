@@ -1,6 +1,8 @@
 import axios, { AxiosRequestConfig } from "axios";
 import { backendBooking, bookingInterface, bookingInterfaceReschedule, detailBooking } from "../../../../types/bookingInterface";
 import apiConfig from "../../../../utils/apiConfig";
+import { showCarInterface } from "../../../../types/carAdminInterface";
+import { toast } from "react-toastify";
 
 export const filterCarsBooking = async(Data: bookingInterface)=>{
     try
@@ -134,6 +136,25 @@ export const bookingRescheduler = async(data: Partial<bookingInterfaceReschedule
         return response.data
     } catch (error: any) {
         console.log(error.message)
+        throw new Error(error.message)
+    }
+}
+
+export const carReportHandle = async(data: Partial<showCarInterface>, bookingId : string)=>{
+    try{
+        console.log("data reSchedule : ", data)
+        const reschedularConfig : AxiosRequestConfig = {
+            url: apiConfig.bookingReportHandler,
+            method: 'patch',
+            data:{data, bookingId}
+        }
+
+        const response = await axios(reschedularConfig)
+        console.log(response)
+        return response.data
+    } catch (error: any) {
+        console.log("error found :", error)
+        toast.error(error.response.data.message)
         throw new Error(error.message)
     }
 }

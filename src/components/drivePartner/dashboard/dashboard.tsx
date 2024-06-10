@@ -3,13 +3,12 @@ import './dashboard.css';
 import { FaFileInvoice, FaUserAlt, FaUserFriends } from "react-icons/fa";
 import { toast } from "react-toastify";
 import { bookingFindingBasedOnRole } from "../../../features/axios/api/booking/booking";
-import { detailBooking } from "../../../types/bookingInterface";
+import { bookingInterface, bookingInterfaceReschedule, detailBooking } from "../../../types/bookingInterface";
 import BarChart from "../../commonComponent/chart/barChart/chart";
-import LineChart from "../../commonComponent/chart/lineChart/lineChart";
+import GanttChart from "../../commonComponent/chart/granttChart/granttchart";
 import { AxiosResponse } from "axios";
 
 const PartnerDashboard: React.FC = () => {
-    console.log("partner token = ", localStorage.getItem("partnerToken"))
     const [totalBookings, setTotalBookings] = useState<number>(0);
     const [totalPartners, setTotalPartners] = useState<number>(0);
     const [totalEarnings, setTotalEarnings] = useState<number>(0);
@@ -21,21 +20,20 @@ const PartnerDashboard: React.FC = () => {
         labels: [],
         datasets: []
     });
+    const [ganttData, setGanttData] = useState<any[]>([]);
+    const [ganttCategories, setGanttCategories] = useState<string[]>([]);
     const [noBookings, setNoBookings] = useState<boolean>(false);
 
     const findPartnerBooking = async () => {
         try {
             const data: Partial<detailBooking> = { ownerRole: 'Partner' };
             const response: AxiosResponse = await bookingFindingBasedOnRole(data);
-            const bookings: detailBooking[] = response.data.data;
+            const bookings = response.data.data;
 
-            if (bookings.length > 0) {
+            if (bookings) {
                 setNoBookings(false);
+                const partnerBookings = Array.isArray(bookings) ? bookings : [bookings];
 
-                // Filter bookings based on owner role 'Partner'
-                const partnerBookings = bookings.filter((booking: any) => booking.ownerRole === 'Partner');
-
-                // Calculate total bookings and total earnings
                 const totalBookings = partnerBookings.length;
                 const totalEarnings = partnerBookings.reduce((sum: number, booking: any) => sum + booking.transaction.amount, 0);
 
@@ -45,8 +43,8 @@ const PartnerDashboard: React.FC = () => {
                 const partnerSet = new Set(partnerBookings.map((booking: any) => booking.owner));
                 setTotalPartners(partnerSet.size);
 
-                const labels = partnerBookings.map((booking: any) => booking.date); 
-                const earnings = partnerBookings.map((booking: any) => booking.transaction.amount); 
+                const labels = partnerBookings.map((booking: any) => booking.date.start);
+                const earnings = partnerBookings.map((booking: any) => booking.transaction.amount);
 
                 setChartData({
                     labels: labels,
@@ -61,10 +59,9 @@ const PartnerDashboard: React.FC = () => {
                     ]
                 });
 
-    
                 const dateCounts: { [key: string]: number } = {};
                 partnerBookings.forEach((booking: any) => {
-                    const date = booking.date;
+                    const date = new Date(booking.date.start).toISOString().split('T')[0];
                     if (dateCounts[date]) {
                         dateCounts[date]++;
                     } else {
@@ -87,6 +84,19 @@ const PartnerDashboard: React.FC = () => {
                         }
                     ]
                 });
+
+                const tasks = partnerBookings.map((booking: any) => ({
+                    id: booking.id,
+                    start: new Date(booking.date.start).getTime(),
+                    end: new Date(booking.date.end).getTime(),
+                    name: `Booking ${booking.id}`,
+                    y: partnerBookings.indexOf(booking)
+                }));
+
+                const categories = partnerBookings.map((booking: bookingInterfaceReschedule) => booking.carId.name);
+                console.log("partner booking : ", partnerBookings)
+                setGanttData(tasks);
+                setGanttCategories(categories);
             } else {
                 setNoBookings(true);
                 setTotalBookings(0);
@@ -94,6 +104,8 @@ const PartnerDashboard: React.FC = () => {
                 setTotalPartners(0);
                 setChartData({ labels: [], datasets: [] });
                 setDateChartData({ labels: [], datasets: [] });
+                setGanttData([]);
+                setGanttCategories([]);
             }
         } catch (error: any) {
             toast.error(error.message);
@@ -114,35 +126,27 @@ const PartnerDashboard: React.FC = () => {
                     ) : (
                         <>
                             <div className="col-md-6" style={{ width: 'inherit' }}>
-                                <div className="row">
-                                    <div className="col-12 col-md-4 mb-3">
-                                        <div className="box-contents box-contents-blue">
-                                            <div className="box-one d-flex flex-column justify-content-center align-items-center">
-                                                <FaUserAlt className="mt-2" style={{ fontSize: '50px' }} />
-                                                <strong className="mt-2">Total Customers</strong>
-                                                <h5 className="mt-2">{totalBookings} Nos</h5>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div className="col-12 col-md-4 mb-3">
-                                        <div className="box-contents box-contents-red">
-                                            <div className="box-one d-flex flex-column justify-content-center align-items-center">
-                                                <FaFileInvoice className="mt-2" style={{ fontSize: '50px' }} />
-                                                <strong className="mt-2">Earnings (This Month)</strong>
-                                                <h5 className="mt-2">₹ {totalEarnings}</h5>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div className="col-12 col-md-4 mb-3">
-                                        <div className="box-contents box-contents-green">
-                                            <div className="box-one d-flex flex-column justify-content-center align-items-center">
-                                                <FaUserFriends className="mt-2" style={{ fontSize: '50px' }} />
-                                                <strong className="mt-2">Total Partners</strong>
-                                                <h5 className="mt-2">{totalPartners} Nos</h5>
-                                            </div>
+                            <div className="row">
+                                <div className="col-12 col-md-6 mb-3">
+                                    <div className="box-contents box-contents-blue">
+                                        <div className="box-one d-flex flex-column justify-content-center align-items-center">
+                                            <FaUserAlt className="mt-2" style={{ fontSize: '50px' }} />
+                                            <strong className="mt-2">Total Customers</strong>
+                                            <h5 className="mt-2">{totalBookings} Nos</h5>
                                         </div>
                                     </div>
                                 </div>
+                                <div className="col-12 col-md-6 mb-3">
+                                    <div className="box-contents box-contents-red">
+                                        <div className="box-one d-flex flex-column justify-content-center align-items-center">
+                                            <FaFileInvoice className="mt-2" style={{ fontSize: '50px' }} />
+                                            <strong className="mt-2">Earnings (This Month)</strong>
+                                            <h5 className="mt-2">₹ {totalEarnings}</h5>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
                             </div>
                             <div className="col-12 mt-4">
                                 <div className="row">
@@ -153,7 +157,7 @@ const PartnerDashboard: React.FC = () => {
                                     </div>
                                     <div className="col-12 col-xl-6 chart-container">
                                         <div className="chart">
-                                            <LineChart data={dateChartData} />
+                                            <GanttChart tasks={ganttData} categories={ganttCategories} />
                                         </div>
                                     </div>
                                 </div>
@@ -164,6 +168,6 @@ const PartnerDashboard: React.FC = () => {
             </div>
         </div>
     );
-}
+};
 
 export default PartnerDashboard;

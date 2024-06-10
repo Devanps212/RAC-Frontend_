@@ -16,6 +16,8 @@ import { RefundDetailsInterface } from "../../../../types/bookingInterface";
 import DateDetailForm, { BookingOnSubmitType } from "../../../../Validators/userValidator.ts/bookingValidator";
 import { loadStripe } from "@stripe/stripe-js";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
+import { useSelector } from "react-redux";
+import { RootState } from "../../../../features/axios/redux/reducers/reducer";
 
 const BookedCars = () => {
     const [selectedDate, setSelectedDate] = useState<Date | null>(null);
@@ -35,12 +37,17 @@ const BookedCars = () => {
     const token = localStorage.getItem('token') ?? '';
     const location = useLocation();
     const navigate = useNavigate();
+    const userToken = useSelector((root:RootState)=>root.token.token) ?? ''
+
+    useEffect(()=>{
+        console.log("single Booking : ", bookingInfo)
+    }, [bookingInfo])
 
     const handleSubmit: BookingOnSubmitType = async(values) => {
         console.log(values);
 
-        const token = localStorage.getItem('token') ?? ''
-        const userId = await decodeToken(token).payload
+        
+        const userId = await decodeToken(userToken).payload
         const data : Partial<bookingInterfaceReschedule> = {
             bookingId: currentBooking?._id,
             carId:currentBooking?.carId,
@@ -131,7 +138,7 @@ const BookedCars = () => {
     };
 
     const submitIssue = async (bookingId: string) => {
-        console.log("submitting")
+        console.log("submitting : ", bookingId)
         setSingleBooking(PrevState => ({
             ...PrevState,
             _id: bookingId
@@ -367,7 +374,10 @@ const BookedCars = () => {
                                                                     </Button>
                                                                 ) : (
                                                                     <>
-                                                                        <Button className="ms-5" onClick={() => setShowModal(true)}>
+                                                                        <Button className="ms-5" onClick={() => {
+                                                                            setShowModal(true)
+                                                                            setSingleBooking(bookings)}
+                                                                            }>
                                                                             Report an issue
                                                                         </Button>
                                                                         <Button variant="danger" onClick={() => handleBookingCancel(bookings._id, bookings.carId.name, bookings.transaction.amount || 0)} className="ms-5 mt-2">
@@ -393,7 +403,10 @@ const BookedCars = () => {
                                                 </div>
                                             </div>
                                             {showModal && (
-                                                <Modal show={showModal} onHide={() => setShowModal(false)}>
+                                                <Modal show={showModal} onHide={() => {
+                                                    setShowModal(false)
+                                                    setSingleBooking(null)
+                                                }}>
                                                     <Modal.Header closeButton>
                                                         <Modal.Title id="modal-title">Report An Issue</Modal.Title>
                                                     </Modal.Header>
@@ -408,9 +421,9 @@ const BookedCars = () => {
                                                         />
                                                     </Modal.Body>
                                                     <Modal.Footer>
-                                                        <Button onClick={() => submitIssue(bookings._id)} type="submit">
-                                                            Submit
-                                                        </Button>
+                                                    <Button onClick={() => singleBooking?._id && submitIssue(singleBooking._id)} type="submit">
+                                                        Submit
+                                                    </Button>
                                                     </Modal.Footer>
                                                 </Modal>
                                             )}

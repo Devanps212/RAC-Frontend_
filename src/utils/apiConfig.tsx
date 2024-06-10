@@ -49,6 +49,7 @@ const apiConfig = {
     bookingBasedOnRole:`${configKeys.API_URL}booking/BasedOnRole`,
     bookingUpdater:`${configKeys.API_URL}booking/updater`,
     bookingRescheduler: `${configKeys.API_URL}booking/rescheduler`,
+    bookingReportHandler:`${configKeys.API_URL}booking/bookCarReport`,
 
     couponGenerator:`${configKeys.API_URL}coupon/Generate`,
     findAllCoupon:`${configKeys.API_URL}coupon/findAll`,

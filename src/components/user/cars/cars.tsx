@@ -105,6 +105,7 @@ const Cars: React.FC = () => {
                     .map(id => combinedCategories.find(category => category?._id === id))
                     .filter(category => category !== undefined) as categoryInterface[];
     
+                    
                 setCategory(uniqueCategories);
             } catch (error: any) {
                 toast.error(error.message);

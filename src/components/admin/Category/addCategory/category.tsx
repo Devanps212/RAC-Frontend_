@@ -7,6 +7,7 @@ import { toast } from 'react-toastify';
 
 const AddCategoryPage = () => {
 
+  const navigate = useNavigate()
   const [category, setCategory] = useState({
     name:'',
     description: ''
@@ -29,6 +30,7 @@ const AddCategoryPage = () => {
         {
           toast.success(response.message)
           setCategory({name:'', description:''})
+          navigate('/admin/manageCategory')
         }
         else
         {

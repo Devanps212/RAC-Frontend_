@@ -1,4 +1,4 @@
-.line-chart {
+.chart {
     position: relative;
     max-width: 600px;
     margin: 20px auto;
@@ -6,10 +6,16 @@
     border-radius: 8px;
     overflow: hidden;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    background-color: #fff;
 }
 
-.line-chart strong {
+.chart .chart-header {
+    background-color: #f0f0f0;
+    padding: 10px;
+    border-bottom: 1px solid #ccc;
+    border-radius: 8px 8px 0 0;
+}
+
+.chart strong {
     display: block;
     font-size: 1.2rem;
     font-weight: bold;
@@ -19,9 +25,25 @@
     border-radius: 8px 8px 0 0;
 }
 
-#line-chart canvas {
+.chart .chart-canvas {
+    padding: 12px;
+}
+
+.chart canvas {
     display: block;
     width: 100%;
     height: auto;
-    padding: 12px; 
+}
+
+.chart.fade-in {
+    animation: fadeInAnimation 1s ease-out;
+}
+
+@keyframes fadeInAnimation {
+    0% {
+        opacity: 0;
+    }
+    100% {
+        opacity: 1;
+    }
 }
