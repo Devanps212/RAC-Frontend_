@@ -2,6 +2,8 @@ import axios, {AxiosRequestConfig} from "axios";
 import { carInterface, showCarInterface } from "../../../../types/carAdminInterface";
 import apiConfig from "../../../../utils/apiConfig";
 import { setAdminInterceptor, setPartnerInterceptor, setUserInterceptor } from "../../axios_Interceptor/Interceptor";
+import { reviewInterface } from "../../../../types/reviewInterface";
+import { toast } from "react-toastify";
 
 const setInterceptor = (role:string)=>{
     if(role === 'admin')
@@ -140,6 +142,28 @@ export const carUpdateBasedOnRole = async(data: Partial<showCarInterface>, role:
         console.log("data : ", response)
         return response.data.data
     } catch(error: any){
+        throw new Error(error.message)
+    }
+}
+
+export const updateRating = async(data: Partial<reviewInterface>, carId: string, userId: string)=>{
+    try{
+        setUserInterceptor()
+        const carConfig : AxiosRequestConfig = {
+            url:apiConfig.carRatingUpdater,
+            method:'patch',
+            data:{
+                data,
+                carId, 
+                userId
+            }
+        }
+
+        const response = await axios(carConfig)
+        console.log("data : ", response)
+        return response.data.data
+    } catch(error: any){
+        toast.error(error.message)
         throw new Error(error.message)
     }
 }

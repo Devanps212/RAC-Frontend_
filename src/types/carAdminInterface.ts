@@ -34,6 +34,7 @@ export interface carInterface {
     insuranceDetails?: string;
     addedBy?: string | undefined;
     addedById?:Types.ObjectId | string;
+    ratingsCount?:number;
     comments?:commentsInterface[];
     thumbnailImg?:File[];
     seats?:number,
@@ -63,7 +64,8 @@ export interface showCarInterface {
     comments?:commentsInterface[]
     thumbnailImg?:string;
     seats?:number;
-    offer?: Offer
+    offer?: Offer;
+    ratingsCount?:number;
     addedById?:string
     
 }

@@ -5,7 +5,7 @@ import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import PaymentFlow from "../../../paymentLoader/paymetnLoader";
 import { FaArrowRight, FaCalendarTimes, FaCar, FaChair, FaGasPump, FaLocationArrow } from "react-icons/fa";
-import { Button, Form, Modal } from "react-bootstrap";
+import { Button, Col, Form, Modal, Row } from "react-bootstrap";
 import { BiSolidLocationPlus } from "react-icons/bi";
 import { BookingDetail, bookingInterfaceReschedule, detailBooking } from "../../../../types/bookingInterface";
 import { bookingFindingBasedOnRole, bookingRescheduler, bookingUpdater } from "../../../../features/axios/api/booking/booking";
@@ -18,6 +18,11 @@ import { loadStripe } from "@stripe/stripe-js";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
 import { useSelector } from "react-redux";
 import { RootState } from "../../../../features/axios/redux/reducers/reducer";
+import StarRating from "../../../commonComponent/starRating/starRating";
+import { jwtDecode } from "jwt-decode";
+import { tokenInterface } from "../../../../types/payloadInterface";
+import { updateRating } from "../../../../features/axios/api/car/carAxios";
+import { reviewInterface } from "../../../../types/reviewInterface";
 
 const BookedCars = () => {
     const [selectedDate, setSelectedDate] = useState<Date | null>(null);
@@ -34,10 +39,20 @@ const BookedCars = () => {
     const [paymentLoader, setPaymentLoader] = useState(false);
     const [showModal, setShowModal] = useState(false);
     const currentDate = new Date().toISOString().split('T')[0];
-    const token = localStorage.getItem('token') ?? '';
+    const token = useSelector((root: RootState)=> root.token.token) ?? ''
+    const userId :tokenInterface = jwtDecode(token)
     const location = useLocation();
     const navigate = useNavigate();
     const userToken = useSelector((root:RootState)=>root.token.token) ?? ''
+    const [review, setReview] = useState(false)
+    const [reviewCar, setReviewCar] = useState<showCarInterface | null>(null)
+    const [ratings, setRatings] = useState<reviewInterface>({
+        car: 0,
+        valueForMoney: 0,
+        comfort: 0,
+        performance: 0,
+        review:''
+    });
 
     useEffect(()=>{
         console.log("single Booking : ", bookingInfo)
@@ -95,14 +110,18 @@ const BookedCars = () => {
         setReschedule(true)
     }
 
-    const handleBookingCompleted = async(bookingId: string)=>{
+    const handleBookingCompleted = async(bookingId: string, car: showCarInterface)=>{
         try{
             const data : Partial<detailBooking> = {
                 _id: bookingId,
                 status:'Completed'
             }
+            console.log("updating car : ", car)
+            setReviewCar(car)
             const updateBooking = await bookingUpdater(data)
+            toast.success("booking Completed")
             console.log("updated booking :", updateBooking)
+            setReview(true)
         } catch(error: any){
             toast.error(error.message)
         }
@@ -137,6 +156,13 @@ const BookedCars = () => {
         }));
     };
 
+    const handleRatingChange = (category: keyof typeof ratings, rating: number) => {
+        setRatings((prevRatings) => ({
+            ...prevRatings,
+            [category]: rating,
+        }));
+    };
+
     const submitIssue = async (bookingId: string) => {
         console.log("submitting : ", bookingId)
         setSingleBooking(PrevState => ({
@@ -155,6 +181,15 @@ const BookedCars = () => {
             setSingleBooking(null);
         }
     };
+
+    const handleRatingSubmit = async()=>{
+        const response = await updateRating(ratings, String(reviewCar?._id), userId.payload)
+        console.log(response)
+        setRatings({} as reviewInterface)
+        setReviewCar(null)
+        toast.success(response.message)
+        setReview(false)
+    }
 
     useEffect(() => {
         const calculateAmount = () => {
@@ -369,7 +404,7 @@ const BookedCars = () => {
                                                             <>
                                                                 {new Date(bookings.date.end) <= new Date() ? (
                                                                     
-                                                                    <Button variant="success" onClick={() => handleBookingCompleted(bookings._id)}>
+                                                                    <Button variant="success" onClick={() => handleBookingCompleted(bookings._id, bookings.carId)}>
                                                                         Booking Completed
                                                                     </Button>
                                                                 ) : (
@@ -708,6 +743,65 @@ const BookedCars = () => {
                     </Button>
                 </Modal.Footer>
             </Modal>
+            <Modal show={review} onHide={() => setReview(false)}>
+            <Modal.Header closeButton>
+                <Modal.Title>Rate Booking</Modal.Title>
+            </Modal.Header>
+            <Modal.Body>
+                <div className="rating-container mt-4">
+                    <Row className="rating-row">
+                        <Col className="rating-col">
+                            <div className="rating-label">Car Rating</div>
+                            <StarRating
+                                rating={ratings.car}
+                                onRatingChange={(rating) => handleRatingChange("car", rating)}
+                            />
+                        </Col>
+                        <Col className="rating-col">
+                            <div className="rating-label">Value for Money</div>
+                            <StarRating
+                                rating={ratings.valueForMoney}
+                                onRatingChange={(rating) => handleRatingChange("valueForMoney", rating)}
+                            />
+                        </Col>
+                    </Row>
+                    <Row className="rating-row">
+                        <Col className="rating-col">
+                            <div className="rating-label">Comfort</div>
+                            <StarRating
+                                rating={ratings.comfort}
+                                onRatingChange={(rating) => handleRatingChange("comfort", rating)}
+                            />
+                        </Col>
+                        <Col className="rating-col">
+                            <div className="rating-label">Performance</div>
+                            <StarRating
+                                rating={ratings.performance}
+                                onRatingChange={(rating) => handleRatingChange("performance", rating)}
+                            />
+                        </Col>
+                    </Row>
+                    <Row>
+                        <Col>
+                        <div className="form-floating mb-3">
+                            <textarea 
+                            className="form-control" 
+                            style={{width:'100%', height:'auto'}} 
+                            id="floatingInput" 
+                            onChange={(e) => setRatings((prevState) => ({
+                                ...prevState,
+                                review: e.target.value,
+                            }))}/>
+                            <label htmlFor="floatingInput">Write a review</label>
+                        </div>
+                        </Col>
+                    </Row>
+                </div>
+                <div className="submit-button">
+                    <Button onClick={()=>handleRatingSubmit}>Submit Ratings</Button>
+                </div>
+            </Modal.Body>
+        </Modal>
         </>
     );
 };
