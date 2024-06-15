@@ -167,3 +167,43 @@ export const updateRating = async(data: Partial<reviewInterface>, carId: string,
         throw new Error(error.message)
     }
 }
+
+export const carPagination = async(page: number, limit: number, role: string)=>{
+    try{
+        if(role === 'user'){
+            setUserInterceptor()
+        } else if('admin'){
+            setAdminInterceptor()
+        } else {
+            setPartnerInterceptor()
+        }
+        const carConfig : AxiosRequestConfig = {
+            url:`${apiConfig.carPaginations}?page=${page}&limit=${limit}`,
+            method:'get',
+        }
+
+        const response = await axios(carConfig)
+        console.log("data : ", response.data.data)
+        return response.data
+    } catch(error: any){
+        toast.error(error.message)
+        throw new Error(error.message)
+    }
+}
+
+export const topbookedCars = async()=>{
+    try{
+        setUserInterceptor()
+        const carConfig : AxiosRequestConfig = {
+            url:apiConfig.topBookedCars,
+            method:'get',
+        }
+
+        const response = await axios(carConfig)
+        console.log("data : ", response.data.car)
+        return response.data.car
+    } catch(error: any){
+        toast.error(error.message)
+        throw new Error(error.message)
+    }
+}

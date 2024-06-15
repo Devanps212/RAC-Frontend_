@@ -26,7 +26,7 @@ export interface carInterface {
     fuelType?: string;
     interior?:File[];
     exterior?: File[];
-    status?: 'available' | 'maintenance' | 'booked' | 'not available';
+    status?: 'available' | 'maintenance' | 'booked' | 'not available' | 'Completed';
     description?: string;
     vehicleNumber?: string;
     rentPricePerWeek?: number;
@@ -54,7 +54,7 @@ export interface showCarInterface {
     fuelType?: string;
     interior?:string[];
     exterior?: string[];
-    status?: 'available' | 'maintenance' | 'booked' | 'not available';
+    status?: 'available' | 'maintenance' | 'booked' | 'not available' | 'Completed';
     description?: string;
     vehicleNumber?: string;
     rentPricePerWeek?: number;
@@ -81,10 +81,11 @@ export interface category {
     isListed?:boolean
 }
 
-interface commentsInterface {
+export interface commentsInterface {
     userId: userAdminInterface,
     comment: string,
-    userRating: number
+    userRating: number,
+    _id: string
 }
 
 export interface imageInterface{

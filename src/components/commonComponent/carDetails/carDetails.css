@@ -46,14 +46,29 @@
     width: 100%;
   }
   
-  .star-rating{
-    border-style: groove;
+  .star-rating {
+    display: inline-block;
     text-align: center;
-    border-radius: 19px;
-    font-size: larger;
-    color: yellow;
-    text-shadow: 1px 1px #000, -1px -1px #000, 1px -1px #000, -1px 1px #000; /* Add a dark border around the star */
+    font-size: 24px; 
+    color: #f8ce0b; 
+    padding: 4px 8px; 
+    border: 2px solid #ccc; 
+    border-radius: 10px; 
+    background-color: #fff; 
   }
+  
+  .star-rating span {
+    margin-right: 4px; 
+    -webkit-text-stroke: 1px black; 
+    -webkit-text-fill-color: #f8ce0b; 
+  }
+  
+  .star-rating span:last-child {
+    margin-right: 0; 
+  }
+  
+
+  
 
   .tags{
     border: solid 1px rgb(198, 198, 198);
@@ -80,3 +95,5 @@
   .Detail-List{
     font-family: 'Kanit';
   }
+
+  

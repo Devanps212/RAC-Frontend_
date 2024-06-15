@@ -6,12 +6,14 @@ import { RootState } from "../features/axios/redux/reducers/reducer";
 import { tokenInterface } from "../types/payloadInterface";
 
 interface SocketContextType {
-  socket: Socket | null;
+  userSocket: Socket | null;
+  partnerSocket: Socket | null;
   onlineUsers: string[];
 }
- 
+
 const SocketContext = createContext<SocketContextType>({
-  socket: null,
+  userSocket: null,
+  partnerSocket: null,
   onlineUsers: [],
 });
 
@@ -20,7 +22,8 @@ export const useSocketContext = () => {
 }
 
 const SocketContextProvider: FC<{ children: ReactNode }> = ({ children }) => {
-  const [socket, setSocket] = useState<Socket | null>(null);
+  const [userSocket, setUserSocket] = useState<Socket | null>(null);
+  const [partnerSocket, setPartnerSocket] = useState<Socket | null>(null);
   const [onlineUsers, setOnlineUsers] = useState<string[]>([]);
   const userToken = useSelector((state: RootState) => state.token.token) ?? '';
   const partnerToken = useSelector((state: RootState) => state.partnerToken.partnerToken) ?? '';
@@ -29,7 +32,7 @@ const SocketContextProvider: FC<{ children: ReactNode }> = ({ children }) => {
     const connectSocket = (token: string, role: string): Socket => {
       try {
         const decodedToken = jwtDecode<tokenInterface>(token);
-        const senderId = decodedToken.payload
+        const senderId = decodedToken.payload;
 
         const newSocket = io("http://localhost:5000/", {
           query: {
@@ -53,45 +56,49 @@ const SocketContextProvider: FC<{ children: ReactNode }> = ({ children }) => {
       }
     };
 
-    // Connect socket based on the available token (user or partner)
     if (userToken && partnerToken) {
       console.log("Both userToken and partnerToken are present. Handling both.");
-      const userSocket = connectSocket(userToken, 'user');
-      const partnerSocket = connectSocket(partnerToken, 'partner');
+      const userSocketInstance = connectSocket(userToken, 'user');
+      const partnerSocketInstance = connectSocket(partnerToken, 'partner');
 
-      setSocket(userSocket);
+      setUserSocket(userSocketInstance);
+      setPartnerSocket(partnerSocketInstance);
 
       return () => {
-        userSocket.close();
-        partnerSocket.close();
+        userSocketInstance.close();
+        partnerSocketInstance.close();
       };
     } else if (userToken) {
       console.log("Found userToken:", userToken);
-      const userSocket = connectSocket(userToken, 'user');
-      setSocket(userSocket);
+      const userSocketInstance = connectSocket(userToken, 'user');
+      setUserSocket(userSocketInstance);
 
-      return () => userSocket.close();
+      return () => userSocketInstance.close();
     } else if (partnerToken) {
       console.log("Found partnerToken:", partnerToken);
-      const partnerSocket = connectSocket(partnerToken, 'partner');
-      setSocket(partnerSocket);
+      const partnerSocketInstance = connectSocket(partnerToken, 'partner');
+      setPartnerSocket(partnerSocketInstance);
 
-      return () => partnerSocket.close();
+      return () => partnerSocketInstance.close();
     } else {
-
-      if (socket) {
-        socket.close();
-        setSocket(null);
+      if (userSocket) {
+        userSocket.close();
+        setUserSocket(null);
+      }
+      if (partnerSocket) {
+        partnerSocket.close();
+        setPartnerSocket(null);
       }
     }
 
     return () => {
-      socket?.close();
+      userSocket?.close();
+      partnerSocket?.close();
     };
   }, [userToken, partnerToken]);
 
   return (
-    <SocketContext.Provider value={{ socket, onlineUsers }}>
+    <SocketContext.Provider value={{ userSocket, partnerSocket, onlineUsers }}>
       {children}
     </SocketContext.Provider>
   );

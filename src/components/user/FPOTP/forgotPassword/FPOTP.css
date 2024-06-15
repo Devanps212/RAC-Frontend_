@@ -3,15 +3,16 @@
     padding:0;
     box-sizing: border-box;
 }
-body{
-    display:flex;
+.fpotp-Backg {
+    display: flex;
     justify-content: center;
     align-items: center;
-    background-image: url('/assets/admin/FPOTP/Screenshot\ \(212\).png');
+    background-image: url("/assets/admin/FPOTP/Screenshot (212).png");
+    background-repeat: no-repeat;
+    background-size: cover;
+    background-position: center;
     padding: 30px;
     margin: 0;
-    background-position: center;
-    background-size: cover;
     overflow: hidden;
     position: absolute;
     height: 100vh;

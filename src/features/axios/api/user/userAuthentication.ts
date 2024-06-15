@@ -49,19 +49,23 @@ export const userLogin = async(payload : signInPayload):Promise<any>=>
         throw new  Error(error.response.data.message)
     }
 }
-export const otpGenerate = async(input : signInPayload | string)=>{
+export const otpGenerate = async(input : signInPayload | string, purpose = 'nothing')=>{
     try{
         console.log("sending request")
-        let payload : signInPayload
+        let payload : Partial<signInPayload>
         if(typeof input === 'string')
         {
-            payload = {email : input, password : ''}
+            payload = {email : input, password : '', purpose : ''}
             console.log(payload)
         }
         else
         {
             payload = input
             console.log(payload)
+        }
+
+        if(purpose === 'FPOTP'){
+            payload.purpose = purpose
         }
         const otp: AxiosRequestConfig = {
             url:apiConfig.otpGenerate,
@@ -126,3 +130,4 @@ export const locationFinding = async(location: string)=>{
         throw new Error(error.data.message)
     }
 }
+

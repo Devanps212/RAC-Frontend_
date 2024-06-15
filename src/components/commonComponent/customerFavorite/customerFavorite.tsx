@@ -6,7 +6,7 @@ const CustomerFav: React.FC = () => {
     return (
         <>
             <div className="container">
-                <h1 className="head mt-5">Customer Talks</h1>
+                <h1 className="head mt-5" style={{fontFamily:'Orbitron', fontSize:'34px'}}>Customer Talks</h1>
                 <div className="row d-flex justify-content-center align-items-center mt-5">
                     <div className="customer col-12 col-md-5">
                         <FaUser style={{ fontSize: '70px' }} />

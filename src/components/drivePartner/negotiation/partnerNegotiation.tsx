@@ -18,10 +18,9 @@ import { conversationInterface } from '../../../types/messageInterface';
 import { useSocketContext } from '../../../context/socketContext';
 
 const PartnerNegotiate: React.FC = () => {
-  const { socket, onlineUsers } = useSocketContext();
+  const { userSocket, partnerSocket, onlineUsers } = useSocketContext();
   const [messages, setMessages] = useState<conversationInterface[]>([]);
   const [newMessage, setNewMessage] = useState<string>('');
-  const [arrivalMessage, setArrivalMessage] = useState<conversationInterface | null>(null);
   const [partnerData, setPartnerData] = useState<partnerDetailInterface | null>(null);
   const [conversationUsers, setConversationUsers] = useState<userInterface[]>([]);
   const [selectedUserId, setSelectedUserId] = useState<string | null>(null);
@@ -57,36 +56,31 @@ const PartnerNegotiate: React.FC = () => {
   }, [partnerId]);
 
   useEffect(() => {
-    if (socket) {
-      socket.on('newMessage', (newMessage: conversationInterface) => {
-        console.log("newMessage found : ", newMessage)
-        setArrivalMessage(newMessage);
-      });
-    }
+    const handleNewMessage = (newMessage: conversationInterface) => {
+      console.log("new Message :", newMessage)
+      setMessages((prevMessages) => [...prevMessages, newMessage]);
+      scrollRef.current?.scrollIntoView({ behavior: 'smooth' });
+    };
+
+    userSocket?.on('newMessage', handleNewMessage);
+    partnerSocket?.on('newMessage', handleNewMessage);
 
     return () => {
-      socket?.off('newMessage');
+      userSocket?.off('newMessage', handleNewMessage);
+      partnerSocket?.off('newMessage', handleNewMessage);
     };
-  }, [socket]);
-
-  useEffect(() => {
-    if (arrivalMessage && selectedUserId === arrivalMessage.senderId) {
-      setMessages((prevMessages) => [...prevMessages, arrivalMessage]);
-      // Scroll to the latest message
-      scrollRef.current?.scrollIntoView({ behavior: 'smooth' });
-      // Reset arrivalMessage after processing
-      setArrivalMessage(null);
-    }
-  }, [arrivalMessage, selectedUserId]);
+  }, [userSocket, partnerSocket]);
 
   useEffect(() => {
     if (partnerId) {
-      socket?.emit('addUser', partnerId);
+      userSocket?.emit('addUser', partnerId);
+      partnerSocket?.emit('addUser', partnerId);
     }
-  }, [partnerId, socket]);
+  }, [partnerId, userSocket, partnerSocket]);
 
   const handleContactSelection = async (userId: string) => {
     setSelectedUserId(userId);
+    console.log(`Selected user id: ${userId}`); // Debug log
     try {
       const userMessages = await getUserMessages(userId, 'user');
       setMessages(userMessages);
@@ -97,14 +91,14 @@ const PartnerNegotiate: React.FC = () => {
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    if (!selectedUserId || !newMessage) return;
+    if (!selectedUserId || !newMessage.trim()) return;
 
+    console.log(`Sending message to user id: ${selectedUserId}`); // Debug log
     try {
       const savedMessage = await getUserConversations(selectedUserId, partnerId, newMessage);
-      setMessages((prevMessages) => [...prevMessages, savedMessage]);
-      socket?.emit('sendMessage', savedMessage);
+      userSocket?.emit('sendMessage', savedMessage);
+      partnerSocket?.emit('sendMessage', savedMessage);
       setNewMessage('');
-      // Scroll to the latest message after sending
       scrollRef.current?.scrollIntoView({ behavior: 'smooth' });
     } catch (error: any) {
       toast.error(error.message);
@@ -115,18 +109,21 @@ const PartnerNegotiate: React.FC = () => {
     <div className="container-fluid content-container">
       <div className="row">
         <div className="col-md-3">
-          <ChatSidebar users={conversationUsers} onSelectContact={handleContactSelection} />
+          <ChatSidebar users={conversationUsers} onSelectContact={handleContactSelection} selectedUserId={selectedUserId} />
         </div>
         <div className="col-md-9">
           <div className="chat-box me-3">
             <h4 className="ms-5 text-light">Chat here</h4>
             <div className="message-list">
-              {messages.map((msg, index) => (
-                <div key={index}>
-                  <Message message={msg} own={msg.senderId === partnerId} />
-                </div>
-              ))}
-              <div ref={scrollRef}></div>
+              {messages.length > 0 ? (
+                messages.map((msg, index) => (
+                  <div key={index} ref={index === messages.length - 1 ? scrollRef : null}>
+                    <Message message={msg} own={msg.senderId === partnerId} />
+                  </div>
+                ))
+              ) : (
+                <p className="text-light ms-5">No messages yet. Start a conversation!</p>
+              )}
             </div>
             <form onSubmit={handleSubmit} className="message-input">
               <textarea

@@ -5,6 +5,47 @@
   .left-col, .right-col {
     margin-top: 8rem;
   }
+
+  .chat-sidebar {
+    padding: 10px;
+  }
+  
+  .chat-sidebar ul {
+    list-style-type: none;
+    padding: 0;
+  }
+  
+  .chat-sidebar li {
+    padding: 10px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+  }
+  
+  .chat-sidebar li:hover {
+    background-color: #f0f0f0;
+  }
+  
+  .chat-sidebar li.selected {
+    background-color: #d0e8ff;
+  }
+  
+  .contact-item {
+    display: flex;
+    align-items: center;
+  }
+  
+  .profile-pic img {
+    border-radius: 50%;
+  }
+  
+  .contact-details {
+    margin-left: 10px;
+  }
+  
+  .contact-name {
+    font-weight: bold;
+  }
+  
   
   
   .chat-box {

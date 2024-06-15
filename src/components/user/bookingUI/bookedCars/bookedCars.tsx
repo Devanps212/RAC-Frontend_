@@ -183,6 +183,8 @@ const BookedCars = () => {
     };
 
     const handleRatingSubmit = async()=>{
+        console.log("handling update")
+        console.log("updatiing rating")
         const response = await updateRating(ratings, String(reviewCar?._id), userId.payload)
         console.log(response)
         setRatings({} as reviewInterface)
@@ -396,36 +398,39 @@ const BookedCars = () => {
                                                 </div>
                                                 <div className="col-3">
                                                     <div className="buttons d-flex flex-column justify-content-center align-items-center">
-                                                    {
-                                                        bookings.status === 'Cancelled' ? (
-                                                            <>
-                                                            </>
-                                                        ) : (
-                                                            <>
-                                                                {new Date(bookings.date.end) <= new Date() ? (
-                                                                    
+                                                    {bookings.status === 'Cancelled' ? (
+                                                        <>
+                                                        </>
+                                                    ) : (
+                                                        <>
+                                                            {new Date(bookings.date.end) <= new Date() ? (
+                                                                bookings.status !== 'Completed' ? (
                                                                     <Button variant="success" onClick={() => handleBookingCompleted(bookings._id, bookings.carId)}>
                                                                         Booking Completed
                                                                     </Button>
                                                                 ) : (
                                                                     <>
-                                                                        <Button className="ms-5" onClick={() => {
-                                                                            setShowModal(true)
-                                                                            setSingleBooking(bookings)}
-                                                                            }>
-                                                                            Report an issue
-                                                                        </Button>
-                                                                        <Button variant="danger" onClick={() => handleBookingCancel(bookings._id, bookings.carId.name, bookings.transaction.amount || 0)} className="ms-5 mt-2">
-                                                                            Cancel booking
-                                                                        </Button>
-                                                                        <Button variant="dark" onClick={() => rescheduleBooking(bookings)} style={{ width: '60%' }} className="ms-5 mt-2">
-                                                                            Reschedule
-                                                                        </Button>
                                                                     </>
-                                                                )}
-                                                            </>
-                                                        )
-                                                    }
+                                                                )
+                                                            ) : (
+                                                                <>
+                                                                    <Button className="ms-5" onClick={() => {
+                                                                        setShowModal(true);
+                                                                        setSingleBooking(bookings);
+                                                                    }}>
+                                                                        Report an issue
+                                                                    </Button>
+                                                                    <Button variant="danger" onClick={() => handleBookingCancel(bookings._id, bookings.carId.name, bookings.transaction.amount || 0)} className="ms-5 mt-2">
+                                                                        Cancel booking
+                                                                    </Button>
+                                                                    <Button variant="dark" onClick={() => rescheduleBooking(bookings)} style={{ width: '60%' }} className="ms-5 mt-2">
+                                                                        Reschedule
+                                                                    </Button>
+                                                                </>
+                                                            )}
+                                                        </>
+                                                    )}
+
                                                                 
                                                                
                         
@@ -579,39 +584,48 @@ const BookedCars = () => {
                                             </div>
                                             <div className="col-3">
                                                 <div className="buttons-items d-flex flex-column justify-content-center align-items-center">
-                                               {
-                                                bookingInfo.status === 'Cancelled' ? (
-                                                    <>
-                                                    </>
-                                                ) : (
-                                                  <>
-                                                    <Button className="ms-5" onClick={() => setShowModal(true)}>
-                                                        Report an issue
-                                                    </Button>
-                                                    <Button variant="danger" onClick={() => handleBookingCancel(bookingInfo._id, bookingInfo.carId.name, bookingInfo.transaction.amount || 0)} className="ms-5 mt-2">
-                                                        Cancel booking
-                                                    </Button>
-                                                    <Button variant="dark" onClick={()=>rescheduleBooking(bookingInfo)} className="ms-5 mt-2">
-                                                        ReSechdule Date
-                                                    </Button>
-                                                  </>  
-                                                )
-                                               }
-                                                                
-                                                                
-                                                                
-                                                             
-                                                    {/* <Button className="ms-5" onClick={() => setShowModal(true)}>
-                                                        Report an issue
-                                                    </Button>
-                                                    <Button variant="danger" onClick={() => handleBookingCancel(bookingInfo._id, bookingInfo.carId.name, bookingInfo.transaction.amount)} className="ms-5 mt-3">
-                                                        Cancel booking
-                                                    </Button> */}
-                                                    <div className="status-container ms-5 mt-2">
-                                                        <p className={`status ${bookingInfo.status.replace(/\s+/g, '-').toLowerCase()}`}>
-                                                            {bookingInfo.status}
-                                                        </p>
-                                                    </div>
+                                                {
+                                                    bookingInfo.status === 'Cancelled' ? (
+                                                        null
+                                                    ) : (
+                                                        <>
+                                                            {new Date(bookingInfo.date.end) <= new Date() ? (
+                                                                bookingInfo.status !== 'Completed' ? (
+                                                                    <Button variant="success" onClick={() => handleBookingCompleted(bookingInfo._id, bookingInfo.carId)}>
+                                                                        Completed Booking
+                                                                    </Button>
+                                                                ) : (
+                                                                    <></>
+                                                                )
+                                                            ) : (
+                                                                <>
+                                                                    <Button className="ms-5" onClick={() => setShowModal(true)}>
+                                                                        Report an issue
+                                                                    </Button>
+                                                                    <Button 
+                                                                        variant="danger" 
+                                                                        onClick={() => handleBookingCancel(bookingInfo._id, bookingInfo.carId.name, bookingInfo.transaction.amount || 0)} 
+                                                                        className="ms-5 mt-2"
+                                                                    >
+                                                                        Cancel booking
+                                                                    </Button>
+                                                                    <Button 
+                                                                        variant="dark" 
+                                                                        onClick={() => rescheduleBooking(bookingInfo)} 
+                                                                        className="ms-5 mt-2"
+                                                                    >
+                                                                        Reschedule Date
+                                                                    </Button>
+                                                                </>
+                                                            )}
+                                                        </>
+                                                    )
+                                                }
+                                                <div className="status-container ms-5 mt-2">
+                                                    <p className={`status ${bookingInfo.status.replace(/\s+/g, '-').toLowerCase()}`}>
+                                                        {bookingInfo.status}
+                                                    </p>
+                                                </div>
                                                 </div>
                                             </div>
                                         </div>
@@ -798,7 +812,7 @@ const BookedCars = () => {
                     </Row>
                 </div>
                 <div className="submit-button">
-                    <Button onClick={()=>handleRatingSubmit}>Submit Ratings</Button>
+                    <Button onClick={handleRatingSubmit}>Submit Ratings</Button>
                 </div>
             </Modal.Body>
         </Modal>

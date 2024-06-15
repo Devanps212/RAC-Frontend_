@@ -121,6 +121,7 @@ const Cars: React.FC = () => {
             if(bookingDetails && detailedBooking){
                 const response = await bookingHelper(bookingDetails, detailedBooking, selectedCars)
                 if(response){
+                    console.log("response of car : ",response)
                     setSelectedCars(response)
                     setFilteredCars(response)
                 }

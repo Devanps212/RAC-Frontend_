@@ -1,7 +1,7 @@
 import axios, { AxiosRequestConfig } from "axios";
 import apiConfig from "../../../../utils/apiConfig";
 import { userDetailPayload } from "../../../../types/payloadInterface";
-import { setUserInterceptor } from "../../axios_Interceptor/Interceptor";
+import { setPartnerInterceptor, setUserInterceptor } from "../../axios_Interceptor/Interceptor";
 
 export const findUser = async(data:string)=>{
     try{
@@ -88,8 +88,9 @@ export const saveUserDetails = async (data: Partial<userDetailPayload> | FormDat
   export const findUsersforConversation = async(userId: string)=>{
     try{
 
+      setPartnerInterceptor()
       const userConfig : AxiosRequestConfig = {
-        url : `${apiConfig.mongoUsers}?userId=${userId}`,
+        url : `${apiConfig.userForConversation}?userId=${userId}`,
         method:'get'
       }
 
@@ -99,3 +100,47 @@ export const saveUserDetails = async (data: Partial<userDetailPayload> | FormDat
       throw new Error(error.message)
     }
   }
+
+  export const UserfindOneUser = async(email:string)=>{
+    try
+    {
+        const userFindConfig : AxiosRequestConfig = {
+            url:apiConfig.findUserThroghtEmail,
+            method:'get',
+            headers:{
+                'x-user-email': email
+            }
+        }
+
+        const response = await axios(userFindConfig)
+        return response.data.user
+    }
+    catch(error:any)
+    {
+        console.log(error.message)
+        throw new Error(error.response.data.message)
+    }
+}
+
+
+export const passwordReset = async(password:string, userId : string)=>{
+  try
+  {
+      const userFindConfig : AxiosRequestConfig = {
+          url:apiConfig.passwordReset,
+          method:'post',
+          data:{ 
+            password,
+            userId
+           }
+      }
+
+      const response = await axios(userFindConfig)
+      return response.data
+  }
+  catch(error:any)
+  {
+      console.log(error.message)
+      throw new Error(error.response.data.message)
+  }
+}

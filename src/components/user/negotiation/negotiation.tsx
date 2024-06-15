@@ -16,29 +16,28 @@ import { RootState } from '../../../features/axios/redux/reducers/reducer';
 import { conversationInterface } from '../../../types/messageInterface';
 import { findAllCars } from '../../../features/axios/api/car/carAxios';
 import { useSocketContext } from '../../../context/socketContext';
-import { Socket } from 'socket.io-client';
 
 const Chat = () => {
-  const { socket, onlineUsers } = useSocketContext();
+  const { userSocket, onlineUsers } = useSocketContext();
   const [messages, setMessages] = useState<conversationInterface[]>([]);
   const [newMessage, setNewMessage] = useState<string>('');
   const [userData, setUserData] = useState<userInterface | null>(null);
   const [partnerData, setPartnerData] = useState<partnerDetailInterface | null>(null);
   const [car, setCar] = useState<showCarInterface | null>(null);
   const scrollRef = useRef<HTMLDivElement>(null);
-  const { userId, partnerId, carId } = useParams();
+  const { userId, partnerId, carId } = useParams<{ userId: string; partnerId: string; carId: string }>();
   const [loading, setLoading] = useState(false);
   const userToken = useSelector((root: RootState) => root.token.token) ?? '';
-  const isOnline = onlineUsers.includes(partnerId as string);
+  const isOnline = onlineUsers.includes(partnerId || '');
 
   useEffect(() => {
     const fetchInitialData = async () => {
       try {
         const [partnerDetails, userDetails, carDetails, userMessages] = await Promise.all([
-          findOnePartner(partnerId as string),
-          findUser(userId as string),
-          findAllCars(carId as string, 'user'),
-          getUserMessages(partnerId as string, 'partner')
+          findOnePartner(partnerId!),
+          findUser(userId!),
+          findAllCars(carId!, 'user'),
+          getUserMessages(partnerId!, 'partner')
         ]);
 
         setPartnerData(partnerDetails);
@@ -55,22 +54,23 @@ const Chat = () => {
 
   useEffect(() => {
     const handleNewMessage = (newMessage: conversationInterface) => {
+      console.log("new Message :", newMessage)
       setMessages((prevMessages) => [...prevMessages, newMessage]);
       scrollRef.current?.scrollIntoView({ behavior: 'smooth' });
     };
 
-    socket?.on('newMessage', handleNewMessage);
+    userSocket?.on('newMessage', handleNewMessage);
 
     return () => {
-      socket?.off('newMessage', handleNewMessage);
+      userSocket?.off('newMessage', handleNewMessage);
     };
-  }, [socket]);
+  }, [userSocket]);
 
   const sendNewMessage = async (messageText: string) => {
     try {
-      const newMessage = await getUserConversations(partnerId as string, userId as string, messageText);
+      const newMessage = await getUserConversations(partnerId!, userId!, messageText);
       setMessages((prevMessages) => [...prevMessages, newMessage]);
-      socket?.emit('sendMessage', newMessage); // Ensure you emit the message after sending it
+      userSocket?.emit('sendMessage', { receiverId: partnerId, message: newMessage }); // Emit 'sendMessage' event using userSocket
       scrollRef.current?.scrollIntoView({ behavior: 'smooth' });
     } catch (error: any) {
       toast.error(error.message);
@@ -119,17 +119,15 @@ const Chat = () => {
               ))}
             </div>
             <form className="message-input" onSubmit={handleSubmit}>
-              <textarea
-                className="form-control message-textarea"
+              <input
+                type="text"
+                className="form-control"
                 value={newMessage}
                 onChange={(e) => setNewMessage(e.target.value)}
-                placeholder="Type a message..."
               />
-              <OverlayTrigger placement="top" overlay={<Tooltip id="tooltip-top">Send</Tooltip>}>
-                <button type="submit" className="btn btn-primary send-button">
-                  <IoPaperPlaneSharp size={24} />
-                </button>
-              </OverlayTrigger>
+              <button type="submit" className="btn btn-primary">
+                <IoPaperPlaneSharp />
+              </button>
             </form>
           </div>
         </div>

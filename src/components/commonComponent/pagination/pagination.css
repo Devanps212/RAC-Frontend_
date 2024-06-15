@@ -1,4 +1,4 @@
-.pagination {
+/* .pagination {
     display: flex;
     justify-content: center;
     list-style-type: none;
@@ -30,4 +30,34 @@
     color: #333;
     cursor: pointer;
   }
-  
+   */
+
+   .pagination {
+    display: flex;
+    list-style: none;
+    padding: 0;
+}
+
+.page-item {
+    margin: 0 5px;
+}
+
+.page-buttons {
+    padding: 5px 10px;
+    border: 1px solid #ccc;
+    background-color: white;
+    cursor: pointer;
+    color: black;
+}
+
+.page-item.disabled .page-buttons {
+    cursor: not-allowed;
+    color: gray;
+    border-color: gray;
+}
+
+.page-item.active .page-buttons {
+    font-weight: bold;
+    color: blue;
+    border-color: blue;
+}

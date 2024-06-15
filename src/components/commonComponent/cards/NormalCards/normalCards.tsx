@@ -1,6 +1,6 @@
 import React from "react";
 import { Carousel, Card, Col, Row, Button } from 'react-bootstrap';
-import { FaArrowCircleDown, FaStar } from "react-icons/fa";
+import { FaStar } from "react-icons/fa";
 import './normalCards.css';
 import { showCarInterface } from "../../../../types/carAdminInterface";
 import { bookingInterface } from "../../../../types/bookingInterface";
@@ -45,12 +45,19 @@ const CarCards: React.FC<{ cars: showCarInterface[], bookings: bookingInterface 
                                         </p>
                                     )
                                 }
+                            {
+                                bookings !== null ? (
+                                    <a href={`/carDetail?carId=${car._id}&bookingDetail=${parsedBooking}`}>
+                                        <Button variant="primary" className="viewMore">
+                                            View More
+                                        </Button>
+                                    </a>
+                                ) : (
+                                    <>
+                                    </>
+                                )
+                            }
                                 
-                                <a href={`/carDetail?carId=${car._id}&bookingDetail=${parsedBooking}`}>
-                                    <Button variant="primary" className="viewMore">
-                                        View More
-                                    </Button>
-                                </a>
                                
                             </div>
                         </Card> 

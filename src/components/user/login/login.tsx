@@ -213,7 +213,7 @@ const UserLogin = () => {
                 </div>
 
                 <div className="mb-3 form-check">
-                  <a href="#" className="text-xs font-semibold text-purple-700 ml-auto">Forgot password?</a>
+                  <a href="/forgotPassword" className="text-xs font-semibold text-purple-700 ml-auto">Forgot password?</a>
                 </div>
                 
                 <div className='text-center'>

@@ -13,6 +13,7 @@ import CustomerFav from '../../commonComponent/customerFavorite/customerFavorite
 import Footer from '../../drivePartner/footer/footer';
 import { useSelector } from 'react-redux';
 import { RootState } from '../../../features/axios/redux/reducers/reducer';
+import TopBookedCars from '../../commonComponent/availableCars/topBookedCars';
 
 
 function Home() {
@@ -153,15 +154,19 @@ function Home() {
       pickUpDate={pickUpDate}
       dropOffDate={dropOffDate}
       handleFormSubmission={handleSubMission}/>
-      {/* <h1 className='text-center mt-5 mb-3'>Cars</h1> */}
-      <CollaboratedPartners/>
+
+      <div className='d-flex justify-content-center align-items-center'>
+        <TopBookedCars/>
+      </div>
+
       <div className='customerFavour'>
         <CustomerFav/>
       </div>
+
+      <CollaboratedPartners/>
+
       <Footer/>
-      {/* <Cards 
-      cars={cars}
-      setSelectedCar={setSelectedCar}/> */}
+
     </div>
   );
 }

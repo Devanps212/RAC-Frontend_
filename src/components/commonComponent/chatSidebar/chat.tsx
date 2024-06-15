@@ -1,21 +1,26 @@
 import React from 'react';
 import { userInterface } from '../../../types/userInterface';
-import { FaUserCircle } from 'react-icons/fa'; // Icon for users without a profile picture
+import { FaUserCircle } from 'react-icons/fa';
 import './chat.css';
 
 interface ChatSidebarProps {
   users?: userInterface[] | userInterface;
   onSelectContact: (id: string) => void;
+  selectedUserId: string | null;
 }
 
-const ChatSidebar: React.FC<ChatSidebarProps> = ({ users, onSelectContact }) => {
+const ChatSidebar: React.FC<ChatSidebarProps> = ({ users, onSelectContact, selectedUserId }) => {
   return (
     <div className="chat-sidebar">
       <h2>Chats</h2>
       <ul>
         {Array.isArray(users) ? (
           users.map((contact) => (
-            <li key={contact._id?.toString()} onClick={() => onSelectContact(contact._id?.toString() ?? '')}>
+            <li
+              key={contact._id?.toString()}
+              onClick={() => onSelectContact(contact._id?.toString() ?? '')}
+              className={selectedUserId === contact._id?.toString() ? 'selected' : ''}
+            >
               <div className="contact-item">
                 <div className="profile-pic">
                   {contact.profilePic ? (

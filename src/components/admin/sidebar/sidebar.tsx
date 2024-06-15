@@ -42,6 +42,11 @@ const Sidebar = () => {
                     </Link>
                 </li>
                 <li className="sidebar-list-item">
+                    <Link to="/admin/coupon/generate" className="link-texts">
+                        <BsGrid3X3 className="icon" /> <span>Coupon Managment</span>
+                    </Link>
+                </li>
+                <li className="sidebar-list-item">
                     <Link to="/admin/OfferManagement" className="link-texts">
                         <BsGrid3X3 className="icon" /> <span>Offer Manage</span>
                     </Link>

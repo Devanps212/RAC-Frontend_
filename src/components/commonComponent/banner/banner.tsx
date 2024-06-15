@@ -1,6 +1,6 @@
 import React from "react";
 import { Button, Carousel } from "react-bootstrap";
-import './banner.css';
+import "./banner.css"
 import { LocationSuggestion } from "../../../types/bookingInterface";
 import { FaLocationArrow, FaMapMarkerAlt } from "react-icons/fa";
 

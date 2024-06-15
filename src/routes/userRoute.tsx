@@ -8,6 +8,7 @@ import { useSelector } from 'react-redux';
 import { RootState } from '../features/axios/redux/reducers/reducer';
 import BookingEndCheck from './protectedRoutes/bookingEndProtection';
 import { BlockedRoutes } from './protectedRoutes/routeProtection';
+import FpOTP from '../pages/user/FPOTP';
 
 const UsersLogins = lazy(() => import('../pages/user/login'));
 const UserSignUp = lazy(() => import('../pages/user/signUp'));
@@ -21,6 +22,10 @@ const BookedCars = lazy(() => import('../pages/user/bookedCars'));
 const Profile = lazy(() => import('../pages/user/profile'));
 const Negotiate = lazy(() => import('../pages/user/negotiate'));
 const GetInTouch = lazy(() => import('../pages/user/GetInTouch'));
+const ForgotPassword = lazy(()=>import('../pages/user/FPOTP'))
+const ResetPassword = lazy(()=>import('../pages/user/resetPassword'))
+const OTPverification = lazy(()=>import('../pages/user/verifyOtp'))
+
 
 const UserRouter = () => {
     const token = useSelector((root: RootState) => root.token.token);
@@ -42,6 +47,9 @@ const UserRouter = () => {
                 <Route path="/profile" element={valid ? <Profile /> : <UsersLogins />} />
                 <Route path="/negotiate/:userId/:partnerId/:carId" element={valid ? <Negotiate /> : <UsersLogins />} />
                 <Route path="/getInTouch" element={<GetInTouch />} />
+                <Route path="/forgotPassword" element={valid ? <Navigate to="/" /> : <ForgotPassword/>} />
+                <Route path="/verifyOtp/:userEmail/:userId" element={valid ? <Navigate to="/" /> : <OTPverification/>} />
+                <Route path="/resetPassword/:userEmail/:userId" element={valid ? <Navigate to="/" /> : <ResetPassword/>} />
             </Routes>
         </Suspense>
     );

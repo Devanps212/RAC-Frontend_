@@ -1,12 +1,12 @@
 import React, { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { FaLock } from "react-icons/fa";
+import { FaLock, FaRegStar, FaStar } from "react-icons/fa";
 import './carDetails.css'
 import Skeleton from "react-loading-skeleton";
 import { useLocation } from "react-router-dom";
 import { findAllCars } from "../../../features/axios/api/car/carAxios";
 import { toast } from "react-toastify";
-import { showCarInterface } from "../../../types/carAdminInterface";
+import { commentsInterface, showCarInterface } from "../../../types/carAdminInterface";
 import { categoryInterface } from "../../../types/categoryInterface";
 import ImageSelector from "../ImageSelector/imageSelector";
 import { useSelector } from "react-redux";
@@ -14,7 +14,7 @@ import { RootState } from "../../../features/axios/redux/reducers/reducer";
 import { decodeToken } from "../../../utils/tokenUtil";
 import { userInterface } from "../../../types/userInterface";
 import { findUser } from "../../../features/axios/api/user/user";
-import { OverlayTrigger, Tooltip } from "react-bootstrap";
+import { Modal, OverlayTrigger, Tooltip } from "react-bootstrap";
 
 
 
@@ -27,10 +27,13 @@ const CarDetails = () => {
     const [smallImg, setSmallImg] = useState<string[]>([]);
     const [loading, setLoading] = useState<boolean>(true);
     const userToken = useSelector((root: RootState)=>root.token.token) ?? '';
+    const [fullComment, setFullComment] = useState(false)
     const navigate = useNavigate();
     const location = useLocation();
+    const [comments, setComments] = useState<commentsInterface[] | []>([])
     const searchParams = new URLSearchParams(location.search);
     const carId = searchParams.get('carId') ?? '';
+    const rating = Array(5).fill(0)
 
     const placement = 'bottom'
 
@@ -46,6 +49,7 @@ const CarDetails = () => {
                 const response = await findAllCars(carId, 'user');
                 setCar(response);
                 setCategory(response.category);
+                setComments(response.comments)
                 setBigImg(response.thumbnailImg);
                 const combinedImages = [...response.exterior, ...response.interior];
                 setSmallImg(combinedImages);
@@ -151,7 +155,15 @@ const CarDetails = () => {
                             <h2>{car?.name}</h2>
                             <div className="specs mx-0 py-0">
                                 <ul className="list-unstyled pt-3" style={{ textAlign: "start", paddingLeft: "0" }}>
-                                    <li><div className="star-rating mb-4">★★★★★</div></li>
+                                    <li>
+                                    <div className="star-rating mb-4">
+                                        {car && car.rating !== undefined && rating.map((_, index) => (
+                                            <span key={index}>
+                                            {index < Number(car.rating) ? <FaStar /> : <FaRegStar/>}
+                                            </span>
+                                        ))}
+                                        </div>
+                                    </li>
                                     <li className="Detail-List">Engine: <strong>{car?.engine}</strong></li>
                                     <li className="Detail-List">Fuel: <strong>{car?.fuelType}</strong></li>
                                     <li className="Detail-List">Seats: <strong>5</strong></li>
@@ -225,12 +237,22 @@ const CarDetails = () => {
                             <h2>{car && car.comments && car.comments.length > 0 ? 'Reviews' : 'No Reviews'}</h2>
                             {car && car.comments && car.comments.length > 0 ? (
                                 car.comments.map((carData, index) => (
-                                    <div className="review-wrapper" key={index}>
+                                    <div className="review-wrapper mt-2 mb-2" key={index}>
                                         <div className="d-flex align-items-center">
-                                            {carData.userId.profilePic ? <img src={carData.userId.profilePic} alt="Profile" style={{ borderRadius: "10px", width: "4%" }} /> : <img src="https://via.placeholder.com/150" alt="Profile" style={{ borderRadius: "10px", width: "10%" }} />}
+                                            {carData.userId.profilePic ? <img src={typeof carData.userId.profilePic === 'string' ? carData.userId.profilePic : URL.createObjectURL(carData.userId.profilePic)} alt="Profile" style={{ borderRadius: "10px", width: "8%" }} /> : <img src="https://via.placeholder.com/150" alt="Profile" style={{ borderRadius: "10px", width: "10%" }} />}
                                             <div className="col">
                                                 <h5 style={{ marginLeft: "10px" }}>{carData.userId.name}</h5>
-                                                <strong style={{ marginLeft: "10px" }}>{carData.userRating}</strong>
+                                                <strong style={{ marginLeft: "10px" }}>
+                                                {
+                                                        Array.from({length: 5}, (_, i)=>(
+                                                            <span key={i}>
+                                                                {
+                                                                    i < carData.userRating ? <FaStar style={{color:'black'}}/> : <FaRegStar/>
+                                                                }
+                                                            </span>
+                                                        ))
+                                                    }
+                                                </strong>
                                             </div>
                                         </div>
                                         <div className="col">
@@ -249,13 +271,59 @@ const CarDetails = () => {
                             )}
                             {car && car.comments && car.comments.length > 0 &&
                                 <div className="d-flex justify-content-center align-items-center" style={{ marginTop: "2rem" }}>
-                                    <button className="hover-border-7 text-decoration-none">View All Reviews</button>
+                                    <button className="hover-border-7 text-decoration-none" onClick={()=>setFullComment(true)}>View All Reviews</button>
                                 </div>
                             }
                         </div>
                     </div>
                 </div>
             )}
+             <Modal show={fullComment} onHide={()=>setFullComment(false)} size="lg">
+            <Modal.Header closeButton>
+                <Modal.Title>Reviews</Modal.Title>
+            </Modal.Header>
+            <Modal.Body style={{ maxHeight: '60vh', overflowY: 'auto' }}>
+                {comments.map((comment, index) => (
+                <div className="review-wrapper mt-2 mb-2" key={index}>
+                    <div className="d-flex align-items-center">
+                    {comment.userId.profilePic ? (
+                        <img
+                        src={
+                            typeof comment.userId.profilePic === 'string'
+                            ? comment.userId.profilePic
+                            : URL.createObjectURL(comment.userId.profilePic)
+                        }
+                        alt="Profile"
+                        style={{ borderRadius: '10px', width: '4%' }}
+                        />
+                    ) : (
+                        <img
+                        src="https://via.placeholder.com/150"
+                        alt="Profile"
+                        style={{ borderRadius: '10px', width: '10%' }}
+                        />
+                    )}
+                    <div className="col">
+                        <h5 style={{ marginLeft: '10px' }}>{comment.userId.name}</h5>
+                        <strong className="star-rating-item" style={{marginLeft:'10px'}}>
+                            {
+                                Array.from({length: 5}, (_, i)=>(
+                                    <span key={i}>
+                                        {
+                                            i < comment.userRating ? <FaStar style={{color:'black'}}/> : <FaRegStar/>
+                                        }
+                                    </span>
+                                ))
+                            }
+                        </strong>
+                        <br/>
+                        <strong style={{ marginLeft: '10px' }}>{comment.comment}</strong>
+                    </div>
+                    </div>
+                </div>
+                ))}
+            </Modal.Body>
+            </Modal>
         </>
     );
 }

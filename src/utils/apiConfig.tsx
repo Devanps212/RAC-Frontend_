@@ -8,7 +8,9 @@ const apiConfig = {
     userFind:`${configKeys.API_URL}user-auth/findUser`,
     saveUserData:`${configKeys.API_URL}user-auth/saveUser`,
     mongoUsers:`${configKeys.API_URL}user-auth/getAll`,
-    userForConversation : `${configKeys.API_URL}user-auth/getUserForConversation`,
+    findUserThroghtEmail: `${configKeys.API_URL}user-auth/userEmail`,
+    passwordReset: `${configKeys.API_URL}user-auth/resetPassword`,
+    
 
     googleVerification: `${configKeys.API_URL}user-auth/Google-SignIn-Up`,
     adminLogin : `${configKeys.API_URL}admin-auth/login`,
@@ -30,15 +32,19 @@ const apiConfig = {
     carBasedOnrole: `${configKeys.API_URL}cars/CarsFromRole`,
     carUpdatePartial:`${configKeys.API_URL}cars/partialUpdate`,
     carRatingUpdater:`${configKeys.API_URL}cars/updateRating`,
+    carPaginations:`${configKeys.API_URL}cars/carPage`,
+
     getAllUsers:`${configKeys.API_URL}admin/allUsers`,
     UBuser:`${configKeys.API_URL}admin/UBUser`,
     findOneUser:`${configKeys.API_URL}admin/userFind`,
+    
 
     partnerLogin:`${configKeys.API_URL}partner/login`,
     PartneraddCar:`${configKeys.API_URL}partner/addCar`,
     PartnerSignUp:`${configKeys.API_URL}partner/SignUp`,
     partnerAll:`${configKeys.API_URL}partner/All`,
     partnerOne : `${configKeys.API_URL}partner/findOne`,
+    userForConversation : `${configKeys.API_URL}partner/getUserForConversation`,
 
     locationFinding: `${configKeys.API_URL}user-auth/location`,
 
@@ -50,6 +56,7 @@ const apiConfig = {
     bookingUpdater:`${configKeys.API_URL}booking/updater`,
     bookingRescheduler: `${configKeys.API_URL}booking/rescheduler`,
     bookingReportHandler:`${configKeys.API_URL}booking/bookCarReport`,
+    topBookedCars:`${configKeys.API_URL}booking/topBookedCars`,
 
     couponGenerator:`${configKeys.API_URL}coupon/Generate`,
     findAllCoupon:`${configKeys.API_URL}coupon/findAll`,
