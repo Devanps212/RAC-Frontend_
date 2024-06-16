@@ -1,6 +1,7 @@
 import axios, {AxiosRequestConfig} from "axios";
 import { partnerLoginInterface, partnerData } from "../../../../types/partnerInterface";
 import apiConfig from "../../../../utils/apiConfig";
+import { toast } from "react-toastify";
 
 
 export const partnerLogin = async(formData: partnerLoginInterface)=>{
@@ -29,8 +30,11 @@ export const partnerSignUpPayment = async(partnerData: partnerData)=>{
     {
         console.log("partnerData passing : ", partnerData)
         const phonePayConfig : AxiosRequestConfig = {
-            url: `${apiConfig.PartnerSignUp}?partnerData=${JSON.stringify(partnerData)}`,
-            method:'get',
+            url: `${apiConfig.PartnerSignUp}`,
+            method:'post',
+            data:{
+                partnerData
+            }
         }
 
         const response = axios(phonePayConfig)
@@ -39,7 +43,8 @@ export const partnerSignUpPayment = async(partnerData: partnerData)=>{
     }
     catch(error:any)
     {
-        console.log(error.message)
+        toast.error(error.response.data.message)
+        console.log("error : ",error.response.data.message)
         throw new Error(error.response.data.message)
     }
     

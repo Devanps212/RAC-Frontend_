@@ -178,12 +178,6 @@ const PartnerLogin = () => {
                 {errors.password && <p className="text-danger text-xs mt-2">{errors.password}</p>}
               </Form.Group>
 
-              <div className="mb-3 form-check p-0">
-                <a href="#" className="text-xs font-semibold text-purple-700 ml-auto">
-                  Forgot password?
-                </a>
-              </div>
-
               <div className="text-center">
                 <Button variant='dark' className="buttonSub" type="submit">
                   Submit

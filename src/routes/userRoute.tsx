@@ -25,6 +25,7 @@ const GetInTouch = lazy(() => import('../pages/user/GetInTouch'));
 const ForgotPassword = lazy(()=>import('../pages/user/FPOTP'))
 const ResetPassword = lazy(()=>import('../pages/user/resetPassword'))
 const OTPverification = lazy(()=>import('../pages/user/verifyOtp'))
+const UIpartner = lazy(()=>import('../pages/partner/partnerUI'))
 
 
 const UserRouter = () => {
@@ -38,6 +39,7 @@ const UserRouter = () => {
                 <Route path="/signUp" element={valid ? <Navigate to="/" /> : <UserSignUp />} />
                 <Route path="/OTP" element={<VerifyOTP />} />
                 <Route path="/" element={<HomePage />} />
+                <Route path="/PartnerUI" element={valid ? <UIpartner/> : <Navigate to={'/signIn'}/>}/>
                 <Route path="/UserBlocked" element={<BlockedRoutes><BlockedPage /></BlockedRoutes>} />
                 <Route path="/carDetail" element={valid ? <CarDetails /> : <UsersLogins />} />
                 <Route path="/bookingUI" element={valid ? <Bookings /> : <UsersLogins />} />

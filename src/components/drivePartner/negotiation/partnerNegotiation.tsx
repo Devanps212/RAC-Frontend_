@@ -80,7 +80,7 @@ const PartnerNegotiate: React.FC = () => {
 
   const handleContactSelection = async (userId: string) => {
     setSelectedUserId(userId);
-    console.log(`Selected user id: ${userId}`); // Debug log
+    console.log(`Selected user id: ${userId}`);
     try {
       const userMessages = await getUserMessages(userId, 'user');
       setMessages(userMessages);

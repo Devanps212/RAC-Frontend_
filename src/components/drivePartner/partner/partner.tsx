@@ -7,44 +7,36 @@ import { FaInfoCircle } from "react-icons/fa";
 import { partnerSignUpPayment } from "../../../features/axios/api/partner/partner";
 import { partnerData } from "../../../types/partnerInterface";
 import { toast } from "react-toastify";
+import { useSelector } from "react-redux";
+import { RootState } from "../../../features/axios/redux/reducers/reducer";
 
 const PartnerUI = () => {
     const [showModal, setShowModal] = useState(false);
     const [subModal, setSubModal] = useState(false)
-    const [partnerData, setPartnerData] = useState<partnerData | null>()
-
+    const token = useSelector((root: RootState)=>root.token.token) ?? ''
+    const [partnerData, setPartnerData] = useState<partnerData>({
+        token: token,
+        amount: 250,
+        role: "partner"
+    });
 
     const hideModal = () => setShowModal(false);
     const ShowModal = () => setShowModal(true);
 
     const handlePayment = async() => {
 
-        const token = localStorage.getItem('token')
-        console.log(token)
-        setPartnerData((PrevState)=>({
-            ...PrevState,
-        amount:250,
-        token:token??'',
-        role:"partner"}))
-
-        const partnerDataToSend = {
-            ...partnerData,
-            amount: 250,
-            token: token ?? '',
-            role:"partner"
-        };
-        if(partnerDataToSend)
+       
+        if(partnerData)
             {
-                const response = await partnerSignUpPayment(partnerDataToSend)
+                const response = await partnerSignUpPayment(partnerData)
                 console.log("response : ", response)
                 console.log("response recieved : ", response.data.data)
-                if(response.data.data === null)
-                {
+                if(response.data.message !== 'success'){
                     toast.warning(response.data.message)
-                }
-                else
-                {
-                    window.location.href = response.data.data 
+                }else{
+                    console.log(response.data.data.url);
+                    
+                    window.location.href = response.data.data.url 
                 }     
             }
     }

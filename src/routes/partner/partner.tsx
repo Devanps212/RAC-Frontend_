@@ -28,7 +28,6 @@ const PartnerRoute = ()=>{
             <Route path="/login" element={isValid ? <Navigate to={'/partner/Dashboard'}/> : <PartnersLogin/>}/>
             {/* <Route path="/home" element={isValid ? <HomePartner/> : <Navigate to={'/partner/login'}/>}/> */}
             <Route path="/addCar" element={isValid ? <AddCar/> : <Navigate to={'/partner/login'}/>}/>
-            <Route path="/PartnerUI" element={isValid ? <UIpartner/> : <Navigate to={'/partner/login'}/>}/>
             <Route path="/manageCar" element={isValid ? <CarManagePartner/> : <Navigate to={'/partner/login'}/>}/>
             <Route path="/editsPartnerCar" element={isValid ? <CarEditPartner/> : <Navigate to={'/partner/login'}/>}/>
             <Route path="/success/:transactionId/:userId" element={<TransactionComplete/>}/>
