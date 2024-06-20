@@ -236,7 +236,7 @@ const CarDetails = () => {
                         <div className="col-5 d-flex flex-column mb-5 mt-5 ms-2">
                             <h2>{car && car.comments && car.comments.length > 0 ? 'Reviews' : 'No Reviews'}</h2>
                             {car && car.comments && car.comments.length > 0 ? (
-                                car.comments.map((carData, index) => (
+                                car.comments.slice(0, 2).map((carData, index) => (
                                     <div className="review-wrapper mt-2 mb-2" key={index}>
                                         <div className="d-flex align-items-center">
                                             {carData.userId.profilePic ? <img src={typeof carData.userId.profilePic === 'string' ? carData.userId.profilePic : URL.createObjectURL(carData.userId.profilePic)} alt="Profile" style={{ borderRadius: "10px", width: "8%" }} /> : <img src="https://via.placeholder.com/150" alt="Profile" style={{ borderRadius: "10px", width: "10%" }} />}

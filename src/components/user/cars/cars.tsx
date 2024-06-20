@@ -5,10 +5,9 @@ import { BiSortDown, BiSortUp } from "react-icons/bi";
 import { BsStarFill } from "react-icons/bs";
 import CarCards from "../../commonComponent/cards/NormalCards/normalCards";
 import { useLocation } from "react-router-dom";
-import { bookingInterface } from "../../../types/bookingInterface";
 import { findBookings } from "../../../features/axios/api/booking/booking";
 import { toast } from "react-toastify";
-import { detailBooking } from "../../../types/bookingInterface";
+import { bookingInterface, detailBooking } from "../../../types/bookingInterface";
 import { bookingHelper } from "../../../utils/bookingHelper";
 import { category, showCarInterface } from "../../../types/carAdminInterface";
 import { findAllCars } from "../../../features/axios/api/car/carAxios";
@@ -18,21 +17,19 @@ import { FaExclamationTriangle, FaLocationArrow } from "react-icons/fa";
 import { categoryInterface } from "../../../types/categoryInterface";
 import { findAllCategory } from "../../../features/axios/api/category/category";
 
-
 const Cars: React.FC = () => {
-
-    const [suggestions, setSuggestions] = useState<LocationSuggestion[] | null>(null)
-    const [bookingDetails, setBookingDetails] = useState<bookingInterface | null>(null)
-    const [detailedBooking, setDetailedBooking] = useState<detailBooking[] | null>(null)
-    const [selectedCars, setSelectedCars] = useState<showCarInterface[]>([])
-    const [filteredCars, setFilteredCars] = useState<showCarInterface[]>([])
-    const [category, setCategory] = useState<categoryInterface[]>([])
-    const [filterdCateg, setFilteredCateg] = useState<categoryInterface[]>([])
-    const [pickUpvalue, setpickUpValue] = useState('')
-    const [dropOffvalue, setdropOffValue] = useState('')
+    const [suggestions, setSuggestions] = useState<LocationSuggestion[] | null>(null);
+    const [bookingDetails, setBookingDetails] = useState<bookingInterface | null>(null);
+    const [detailedBooking, setDetailedBooking] = useState<detailBooking[] | null>(null);
+    const [selectedRatings, setSelectedRatings] = useState<number | null>(null); // Changed from Set<number> to number
+    const [selectedCars, setSelectedCars] = useState<showCarInterface[]>([]);
+    const [filteredCars, setFilteredCars] = useState<showCarInterface[]>([]);
+    const [category, setCategory] = useState<categoryInterface[]>([]);
+    const [seats, setSeats] = useState<Set<number>>(new Set());
+    const [pickUpvalue, setpickUpValue] = useState('');
+    const [dropOffvalue, setdropOffValue] = useState('');
     const currentDate = new Date().toISOString().split('T')[0];
-    const [seats, setSeats]= useState<Set<number>>(new Set())
-
+    const [filterdCateg, setFilteredCateg] = useState<categoryInterface[]>([])
     const location = useLocation();
     const searchParams = new URLSearchParams(location.search);
     const bookingDataParams = searchParams.get("bookingData");
@@ -156,6 +153,32 @@ const Cars: React.FC = () => {
             }
     }
 
+
+    const handleRatingChange = (rating: number) => {
+        setSelectedRatings(prevRating => prevRating === rating ? null : rating);
+    };
+
+    const handleRatingFilter = () => {
+        if (selectedRatings === null) {
+            setSelectedCars(filteredCars); // Set back to original filtered cars when no rating is selected
+        } else {
+            const filteredCarsByRating = filteredCars.filter((car) => {
+                const carRating = car.rating;
+                if (carRating) {
+                    return carRating >= selectedRatings;
+                }
+                return false;
+            });
+            setSelectedCars(filteredCarsByRating); // Set the selected cars based on the filteredCarsByRating
+        }
+    };
+    
+
+    useEffect(() => {
+        handleRatingFilter();
+    }, [selectedRatings]);
+    
+
     const handleClick = (value: string, mode:string)=>{
         if(mode ==='pickup')
             {
@@ -190,7 +213,7 @@ const Cars: React.FC = () => {
     const handleSeats = (num: number)=>{
         const filteredData = filteredCars.filter(car=>car.seats === num)
         setSelectedCars(filteredData)
-    }
+    };
     const handleLH = () => {
         const sortedData = [...selectedCars].sort((a, b) => (a.rentPricePerDay ?? 0) - (b.rentPricePerDay ?? 0));
         setSelectedCars(sortedData);
@@ -199,7 +222,7 @@ const Cars: React.FC = () => {
     const handleHL = ()=>{
         const sortedData = [...selectedCars].sort((a, b)=> (b.rentPricePerDay ?? 0) - (a.rentPricePerDay ?? 0))
         setSelectedCars(sortedData)
-    }
+    };
     
     
 
@@ -224,87 +247,50 @@ const Cars: React.FC = () => {
                                 <div className="col-12 mt-2">
                                     <p className="font-text">Sort by Rating :</p>
                                     <div className="d-flex flex-column justify-content-start align-items-start">
-                                        <div className="d-flex align-items-center mb-2">
-                                            <input type="checkbox" className="me-2"/>
-                                            <BsStarFill />
+                                    {[1, 2, 3, 4, 5].map((star, index) => (
+                                        <div key={index} className="d-flex align-items-center mb-2">
+                                            <input
+                                            type="radio"
+                                            className="me-2"
+                                            checked={selectedRatings === star}
+                                            onChange={() => handleRatingChange(star)}
+                                            />
+                                            {[...Array(star)].map((_, starIndex) => (
+                                            <BsStarFill key={starIndex} />
+                                            ))}
                                         </div>
-                                        <div className="d-flex align-items-center mb-2">
-                                            <input type="checkbox" className="me-2"/>
-                                            <BsStarFill />
-                                            <BsStarFill />
-                                        </div>
-                                        <div className="d-flex align-items-center mb-2">
-                                            <input type="checkbox" className="me-2"/>
-                                            <BsStarFill />
-                                            <BsStarFill />
-                                            <BsStarFill />
-                                        </div>
-                                        <div className="d-flex align-items-center mb-2">
-                                            <input type="checkbox" className="me-2"/>
-                                            <BsStarFill />
-                                            <BsStarFill />
-                                            <BsStarFill />
-                                            <BsStarFill />
-                                        </div>
-                                        <div className="d-flex align-items-center mb-2">
-                                            <input type="checkbox" className="me-2"/>
-                                            <BsStarFill />
-                                            <BsStarFill />
-                                            <BsStarFill />
-                                            <BsStarFill />
-                                            <BsStarFill />
-                                        </div>
+                                        ))}
                                     </div>
                                 </div>
                                 <div className="col-12 mt-2">
                                     <p className="font-text">sort by Category :</p>
                                     <div className="d-flex justify-content-start align-items-start">
-                                        {
-                                            category && category!==null && category.map((categories, index)=>(
-                                                <div key={index}>
-                                                    <Button onClick={()=>categoryFilter(categories._id ? categories._id :'')} value={categories._id} variant="link">
-                                                        {categories.name}
-                                                    </Button>
-                                                </div>
-                                            ))
-                                        }
-                                    </div>
-                                </div>
-                                <div className="col-12 mt-2">
-                                    <p className="font-text">Sort by Brand :</p>
-                                    <div className="row">
-                                        <div className="col-12">
-                                            <div className="d-flex justify-content-start align-items-start">
-                                                <Button variant="light" style={{width: "25%"}}>
-                                                    Dodge
-                                                </Button>
-                                                <Button variant="light ms-3" style={{width: "25%"}}>
-                                                    Dodge
-                                                </Button>
-                                                <Button variant="light ms-3" style={{width: "25%"}}>
-                                                    Dodge
+                                        {category && category !== null && category.map((categories, index) => (
+                                            <div key={index}>
+                                                <Button onClick={() => categoryFilter(categories._id ? categories._id : '')} value={categories._id} variant="link">
+                                                    {categories.name}
                                                 </Button>
                                             </div>
-                                        </div>
+                                        ))}
                                     </div>
                                 </div>
                                 <div className="col-12 mt-2">
                                     <p className="font-text">Sort by Seats :</p>
                                     <div className="d-flex justify-content-start align-items-start">
                                         <div>
-                                        <Dropdown>
-                                            <Dropdown.Toggle variant="light" id="dropdown-basic">
-                                                Select Seats
-                                            </Dropdown.Toggle>
+                                            <Dropdown>
+                                                <Dropdown.Toggle variant="light" id="dropdown-basic">
+                                                    Select Seats
+                                                </Dropdown.Toggle>
 
-                                            <Dropdown.Menu>
-                                                {[...seats].map((num) => (
-                                                    <Dropdown.Item key={num} onClick={() => handleSeats(num)}>
-                                                        {num} Seater
-                                                    </Dropdown.Item>
-                                                ))}
-                                            </Dropdown.Menu>
-                                        </Dropdown>
+                                                <Dropdown.Menu>
+                                                    {[...seats].map((num) => (
+                                                        <Dropdown.Item key={num} onClick={() => handleSeats(num)}>
+                                                            {num} Seater
+                                                        </Dropdown.Item>
+                                                    ))}
+                                                </Dropdown.Menu>
+                                            </Dropdown>
                                         </div>
                                     </div>
                                 </div>
@@ -314,115 +300,113 @@ const Cars: React.FC = () => {
                     <div className="col-8">
                         <div className="row">
                             <div className="rightSide-content">
-                            <div className="col-12">
-                                <div className="right-top-contents d-flex justify-content-center align-items-center">
-                                    <div className="col-2 d-flex justify-content-center">
-                                    <input 
-                                        type="date"
-                                        value={bookingDetails?.startDate ? new Date(bookingDetails.startDate).toISOString().split('T')[0] : currentDate}
-                                        min={currentDate}
-                                        onChange={(e)=>{const selectedDate = new Date(e.target.value)
-                                            setBookingDetails({...bookingDetails, startDate: selectedDate})}}
-                                    />
+                                <div className="col-12">
+                                    <div className="right-top-contents d-flex justify-content-center align-items-center">
+                                        <div className="col-2 d-flex justify-content-center">
+                                            <input
+                                                type="date"
+                                                value={bookingDetails?.startDate ? new Date(bookingDetails.startDate).toISOString().split('T')[0] : currentDate}
+                                                min={currentDate}
+                                                onChange={(e) => {
+                                                    const selectedDate = new Date(e.target.value)
+                                                    setBookingDetails({ ...bookingDetails, startDate: selectedDate })
+                                                }}
+                                            />
 
-                                    </div>
-                                    <div className="col-2 d-flex justify-content-center">
-                                    <input 
-                                        type="date"
-                                        value={bookingDetails?.endDate ? new Date(bookingDetails.endDate).toISOString().split('T')[0] : currentDate}
-                                        min={currentDate}
-                                        onChange={(e)=>{const selectedDate = new Date(e.target.value)
-                                            setBookingDetails({...bookingDetails, endDate: selectedDate})}}
-                                    />
-                                    </div>
-                                    <div className="col-1 d-flex justify-content-center">
-                                        <input 
-                                            type="time" 
-                                            value={bookingDetails?.pickupTime}
-                                            onChange={(e)=>{
-                                                const inputValue = e.target.value;
-                                                const [hours, minutes] = inputValue.split(':'); 
-                                                const formattedTime = `${hours}:${minutes || '00'}`;
-                                                setBookingDetails({...bookingDetails, pickupTime: formattedTime})}}
-                                        />
-                                    </div>
-                                    <div className="col-1 d-flex justify-content-center">
-                                        <input 
-                                            type="time"
-                                            value={bookingDetails?.dropOffTime}
-                                            onChange={(e)=>{
-                                                const inputValue = e.target.value;
-                                                const [hours, minutes] = inputValue.split(':');
-                                                const formattedTime = `${hours}:${minutes || '00'}`;
-                                                setBookingDetails({...bookingDetails, dropOffTime: formattedTime})}}
-                                        />
-                                    </div>
-                                    <div className="col-3 d-flex justify-content-center position-relative">
-                                        <input 
-                                            type="text" 
-                                            style={{ width: '120px' }} 
-                                            placeholder="select Starting"
-                                            value={bookingDetails?.pickupLocation}
-                                            onChange={(e)=>locationFindings(e.target.value, 'pickup')}
-                                        />
-                                        {
-                                            pickUpvalue && (
+                                        </div>
+                                        <div className="col-2 d-flex justify-content-center">
+                                            <input
+                                                type="date"
+                                                value={bookingDetails?.endDate ? new Date(bookingDetails.endDate).toISOString().split('T')[0] : currentDate}
+                                                min={currentDate}
+                                                onChange={(e) => {
+                                                    const selectedDate = new Date(e.target.value)
+                                                    setBookingDetails({ ...bookingDetails, endDate: selectedDate })
+                                                }}
+                                            />
+                                        </div>
+                                        <div className="col-1 d-flex justify-content-center">
+                                            <input
+                                                type="time"
+                                                value={bookingDetails?.pickupTime}
+                                                onChange={(e) => {
+                                                    const inputValue = e.target.value;
+                                                    const [hours, minutes] = inputValue.split(':');
+                                                    const formattedTime = `${hours}:${minutes || '00'}`;
+                                                    setBookingDetails({ ...bookingDetails, pickupTime: formattedTime })
+                                                }}
+                                            />
+                                        </div>
+                                        <div className="col-1 d-flex justify-content-center">
+                                            <input
+                                                type="time"
+                                                value={bookingDetails?.dropOffTime}
+                                                onChange={(e) => {
+                                                    const inputValue = e.target.value;
+                                                    const [hours, minutes] = inputValue.split(':');
+                                                    const formattedTime = `${hours}:${minutes || '00'}`;
+                                                    setBookingDetails({ ...bookingDetails, dropOffTime: formattedTime })
+                                                }}
+                                            />
+                                        </div>
+                                        <div className="col-3 d-flex justify-content-center position-relative">
+                                            <input
+                                                type="text"
+                                                style={{ width: '120px' }}
+                                                placeholder="select Starting"
+                                                value={bookingDetails?.pickupLocation}
+                                                onChange={(e) => locationFindings(e.target.value, 'pickup')}
+                                            />
+                                            {pickUpvalue && (
                                                 <ul className="suggestion-list">
-                                                    { Array.isArray(suggestions) && suggestions.map((place, index) => (
-                                                        <li key={index} className="suggestion-item" onClick={()=>handleClick(place.name, 'pickup')}>
+                                                    {Array.isArray(suggestions) && suggestions.map((place, index) => (
+                                                        <li key={index} className="suggestion-item" onClick={() => handleClick(place.name, 'pickup')}>
                                                             <span className="suggestion-text">{place.name}<strong>{place.name}</strong>
-                                                            <br />
-                                                            <small>{place.place_formatted}</small>
+                                                                <br />
+                                                                <small>{place.place_formatted}</small>
                                                             </span>
                                                             <FaLocationArrow className="suggestion-icon" />
                                                         </li>
                                                     ))}
                                                 </ul>
-                                            )
-                                        }
-                                    </div>
+                                            )}
+                                        </div>
 
-                                    <div className="col-1 d-flex justify-content-center position-relative">
-                                        <input 
-                                            type="text" 
-                                            style={{ width: '120px' }} 
-                                            placeholder="select ending"
-                                            value={bookingDetails?.dropOffLocation}
-                                            onChange={(e)=>locationFindings(e.target.value, 'dropoff')}
-                                        />
-                                        {
-                                            dropOffvalue && (
+                                        <div className="col-1 d-flex justify-content-center position-relative">
+                                            <input
+                                                type="text"
+                                                style={{ width: '120px' }}
+                                                placeholder="select ending"
+                                                value={bookingDetails?.dropOffLocation}
+                                                onChange={(e) => locationFindings(e.target.value, 'dropoff')}
+                                            />
+                                            {dropOffvalue && (
                                                 <ul className="suggestion-list">
-                                                { Array.isArray(suggestions) && suggestions.map((place, index) => (
-                                                    <li key={index} className="suggestion-item" onClick={()=>handleClick(place.name, 'dropoff')}>
-                                                        <span className="suggestion-text">{place.name}<strong>{place.name}</strong>
-                                                        <br />
-                                                        <small>{place.place_formatted}</small>
-                                                        </span>
-                                                        <FaLocationArrow className="suggestion-icon" />
-                                                    </li>
-                                                ))}
-                                            </ul>
-                                            )
-                                        }
+                                                    {Array.isArray(suggestions) && suggestions.map((place, index) => (
+                                                        <li key={index} className="suggestion-item" onClick={() => handleClick(place.name, 'dropoff')}>
+                                                            <span className="suggestion-text">{place.name}<strong>{place.name}</strong>
+                                                                <br />
+                                                                <small>{place.place_formatted}</small>
+                                                            </span>
+                                                            <FaLocationArrow className="suggestion-icon" />
+                                                        </li>
+                                                    ))}
+                                                </ul>
+                                            )}
+                                        </div>
                                     </div>
-                                    {/* <div className="col-1 d-flex justify-content-center">
-                                        <button onClick={handleSubmit} type="submit" className="btn btn-dark" style={{ width: '80px' }}>Submit</button>
-                                    </div> */}
                                 </div>
-                            </div>
 
                                 <div className="col-12 mt-4">
                                     <h5>Cars</h5>
                                     <div className="right-bottom-contents">
-                                    {selectedCars.length > 0 ? (
+                                        {selectedCars.length > 0 ? (
                                             <CarCards cars={selectedCars} bookings={bookingDetails}/>
                                         ) : (
                                             <div className="alert-container d-flex flex-column justify-content-center align-items-center mt-5">
                                                 <FaExclamationTriangle className="exclamation-icon" style={{ width: '30%', height: 'auto' }} />
                                                 <Alert variant="warning" className="alert-message">No cars found. But don't worry, we're still looking!</Alert>
                                             </div>
-                                            
                                         )}
                                     </div>
                                 </div>
@@ -437,3 +421,4 @@ const Cars: React.FC = () => {
 };
 
 export default Cars;
+

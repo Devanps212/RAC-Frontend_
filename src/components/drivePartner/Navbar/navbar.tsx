@@ -5,7 +5,6 @@ import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import { FaUserAlt, FaUserCircle } from 'react-icons/fa';
 import { BiSolidMessage } from 'react-icons/bi';
-import { useSocketContext } from '../../../context/socketContext';
 import { clearPartnerToken } from '../../../features/axios/redux/slices/partner/tokenSlice';
 import { RootState } from '../../../features/axios/redux/reducers/reducer';
 import { partnerLogout } from '../../../features/axios/redux/slices/partner/partnerLogin';
@@ -17,7 +16,7 @@ import { tokenInterface, userDetailPayload } from '../../../types/payloadInterfa
 const PartnerHeader: React.FC = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const { socket } = useSocketContext();
+  // const { socket } = useSocketContext();
   const [unreadMessages, setUnreadMessages] = useState<number>(0);
   const [partnerData, setPartnerData] = useState<userDetailPayload>()
   const partnerToken = useSelector((state: RootState) => state.partnerToken.partnerToken) ?? ''
@@ -39,18 +38,18 @@ const PartnerHeader: React.FC = () => {
     partnerData()
   }, [])
 
-  useEffect(() => {
-    if (!socket) return;
+  // useEffect(() => {
+  //   if (!socket) return;
 
-    socket.on("newMessage", (messageData: any) => {
-      console.log("Message received for partner: ", messageData);
-      setUnreadMessages(prevState => prevState + 1);
-    });
+  //   socket.on("newMessage", (messageData: any) => {
+  //     console.log("Message received for partner: ", messageData);
+  //     setUnreadMessages(prevState => prevState + 1);
+  //   });
 
-    return () => {
-      socket.off("newMessage");
-    };
-  }, [socket]);
+  //   return () => {
+  //     socket.off("newMessage");
+  //   };
+  // }, [socket]);
 
   useEffect(() => {
     if (partnerToken === null) {
@@ -90,8 +89,7 @@ const PartnerHeader: React.FC = () => {
                           partnerData && partnerData.profilePic ? (
                             <img
                               src={partnerData && partnerData.profilePic ? partnerData.profilePic : ''}
-                              width="20%"
-                              height="20%"
+                              style={{width:"32px", height:'32px', borderRadius: '20px'}}
                               alt="User Profile"
                             />
                           ) : (

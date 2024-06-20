@@ -15,15 +15,17 @@ import { findUsersforConversation } from '../../../features/axios/api/user/user'
 import { userInterface } from '../../../types/userInterface';
 import { getUserConversations, getUserMessages } from '../../../features/axios/api/messenger/userConversation';
 import { conversationInterface } from '../../../types/messageInterface';
-import { useSocketContext } from '../../../context/socketContext';
+import io, { Socket } from 'socket.io-client';
 
 const PartnerNegotiate: React.FC = () => {
-  const { userSocket, partnerSocket, onlineUsers } = useSocketContext();
   const [messages, setMessages] = useState<conversationInterface[]>([]);
   const [newMessage, setNewMessage] = useState<string>('');
   const [partnerData, setPartnerData] = useState<partnerDetailInterface | null>(null);
   const [conversationUsers, setConversationUsers] = useState<userInterface[]>([]);
+  const [unreadMessageCounts, setUnreadMessageCounts] = useState<{ [userId: string]: number }>({});
+  const [socket, setSocket] = useState<Socket | null>(null);
   const [selectedUserId, setSelectedUserId] = useState<string | null>(null);
+  const [currentPartnerSocketDetail, setCurrentPartnerSocketDetail] = useState<any>(null);
   const scrollRef = useRef<HTMLDivElement>(null);
   const partnerToken = useSelector((state: RootState) => state.partnerToken.partnerToken) ?? '';
   const decoded: tokenInterface = jwtDecode(partnerToken);
@@ -56,34 +58,59 @@ const PartnerNegotiate: React.FC = () => {
   }, [partnerId]);
 
   useEffect(() => {
-    const handleNewMessage = (newMessage: conversationInterface) => {
-      console.log("new Message :", newMessage)
-      setMessages((prevMessages) => [...prevMessages, newMessage]);
-      scrollRef.current?.scrollIntoView({ behavior: 'smooth' });
-    };
-
-    userSocket?.on('newMessage', handleNewMessage);
-    partnerSocket?.on('newMessage', handleNewMessage);
-
+    const socketConnection = io("http://localhost:5000/");
+    setSocket(socketConnection);
+    
     return () => {
-      userSocket?.off('newMessage', handleNewMessage);
-      partnerSocket?.off('newMessage', handleNewMessage);
+      socketConnection.disconnect();
     };
-  }, [userSocket, partnerSocket]);
+  }, []);
 
   useEffect(() => {
-    if (partnerId) {
-      userSocket?.emit('addUser', partnerId);
-      partnerSocket?.emit('addUser', partnerId);
+    if (socket) {
+      socket.emit("addUser", partnerId);
+
+      socket.on("getUsers", (users: any) => {
+        setCurrentPartnerSocketDetail(users);
+      });
+
+      socket.on("getMessage", async (data: any) => {
+        if (selectedUserId === data.senderId) {
+          const messageWithTimestamp = {
+            ...data,
+            createdAt: new Date().toISOString()
+          };
+          const userMessages = await getUserMessages(selectedUserId!, partnerId, 'user');
+          
+          setMessages([...userMessages, messageWithTimestamp]);
+        } else {
+          setUnreadMessageCounts((prevCounts) => ({
+            ...prevCounts,
+            [data.senderId]: (prevCounts[data.senderId] || 0) + 1,
+          }));
+        }
+      });
+
+      return () => {
+        socket.off("getUsers");
+        socket.off("getMessage");
+      };
     }
-  }, [partnerId, userSocket, partnerSocket]);
+  }, [socket, partnerId, selectedUserId]);
+
+  useEffect(() => {
+    scrollRef.current?.scrollIntoView({ behavior: 'smooth' });
+  }, [messages]);
 
   const handleContactSelection = async (userId: string) => {
     setSelectedUserId(userId);
-    console.log(`Selected user id: ${userId}`);
     try {
-      const userMessages = await getUserMessages(userId, 'user');
+      const userMessages = await getUserMessages(userId, partnerId, 'user');
       setMessages(userMessages);
+      setUnreadMessageCounts((prevCounts) => ({
+        ...prevCounts,
+        [userId]: 0,
+      }));
     } catch (error: any) {
       toast.error(error.message);
     }
@@ -91,25 +118,31 @@ const PartnerNegotiate: React.FC = () => {
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    if (!selectedUserId || !newMessage.trim()) return;
-
-    console.log(`Sending message to user id: ${selectedUserId}`); // Debug log
-    try {
-      const savedMessage = await getUserConversations(selectedUserId, partnerId, newMessage);
-      userSocket?.emit('sendMessage', savedMessage);
-      partnerSocket?.emit('sendMessage', savedMessage);
-      setNewMessage('');
-      scrollRef.current?.scrollIntoView({ behavior: 'smooth' });
-    } catch (error: any) {
-      toast.error(error.message);
+    if (!newMessage || !selectedUserId) {
+      return;
     }
+
+    socket?.emit("sendMessage", {
+      senderId: partnerId,
+      receiverId: selectedUserId,
+      message: newMessage,
+    });
+
+    const savedMessage = await getUserConversations(selectedUserId, partnerId, newMessage);
+    setNewMessage('');
+    setMessages((prevMessages) => [...prevMessages, savedMessage]);
+  };
+
+  const getProfileImage = (userId: string) => {
+    const user = conversationUsers.find(user => user._id?.toString() === userId);
+    return user?.profilePic;
   };
 
   return (
     <div className="container-fluid content-container">
       <div className="row">
         <div className="col-md-3">
-          <ChatSidebar users={conversationUsers} onSelectContact={handleContactSelection} selectedUserId={selectedUserId} />
+          <ChatSidebar users={conversationUsers} unreadMessageCounts={unreadMessageCounts} onSelectContact={handleContactSelection} selectedUserId={selectedUserId} />
         </div>
         <div className="col-md-9">
           <div className="chat-box me-3">
@@ -118,7 +151,7 @@ const PartnerNegotiate: React.FC = () => {
               {messages.length > 0 ? (
                 messages.map((msg, index) => (
                   <div key={index} ref={index === messages.length - 1 ? scrollRef : null}>
-                    <Message message={msg} own={msg.senderId === partnerId} />
+                    <Message message={msg} own={msg.senderId === partnerId} profileImage={getProfileImage(msg.senderId)} />
                   </div>
                 ))
               ) : (

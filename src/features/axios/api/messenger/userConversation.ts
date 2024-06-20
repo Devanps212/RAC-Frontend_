@@ -29,7 +29,7 @@ export const getUserConversations = async(recieverId: string, senderId:string, m
     }
 }
 
-export const getUserMessages = async(recvId:string, role: string): Promise<any> => {
+export const getUserMessages = async(recvId:string, senderId: string, role: string): Promise<any> => {
     try {
         if(role==='user'){
             setUserInterceptor()
@@ -38,14 +38,15 @@ export const getUserMessages = async(recvId:string, role: string): Promise<any> 
         }
         
         const config: AxiosRequestConfig = {
-            url: `${apiConfig.getMessages}/${recvId}`,
+            url: `${apiConfig.getMessages}/${recvId}/${senderId}`,
             method: 'get'
         }
+        console.log(config)
         const res = await axios(config);
-        console.log("data : ", res.data)
+        // console.log("data : ", res.data)
         return res.data;
     } catch (error: any) {
-        console.log("error i n getMessage : ", error)
+        console.error("error i n getMessage : ", error)
         toast.warning(error.response.data.message)
         throw new Error('Error while getting user messages');
     }

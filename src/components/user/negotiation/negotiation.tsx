@@ -3,6 +3,7 @@ import { IoPaperPlaneSharp } from 'react-icons/io5';
 import { OverlayTrigger, Tooltip } from 'react-bootstrap';
 import Message from '../../messengers/user/Messsage/userMessage';
 import './negotiation.css';
+import io, { Socket } from "socket.io-client";
 import { toast } from 'react-toastify';
 import { findOnePartner } from '../../../features/axios/api/partner/partner';
 import { findUser } from '../../../features/axios/api/user/user';
@@ -15,35 +16,36 @@ import { useSelector } from 'react-redux';
 import { RootState } from '../../../features/axios/redux/reducers/reducer';
 import { conversationInterface } from '../../../types/messageInterface';
 import { findAllCars } from '../../../features/axios/api/car/carAxios';
-import { useSocketContext } from '../../../context/socketContext';
+import { jwtDecode } from 'jwt-decode';
+import { tokenInterface } from '../../../types/payloadInterface';
 
-const Chat = () => {
-  const { userSocket, onlineUsers } = useSocketContext();
+const Chat: React.FC = () => {
   const [messages, setMessages] = useState<conversationInterface[]>([]);
   const [newMessage, setNewMessage] = useState<string>('');
   const [userData, setUserData] = useState<userInterface | null>(null);
   const [partnerData, setPartnerData] = useState<partnerDetailInterface | null>(null);
   const [car, setCar] = useState<showCarInterface | null>(null);
   const scrollRef = useRef<HTMLDivElement>(null);
+  const [socket, setSocket] = useState<Socket | null>(null);
   const { userId, partnerId, carId } = useParams<{ userId: string; partnerId: string; carId: string }>();
   const [loading, setLoading] = useState(false);
   const userToken = useSelector((root: RootState) => root.token.token) ?? '';
-  const isOnline = onlineUsers.includes(partnerId || '');
+  const decodeToken: tokenInterface = jwtDecode(userToken);
+  const userID = decodeToken.payload;
+  const [currentUserSocketDetail, setCurrentUserSocketDetail] = useState<any>(null);
 
   useEffect(() => {
     const fetchInitialData = async () => {
       try {
-        const [partnerDetails, userDetails, carDetails, userMessages] = await Promise.all([
+        const [partnerDetails, userDetails, carDetails] = await Promise.all([
           findOnePartner(partnerId!),
           findUser(userId!),
           findAllCars(carId!, 'user'),
-          getUserMessages(partnerId!, 'partner')
         ]);
 
         setPartnerData(partnerDetails);
         setUserData(userDetails.data);
         setCar(carDetails);
-        setMessages(userMessages);
       } catch (error: any) {
         toast.error(error.message);
       }
@@ -53,35 +55,65 @@ const Chat = () => {
   }, [userId, partnerId, carId]);
 
   useEffect(() => {
-    const handleNewMessage = (newMessage: conversationInterface) => {
-      console.log("new Message :", newMessage)
-      setMessages((prevMessages) => [...prevMessages, newMessage]);
-      scrollRef.current?.scrollIntoView({ behavior: 'smooth' });
-    };
-
-    userSocket?.on('newMessage', handleNewMessage);
+    const socketConnection = io("http://localhost:5000/");
+    setSocket(socketConnection);
 
     return () => {
-      userSocket?.off('newMessage', handleNewMessage);
+      socketConnection.disconnect();
     };
-  }, [userSocket]);
+  }, []);
 
-  const sendNewMessage = async (messageText: string) => {
-    try {
-      const newMessage = await getUserConversations(partnerId!, userId!, messageText);
-      setMessages((prevMessages) => [...prevMessages, newMessage]);
-      userSocket?.emit('sendMessage', { receiverId: partnerId, message: newMessage }); // Emit 'sendMessage' event using userSocket
-      scrollRef.current?.scrollIntoView({ behavior: 'smooth' });
-    } catch (error: any) {
-      toast.error(error.message);
+  useEffect(() => {
+    if (socket) {
+      // console.log("socket connected to backend");
+      socket.emit("addUser", userID);
+      socket.on("getUsers", (users: any) => {
+        setCurrentUserSocketDetail(users);
+      });
+
+      socket.on("getMessage", async (data: any) => {
+        console.log("message gt ============================ :", data)
+        
+        const messageWithTimestamp = {
+          ...data,
+          createdAt: new Date().toISOString()
+        };
+        const existingMessages = await getUserMessages(partnerId!, userID!, 'partner');
+        
+        setMessages([...existingMessages, messageWithTimestamp]);
+      });
     }
-  };
+  }, [socket, partnerId, userID]);
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  useEffect(() => {
+    // console.log("selected User Id: ", userID);
+    const fetchingMessages = async () => {
+      // console.log("partner Id: ", partnerId);
+      const fetchMessages = await getUserMessages(partnerId!, userID!, 'partner');
+      setMessages(fetchMessages);
+    };
+    fetchingMessages();
+  }, [partnerId, userID]);
+
+  useEffect(() => {
+    scrollRef.current?.scrollIntoView({ behavior: 'smooth' });
+  }, [messages]);
+
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    if (!newMessage.trim()) return;
-    await sendNewMessage(newMessage);
+    // console.log("partnerId: ", partnerId);
+    if (!newMessage) return;
+    socket?.emit("sendMessage", {
+      senderId: userID,
+      receiverId: partnerId,
+      message: newMessage
+    });
+
+    const newMessageSave = await getUserConversations(partnerId!, userId!, newMessage);
+    // console.log("new Message received============= : ", newMessageSave)
     setNewMessage('');
+    setMessages((prevMessages) => [...prevMessages, newMessageSave]);
+    
   };
 
   return (
@@ -104,11 +136,6 @@ const Chat = () => {
           <div className="chat-box me-3">
             <div className="d-flex justify-content-center align-items-center bg-dark text-light py-3 mb-1" style={{ height: '12px' }}>
               <h4 className="ms-5 mb-0">{`Connected to: ${partnerData?.name || "Unknown"}`}</h4>
-              {isOnline ? (
-                <span className="badge bg-success ms-2">Online</span>
-              ) : (
-                <span className="badge bg-danger ms-2">Offline</span>
-              )}
             </div>
 
             <div className="message-list">

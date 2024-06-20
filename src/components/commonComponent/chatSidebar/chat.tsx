@@ -5,11 +5,13 @@ import './chat.css';
 
 interface ChatSidebarProps {
   users?: userInterface[] | userInterface;
+  unreadMessageCounts: { [userId: string]: number };
   onSelectContact: (id: string) => void;
   selectedUserId: string | null;
 }
 
-const ChatSidebar: React.FC<ChatSidebarProps> = ({ users, onSelectContact, selectedUserId }) => {
+const ChatSidebar: React.FC<ChatSidebarProps> = ({ users, unreadMessageCounts, onSelectContact, selectedUserId }) => {
+  console.log("user data ================================:", users)
   return (
     <div className="chat-sidebar">
       <h2>Chats</h2>
@@ -31,6 +33,9 @@ const ChatSidebar: React.FC<ChatSidebarProps> = ({ users, onSelectContact, selec
                 </div>
                 <div className="contact-details">
                   <div className="contact-name">{contact.name}</div>
+                  {unreadMessageCounts[contact._id?.toString() ?? ''] > 0 && (
+                    <div className="unread-count">{unreadMessageCounts[contact._id?.toString() ?? '']}</div>
+                  )}
                 </div>
               </div>
             </li>

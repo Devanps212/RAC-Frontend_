@@ -13,7 +13,6 @@ interface MessageProps {
 const Message: React.FC<MessageProps> = ({ message, own, profileImage, loading }) => {
   const messageClass = own ? 'own' : 'receiver';
 
-  
   if (loading) {
     return (
       <div className={`message ${messageClass}`}>
@@ -34,7 +33,7 @@ const Message: React.FC<MessageProps> = ({ message, own, profileImage, loading }
         </div>
       ) : (
         <div className="message-top receiver">
-          <img src={profileImage} alt="Profile" className="profile-image round-image" />
+          {profileImage && <img src={profileImage} alt="Profile" className="profile-image round-image" />}
           <div className="ms-2">
             <p className="message-text">{message?.message}</p>
             <div className="message-time">{message ? new Date(message.createdAt).toLocaleTimeString() : ''}</div>

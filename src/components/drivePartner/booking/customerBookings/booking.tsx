@@ -129,7 +129,7 @@ const PartnerBooking: React.FC = () => {
                             </td>
                         </tr>
                     )}
-                    {!AllBooking && (
+                    {(Array.isArray(AllBooking) && AllBooking.length === 0) && (
                         <tr>
                             <td colSpan={8} className="no-data-cell">No Booking Found</td>
                         </tr>

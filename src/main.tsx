@@ -10,15 +10,15 @@ import store from './features/axios/redux/app/store';
 import 'react-confirm-alert/src/react-confirm-alert.css'; 
 import "react-country-state-city/dist/react-country-state-city.css";
 import 'react-datepicker/dist/react-datepicker.css';
-import SocketContextProvider from './context/socketContext';
+// import SocketContextProvider from './context/socketContext';
 
 
 ReactDOM.createRoot(document.getElementById('root') as Element).render(
   <React.StrictMode>
     <Provider store={store}>
-      <SocketContextProvider>
+      {/* <SocketContextProvider> */}
         <App />
-      </SocketContextProvider>
+      {/* </SocketContextProvider> */}
     <ToastContainer
       position="top-right"
       autoClose={5000}
