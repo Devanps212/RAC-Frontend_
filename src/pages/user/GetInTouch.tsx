@@ -1,7 +1,6 @@
 import React from "react";
 import GetInTouch from "../../components/user/getInTouch/getIntouch";
 import UserHeader from "../../components/user/header/header";
-import Footer from "../../components/drivePartner/footer/footer";
 
 
 const GetIntouchUser = ()=>{
@@ -9,7 +8,6 @@ const GetIntouchUser = ()=>{
         <>
         <UserHeader/>
         <GetInTouch/>
-        <Footer/>
         </>
     )
 }

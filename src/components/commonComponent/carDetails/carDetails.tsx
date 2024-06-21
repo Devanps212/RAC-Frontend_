@@ -188,13 +188,13 @@ const CarDetails = () => {
                                             placement={placement}
                                             overlay={
                                                 <Tooltip id={`tooltip-${placement}`}>
-                                                    Car owned by Admin. Negotiation not available.
+                                                    Car owned by Admin. Chat not available.
                                                 </Tooltip>
                                             }
                                         >
                                             <button className="position-relative negotiate me-3" style={{ zIndex: 1 }}>
                                                 <FaLock className="position-absolute top-50 start-50 translate-middle" style={{ transform: "translate(-50%, -50%)" }} />
-                                                <span className="position-relative" style={{ filter: "blur(1.5px)", zIndex: 2 }}>Negotiate</span>
+                                                <span className="position-relative" style={{ filter: "blur(1.5px)", zIndex: 2 }}>Chat</span>
                                             </button>
                                         </OverlayTrigger>
                                     ) : (
@@ -205,12 +205,12 @@ const CarDetails = () => {
                                                     placement={placement}
                                                     overlay={
                                                         <Tooltip id={`tooltip-${placement}`}>
-                                                            Please rent a car first to access negotiation.
+                                                            Please rent a car first to access Chat.
                                                         </Tooltip>
                                                     }
                                                 >
                                                     <button className="negotiate me-3" style={{ zIndex: 1 }}>
-                                                        <span className="position-relative">Negotiate</span>
+                                                        <span className="position-relative">Chat</span>
                                                     </button>
                                                 </OverlayTrigger>
                                             ): (

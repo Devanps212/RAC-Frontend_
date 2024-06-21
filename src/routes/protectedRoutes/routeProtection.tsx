@@ -100,13 +100,15 @@ export const BlockedRoutes :React.FC<RouteProtectionProps> = ({children})=>{
       const userId = decodeToken(token).payload
       if(!ParsedUsers.includes(userId))
         {
-          return <Navigate to={'/users/home'}/>
+          return <>{children}</>
         }
-        return <>{children}</>
+
+        return <Navigate to={'/UserBlocked'}/>
+        
     }
     else
     {
-      return <Navigate to={'/users/signIn'}/>
+      return <Navigate to={'/signIn'}/>
     }
   }
   catch(error:any)

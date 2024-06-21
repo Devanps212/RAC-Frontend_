@@ -1,12 +1,15 @@
-import React from "react";
+import React, { useState } from "react";
 import './getInTouch.css'
 import { BsTelephone, BsTelephoneFill } from "react-icons/bs";
 import { BiSolidLocationPlus } from "react-icons/bi";
 import { FaAt } from "react-icons/fa";
 import { Button } from "react-bootstrap";
+import { toast } from "react-toastify";
 
 
 const GetInTouch = ()=>{
+
+    const [message, setMessages] = useState('')
     return(
         <div className="container-fuid">
             <div className="row d-flex flex-column justify-content-center align-item-center">
@@ -40,10 +43,15 @@ const GetInTouch = ()=>{
                                     <h4>Pitch Us</h4>
                                     <textarea
                                     placeholder="write here"
-                                    value={"ddscsd"}
-                                    className="pitch-text"/>
+                                    value={message}
+                                    className="pitch-text"
+                                    onChange={(e)=>setMessages(e.target.value)}
+                                    />
                                 </div>
-                                <Button>Submit</Button>
+                                <Button onClick={()=>{
+                                    toast.success("message submitted")
+                                    setMessages('')
+                                }}>Submit</Button>
                             </div>
                         </div>
                     </div>

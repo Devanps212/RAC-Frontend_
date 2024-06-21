@@ -17,6 +17,9 @@ import { Button } from "react-bootstrap";
 import CouponComponent from "../../commonComponent/coupons/coupons";
 import { userInterface } from "../../../types/userInterface";
 import { couponInterface } from "../../../types/couponInterface";
+import { findAllCategory } from "../../../features/axios/api/category/category";
+import { categoryInterface } from "../../../types/categoryInterface";
+import { Types } from "mongoose";
 
 
 const UserProfile = () => {
@@ -28,6 +31,7 @@ const UserProfile = () => {
     const [uniqueCars, setUniqueCars] = useState<showCarInterface>()
     const [userCoupons, setUserCoupons] = useState<couponInterface[] | null>(null);
     const [showComponent, setShowComponent] = useState(true)
+    const [luxuryRental, setLuxuryRental] = useState<number>(0)
     const tokenPayload = useSelector((root: RootState)=> root.token.token) ?? ''
 
 
@@ -51,9 +55,29 @@ const UserProfile = () => {
             }
             
             const bookings = await bookingFindingBasedOnRole(data)
-            const bookingDetail = bookings.data.data
-    
+            const bookingDetail : detailBooking[] = bookings.data.data
+            
+            let categ: string[];
+            if (Array.isArray(bookingDetail)) {
+                categ = bookingDetail.map((booking) => {
+                  const category = booking.carId.category;
+                  if (typeof category === 'string') {
+                    return category;
+                  } else if (category instanceof Types.ObjectId) {
+                    return category.toString();
+                  } else {
+                    return '';
+                  }
+                }).filter(Boolean);
+              }
+            const findCategory :categoryInterface[] = await findAllCategory()
+            const matchedCateg = findCategory.filter((category)=>categ.includes(category._id!))
+            const luxuryrentalsLength = matchedCateg.length
+            console.log("luxury rental : ", matchedCateg)
+            console.log("length : ", luxuryrentalsLength);
+            
             setBookings(bookingDetail)
+            setLuxuryRental(luxuryrentalsLength)
             
         }catch(error: any){
             toast.error(error)
@@ -64,11 +88,11 @@ const UserProfile = () => {
         try {
             const userId = await decodeToken(tokenPayload).payload;
             const data = await findUser(userId);
-            console.log("data :", data.data)
+
             const user : userInterface = data.data
-            console.log("users : ", user)
+            
             const coupons = user.coupons?.map(coupon => typeof coupon === 'string' ? { coupon } as couponInterface : coupon) ?? [];
-            console.log("coupon : ", coupons)
+            
             setUserCoupons(coupons);
         } catch (error: any) {
             toast.error(error.message);
@@ -95,8 +119,7 @@ const UserProfile = () => {
                     }
                 });
 
-                console.log(`Most common car ID: ${mostCommonCarId}, Count: ${maxCount}`);
-
+               
                 const mostCommonCars = bookings.filter(booking => booking.carId._id === mostCommonCarId);
 
                 const uniqueMostCommonCars = Array.from(new Set(mostCommonCars.map(booking => booking.carId)));
@@ -120,7 +143,7 @@ const UserProfile = () => {
         const token = await decodeToken(tokenPayload ?? '').payload
 
         const userFindings = await findUser(token)
-        console.log(userFindings.data)
+        
         setUserData(userFindings.data)
     }
 
@@ -165,7 +188,7 @@ const UserProfile = () => {
             const userSave = await saveUserDetails(formData)
             if (userSave.data.status === "success" && userData && userData.profilePic) {
                 userData.profilePic = userSave.data.data.profilePic;
-                console.log(userSave.data.data.profilePic)
+                
                 toast.success("userProfile updated successfully")
                 setShowLoad(false)
             } else {
@@ -226,12 +249,8 @@ const UserProfile = () => {
                                     <p className="text-center text-sub mt-3">{bookings && bookings.length}</p>
                                 </div>
                                 <div className="px-3">
-                                    <h5 className="text-heading">Negotiation Savings</h5>
-                                    <p className="text-center text-sub mt-3">₹ 100</p>
-                                </div>
-                                <div className="px-3">
                                     <h5 className="text-heading">Luxury Rentals</h5>
-                                    <p className="text-center text-sub mt-3">2</p>
+                                    <p className="text-center text-sub mt-3">{luxuryRental}</p>
                                 </div>
                             </div>
                         </div>

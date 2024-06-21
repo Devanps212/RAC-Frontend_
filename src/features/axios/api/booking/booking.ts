@@ -15,7 +15,7 @@ export const filterCarsBooking = async(Data: bookingInterface)=>{
         }
 
         const response = await axios(bookingFilterConfig)
-        console.log(response)
+        
     }
     catch(error: any)
     {
@@ -26,7 +26,7 @@ export const filterCarsBooking = async(Data: bookingInterface)=>{
 
 export const findBookings = async(bookingData : string)=>{
     try{
-        console.log("data to pass : ", bookingData)
+        
         const findingBookingConfig : AxiosRequestConfig = {
             url:`${apiConfig.findBookings}?bookingData=${bookingData}`,
             method:'get'
@@ -41,9 +41,9 @@ export const findBookings = async(bookingData : string)=>{
 }
 export const bookingPaymentUI = async(bookingDetail : bookingInterface | null, carId: string | undefined, userId: string)=>{
     try{
-        console.log("booking detail : ", bookingDetail)
+        
         const dataString = JSON.stringify(bookingDetail)
-        console.log(dataString, carId)
+        
         const paymentUIConfig : AxiosRequestConfig = {
             url: apiConfig.bookingPaymentURI,
             method:'post',
@@ -76,7 +76,7 @@ export const bookingCompletion = async(paymentDetail: backendBooking )=>{
         }
 
         const response = await axios(bookingCompletion)
-        console.log("response : ", response)
+        
     }catch(error: any){
         return error.message
     }
@@ -93,7 +93,6 @@ export const bookingFindingBasedOnRole = async(bookingData:Partial<detailBooking
         }
 
         const response = await axios(bookingConfig)
-        console.log(response)
         return response
         
     } catch(error:any) {
@@ -114,7 +113,6 @@ export const bookingUpdater = async(data: Partial<detailBooking>, purpose: strin
             }
         }
         const response = await axios(updaterConfig)
-        console.log("response from frontend : ", response.data)
         return response.data
     } catch(error: any){
         console.log("errorMessage: ", error.response.data)
@@ -124,7 +122,6 @@ export const bookingUpdater = async(data: Partial<detailBooking>, purpose: strin
 
 export const bookingRescheduler = async(data: Partial<bookingInterfaceReschedule>, userId : string)=>{
     try{
-        console.log("data reSchedule : ", data)
         const reschedularConfig : AxiosRequestConfig = {
             url: apiConfig.bookingRescheduler,
             method: 'patch',
@@ -132,7 +129,7 @@ export const bookingRescheduler = async(data: Partial<bookingInterfaceReschedule
         }
 
         const response = await axios(reschedularConfig)
-        console.log(response)
+        
         return response.data
     } catch (error: any) {
         console.log(error.message)
@@ -150,7 +147,7 @@ export const carReportHandle = async(data: Partial<showCarInterface>, bookingId 
         }
 
         const response = await axios(reschedularConfig)
-        console.log(response)
+        
         return response.data
     } catch (error: any) {
         console.log("error found :", error)

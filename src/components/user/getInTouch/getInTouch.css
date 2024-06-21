@@ -16,10 +16,10 @@
   transform: scale(1.1);
 }
 
-.column-1{
+/* .column-1{
     background: rgb(55,117,246);
     background: linear-gradient(232deg, rgba(55,117,246,0.9753151260504201) 0%, rgba(62,244,178,1) 83%);
-}
+} */
 
 .column-2{
     background: rgb(47,255,75);

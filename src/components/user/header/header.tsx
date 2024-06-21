@@ -45,16 +45,16 @@ const UserHeader = () => {
             {
               token ? (
                 <Nav className="justify-content-md-between align-items-center me-auto ms-5">
-                  <Nav.Link className="button-Header-user me-3" as={Link} to="/">Home</Nav.Link>
-                  <Nav.Link className="button-Header-user me-3" as={Link} to={'#'}>about Us</Nav.Link>
-                  <Nav.Link className="me-3" href="/BookedCars">Your Deals</Nav.Link>
-                  <Nav.Link className="custom-nav-link me-3" as={Link} to="/PartnerUI">Become Partner</Nav.Link>
+                  <Nav.Link className="button-Header-user me-4" as={Link} to="/">Home</Nav.Link>
+                  <Nav.Link className="button-Header-user me-4" as={Link} to={'#'}>about Us</Nav.Link>
+                  <Nav.Link className="button-Header-user me-4" href="/BookedCars">Your Deals</Nav.Link>
+                  <Nav.Link className="custom-nav-link button-Header-user me-3" as={Link} to="/PartnerUI">Become Partner</Nav.Link>
                 </Nav>
               ) : (
                 <Nav className="justify-content-md-between align-items-center me-auto ms-5">
-                  <Nav.Link className="button-Header-user me-3" as={Link} to="/">Home</Nav.Link>
-                  <Nav.Link className="button-Header-user me-3" as={Link} to={'#'}>about Us</Nav.Link>
-                  <Nav.Link className="custom-nav-link me-3" as={Link} to="/PartnerUI">Become Partner</Nav.Link>
+                  <Nav.Link className="button-Header-user me-4" as={Link} to="/">Home</Nav.Link>
+                  <Nav.Link className="button-Header-user me-4" as={Link} to={'#'}>about Us</Nav.Link>
+                  <Nav.Link className="custom-nav-link button-Header-user me-3" as={Link} to="/PartnerUI">Become Partner</Nav.Link>
                 </Nav>
               )
             }
@@ -71,10 +71,10 @@ const UserHeader = () => {
             <div className="nav-link-container me-3">
               {
                 token ? (
-                  <Nav.Link className="custom-nav-link" onClick={handleLogout}>SignOut</Nav.Link>
+                  <Nav.Link className="custom-nav-link " onClick={handleLogout}>SignOut</Nav.Link>
                 )
                 :
-                <Nav.Link as={Link} to={'/signIn'} className="custom-nav-link">SignUp/SignIn</Nav.Link>
+                <Nav.Link as={Link} to={'/signIn'} className="custom-nav-link ">SignUp/SignIn</Nav.Link>
               }
               
             </div>

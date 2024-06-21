@@ -2,7 +2,7 @@ import React, { useEffect, useRef, useState } from 'react';
 import { IoPaperPlaneSharp } from 'react-icons/io5';
 import { OverlayTrigger, Tooltip } from 'react-bootstrap';
 import Message from '../../messengers/user/Messsage/userMessage';
-import './partnerNegotiation.css';
+import './partnerChat.css';
 import { toast } from 'react-toastify';
 import { findOnePartner } from '../../../features/axios/api/partner/partner';
 import { partnerDetailInterface } from '../../../types/partnerInterface';

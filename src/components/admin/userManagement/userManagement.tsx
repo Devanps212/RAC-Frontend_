@@ -146,7 +146,7 @@ const UserManagement = ()=>{
                          <h4>{selectedUser?.name ?? <span style={{ color: 'red' }}>Not given</span>}</h4>
                          <p>Email: {selectedUser?.email ?? <span style={{ color: 'red' }}>Not given</span>}</p>
                          <p>Mobile: {selectedUser?.mobile ?? <span style={{ color: 'red' }}>Not given</span>}</p>
-                         <p>Date Of Birth: {selectedUser?.DOB?.toLocaleDateString() ?? <span style={{ color: 'red' }}>DOB not given</span>}</p>
+                         <p>Date Of Birth: {selectedUser?.gender ?? <span style={{ color: 'red' }}>DOB not given</span>}</p>
                          <p>Address:</p>
                          {selectedUser?.address ? (
                             <>

@@ -4,6 +4,10 @@ body {
     background-color: #f5f5f5 !important;
 }
 
+.transaction-amount {
+    width: 10%;
+}
+
 .table-body {
     border: solid;
     border-width: 1px;

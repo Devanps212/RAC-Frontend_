@@ -52,7 +52,7 @@
   background-color: #fff;
   border-color: #ccc;
   border-left: 0;
-  height: 46px;
+  height: 58px;
   border-top-left-radius: 0;
   border-bottom-left-radius: 0;
 }
@@ -74,7 +74,7 @@
 
 .suggestion-list {
   position: absolute;
-  top: 100%;
+  top: 66%;
   left: 0;
   background-color: #fff;
   border: 1px solid #ddd;
@@ -133,9 +133,14 @@
   left: 0;
   width: 100%;
   height: 100%;
-  background-color: rgba(0, 0, 0, 0.139);
+  background: rgba(0, 0, 0, 0.139); /* Base color */
+  background: linear-gradient(to bottom, rgba(0, 0, 0, 0.139) 95%, rgb(255, 250, 250) 100%);
   z-index: 1;
+  pointer-events: none; /* Ensure the overlay does not block interactions */
 }
+
+
+
 
 .selection-T {
   position: relative;
@@ -144,7 +149,7 @@
 
 .text-overlay {
   position: absolute;
-  top: 30rem;
+  top: 28rem;
   left: 45px;
   text-align: left;
   color: white;

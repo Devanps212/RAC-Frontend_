@@ -2,7 +2,7 @@ import React, { useEffect, useRef, useState } from 'react';
 import { IoPaperPlaneSharp } from 'react-icons/io5';
 import { OverlayTrigger, Tooltip } from 'react-bootstrap';
 import Message from '../../messengers/user/Messsage/userMessage';
-import './negotiation.css';
+import './chat.css'
 import io, { Socket } from "socket.io-client";
 import { toast } from 'react-toastify';
 import { findOnePartner } from '../../../features/axios/api/partner/partner';
@@ -54,6 +54,10 @@ const Chat: React.FC = () => {
     fetchInitialData();
   }, [userId, partnerId, carId]);
 
+  useEffect(()=>{
+    console.log("car details : ", car)
+  }, [car])
+
   useEffect(() => {
     const socketConnection = io("http://localhost:5000/");
     setSocket(socketConnection);
@@ -65,14 +69,14 @@ const Chat: React.FC = () => {
 
   useEffect(() => {
     if (socket) {
-      // console.log("socket connected to backend");
+      
       socket.emit("addUser", userID);
       socket.on("getUsers", (users: any) => {
         setCurrentUserSocketDetail(users);
       });
 
       socket.on("getMessage", async (data: any) => {
-        console.log("message gt ============================ :", data)
+        
         
         const messageWithTimestamp = {
           ...data,
@@ -86,9 +90,9 @@ const Chat: React.FC = () => {
   }, [socket, partnerId, userID]);
 
   useEffect(() => {
-    // console.log("selected User Id: ", userID);
-    const fetchingMessages = async () => {
-      // console.log("partner Id: ", partnerId);
+    
+      const fetchingMessages = async () => {
+      
       const fetchMessages = await getUserMessages(partnerId!, userID!, 'partner');
       setMessages(fetchMessages);
     };
@@ -101,7 +105,7 @@ const Chat: React.FC = () => {
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    // console.log("partnerId: ", partnerId);
+    
     if (!newMessage) return;
     socket?.emit("sendMessage", {
       senderId: userID,
@@ -110,7 +114,7 @@ const Chat: React.FC = () => {
     });
 
     const newMessageSave = await getUserConversations(partnerId!, userId!, newMessage);
-    // console.log("new Message received============= : ", newMessageSave)
+    
     setNewMessage('');
     setMessages((prevMessages) => [...prevMessages, newMessageSave]);
     
@@ -126,9 +130,8 @@ const Chat: React.FC = () => {
             </div>
             <strong className="car-name mt-3">{car?.name}</strong>
             <div className="price-details text-center mt-3">
-              <h4>Current Price</h4>
-              {car?.offer ? <p>Price: {car.offer.price}</p> : <p>Price: {car?.rentPricePerDay}</p>}
-              <strong>Negotiated Price: <span>1100000</span></strong>
+              <h4>Price per Day</h4>
+              {<h5>Price: {car?.rentPricePerDay}</h5>}
             </div>
           </div>
         </div>

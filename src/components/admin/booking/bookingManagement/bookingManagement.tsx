@@ -87,11 +87,11 @@ const BookingManagementTable = () => {
                                     <small>{new Date(booking.date.end).toLocaleString()}, {booking.time.end}</small>
                                 </td>
                                 <td>Booking {booking.status}</td>
-                                <td>₹ {booking.transaction.amount}</td>
+                                <td className="transaction-amount">₹ {booking.transaction.amount}</td>
                                 <td>
                                 <Link to={`/admin/booking/BookingMessages?bookingId=${booking._id}`}>
                                     <div style={{ position: 'relative' }}>
-                                        <Button variant="primary" size="sm">
+                                        <Button variant="primary" size="sm" style={{width:"max-content"}}>
                                         <BiSolidMessage /> Message
                                         </Button>
                                         {countMessages(booking._id) > 0 && (
@@ -102,7 +102,7 @@ const BookingManagementTable = () => {
                                     </div>
                                 </Link>
                                     {' '}
-                                    <Button className="mt-1" onClick={() => showDetailsModal(booking._id)} variant="success" size="sm" style={{width:"94%"}}>
+                                    <Button className="mt-1" onClick={() => showDetailsModal(booking._id)} variant="success" size="sm" style={{width:"100%"}}>
                                         <FaInfoCircle /> Info
                                     </Button>
                                 </td>

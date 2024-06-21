@@ -1,19 +1,17 @@
 import React from "react";
 import { Navigate, Route, Routes } from "react-router-dom";
 import PartnersLogin from '../../pages/partner/login.jsx'
-import HomePartner from "../../pages/partner/Home.js";
 import AddCar from "../../pages/partner/addCar.js";
-import UIpartner from "../../pages/partner/partnerUI.js";
 import CarManagePartner from "../../pages/partner/carManagement.js";
 import CarEditPartner from "../../pages/partner/editCar.js";
 import TransactionComplete from "../../pages/partner/transactionComplete.js";
 import DashboardPartner from "../../pages/partner/dashboard.js";
-import PartnerChat from "../../pages/partner/negotiation.js";
+import PartnerChat from "../../pages/partner/partnerChat.js";
 import BookingPartner from "../../pages/partner/booking.js";
+import PartnerMessageBooking from "../../pages/partner/complaintMessage.js";
 import { jwtDecode } from "jwt-decode";
 import { useSelector } from "react-redux";
 import { RootState } from "../../features/axios/redux/reducers/reducer.js";
-import BookingHistory from "../../pages/partner/bookingHistory.js";
 
 
 const PartnerRoute = ()=>{
@@ -35,6 +33,7 @@ const PartnerRoute = ()=>{
             <Route path="/bookings" element={isValid ? <BookingPartner/> : <Navigate to={'/partner/login'}/>}/>
             {/* <Route path="/bookingHistory" element={isValid ? <BookingHistory/> : <Navigate to={'/partner/login'}/>}/> */}
             <Route path="/negotiate" element={isValid ? <PartnerChat/> : <Navigate to={'/partner/login'}/>}/>
+            <Route path="/booking/BookingMessages" element={ isValid ? <PartnerMessageBooking/> : <Navigate to={'/partner/login'}/>}/>
         </Routes>
     )
 }

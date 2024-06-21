@@ -1,3 +1,8 @@
-/* body{
+@font-face {
+    font-family: 'Friedrich';
+    src: url('../public/assets/fonts/Friedrich.ttf') format('truetype');
+  }
+
+body{
     background-color: white !important;
-} */
+}

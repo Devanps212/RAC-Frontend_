@@ -260,6 +260,20 @@ const BookedCars = () => {
         }
     };
 
+    const sortBookingStatus = (bookings: detailBooking[])=>{
+        const orderPriority = {
+            'Confirmed': 1,
+            'Completed': 2,
+            'Cancelled': 3
+          };
+
+          return bookings.sort((a, b) => {
+            const statusA = a.status as keyof typeof orderPriority;
+            const statusB = b.status as keyof typeof orderPriority;
+            return (orderPriority[statusA] || 4) - (orderPriority[statusB] || 4);
+        })
+    }
+
 
 
     const handleBookingCancel = async (id: string, carName: string, totalAmount: number) => {
@@ -332,7 +346,7 @@ const BookedCars = () => {
                         <div className="col-8" style={{ maxHeight: '488px', overflowY: 'auto' }}>
                             {bookingInfo &&  (
                                 Array.isArray(bookingInfo) ? (
-                                    bookingInfo.map((bookings) => (
+                                    sortBookingStatus([...bookingInfo]).map((bookings) => (
                                         <div className="right-side-contents mb-3" key={bookings._id}>
                                             <div className="row d-flex justify-content-center align-items-center">
                                                 <div className="col-4">
