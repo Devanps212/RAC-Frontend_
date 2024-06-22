@@ -1,6 +1,6 @@
 @font-face {
     font-family: 'Friedrich';
-    src: url('../public/assets/fonts/Friedrich.ttf') format('truetype');
+    src: url('/assets/fonts/Friedrich.ttf') format('truetype');
   }
 
 body{

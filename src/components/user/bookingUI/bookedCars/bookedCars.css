@@ -24,6 +24,23 @@
     font-weight: 300;
 }
 
+.booked-date {
+  background-color: red; 
+  color: white;
+  border-radius: 50%;
+  display: inline-block;
+  width: 2em;
+  height: 2em;
+  line-height: 2em;
+  text-align: center;
+}
+
+.booked-date:hover {
+  background-color: darkred; /* Change hover background color */
+  /* Add any other hover styles you want */
+}
+
+
 .right-side-contents{
     border: solid 1px grey;
     border-radius: 4px;

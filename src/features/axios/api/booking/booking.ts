@@ -155,3 +155,27 @@ export const carReportHandle = async(data: Partial<showCarInterface>, bookingId 
         throw new Error(error.message)
     }
 }
+
+export const BookingPagination = async(data: Partial<detailBooking> | string, page: number, limit: number)=>{
+    try{
+        let encodedURL: string;
+
+        if (typeof data === 'object') {
+            const jsonString = JSON.stringify(data);
+            encodedURL = encodeURIComponent(jsonString);
+        } else{
+            encodedURL = encodeURIComponent(data);
+        }
+        const PaginationConfig : AxiosRequestConfig = {
+            url: `${apiConfig.bookingPagination}?data=${encodedURL}&page=${page}&limit=${limit}`,
+            method: 'get',
+        }
+        const response = await axios(PaginationConfig)
+        console.log(response)
+        return response.data
+
+    } catch(error: any){
+        console.error(error)
+        throw new Error(error.response.data.message)
+    }
+}

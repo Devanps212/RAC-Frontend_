@@ -43,7 +43,7 @@ export const getUserMessages = async(recvId:string, senderId: string, role: stri
         }
         console.log(config)
         const res = await axios(config);
-        // console.log("data : ", res.data)
+        
         return res.data;
     } catch (error: any) {
         console.error("error i n getMessage : ", error)

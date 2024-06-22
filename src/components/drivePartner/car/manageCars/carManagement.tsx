@@ -64,6 +64,7 @@ const PartnerCarManagement = ()=>{
         };
       }, []);
 
+
       useEffect(()=>{
         handleSearch(search)
       }, [search])

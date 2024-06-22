@@ -57,6 +57,7 @@ const apiConfig = {
     bookingRescheduler: `${configKeys.API_URL}booking/rescheduler`,
     bookingReportHandler:`${configKeys.API_URL}booking/bookCarReport`,
     topBookedCars:`${configKeys.API_URL}booking/topBookedCars`,
+    bookingPagination:`${configKeys.API_URL}booking/pagination`,
 
     couponGenerator:`${configKeys.API_URL}coupon/Generate`,
     findAllCoupon:`${configKeys.API_URL}coupon/findAll`,

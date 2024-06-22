@@ -31,7 +31,7 @@ const Login = () => {
 
           if (AdminLogin) {
             console.log("Admin is not logged out");
-            navigate('/admin/Dashboard');
+            window.location.href = '/admin/Dashboard'
           }
         } 
         catch (error) 
@@ -79,7 +79,7 @@ const Login = () => {
           dispatch(isAdminLogin())
           toast.success(response.message)
           setIsLoading(false)
-          navigate('/admin/Dashboard')
+          window.location.href = '/admin/Dashboard'
         }
       }
     }
@@ -142,10 +142,6 @@ const Login = () => {
         <button type='submit' className="login-btn">Sign In</button>
 
         <br />
-
-        <p className="f-pass">
-          <a href="#">forget password?</a>
-        </p>
         </form>
       </div>
     </div>

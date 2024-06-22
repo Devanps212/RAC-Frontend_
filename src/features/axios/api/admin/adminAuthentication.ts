@@ -5,7 +5,7 @@ import { toast } from "react-toastify";
 import { userAdminInterface } from "../../../../types/userInterface";
 import { setAdminInterceptor } from "../../axios_Interceptor/Interceptor";
 
-export const adminLogin = async(formData : signInPayload)=>{
+export const adminLogin = async(formData : Partial<signInPayload>)=>{
     console.log("formData recieved : ", formData)
     try
     {

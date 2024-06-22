@@ -46,6 +46,7 @@ const BookedCars = () => {
     const userToken = useSelector((root:RootState)=>root.token.token) ?? ''
     const [review, setReview] = useState(false)
     const [reviewCar, setReviewCar] = useState<showCarInterface | null>(null)
+    const [bookedDates, setBookedDates] = useState<Date[]>([]); 
     const [ratings, setRatings] = useState<reviewInterface>({
         car: 0,
         valueForMoney: 0,
@@ -54,9 +55,6 @@ const BookedCars = () => {
         review:''
     });
 
-    useEffect(()=>{
-        console.log("single Booking : ", bookingInfo)
-    }, [bookingInfo])
 
     const handleSubmit: BookingOnSubmitType = async(values) => {
         console.log(values);
@@ -146,7 +144,21 @@ const BookedCars = () => {
         setCar(car);
         setBookingInfo(response.data.data);
         setFilteredBookingInfo(response.data.data);
+        const booking = response.data.data
+        const bookedDatesArray = Array.isArray(booking)
+      ? booking.map((bookings: detailBooking) => new Date(bookings.date.start))
+      : [new Date(booking.date.start)];
+        console.log(bookedDatesArray)
+        setBookedDates(bookedDatesArray)
     };
+
+
+    const isBooked = (date: Date | null | undefined): boolean => {
+        if (!(date instanceof Date)) return false;
+        return bookedDates.some((bookedDate: Date) => {
+          return date.toLocaleDateString() === bookedDate.toLocaleDateString();
+        });
+      };
 
     const handleChange = async (e: ChangeEvent<HTMLTextAreaElement>) => {
         const updateValues = e.target.value;
@@ -319,6 +331,10 @@ const BookedCars = () => {
         });
     };
 
+    const getDayClassName = (date: Date): string => {
+        return isBooked(date) ? 'booked-date' : '';
+      };
+
     return (
         <>
             {paymentLoader && <PaymentFlow />}
@@ -331,13 +347,14 @@ const BookedCars = () => {
                                 <div className="mt-4 datePicker">
                                     <h4 className="font-text">Check by date</h4>
                                     <div className="calender">
-                                        <DatePicker
-                                            selected={selectedDate}
-                                            onChange={date => handleDate(date)}
-                                            dateFormat="dd/MM/yyyy"
-                                            className="form-control-input"
-                                            minDate={new Date()}
-                                            inline
+                                    <DatePicker
+                                        selected={selectedDate}
+                                        onChange={handleDate}
+                                        dateFormat="dd/MM/yyyy"
+                                        className="form-control-input"
+                                        inline
+                                        filterDate={() => true}
+                                        dayClassName={getDayClassName}
                                         />
                                     </div>
                                 </div>

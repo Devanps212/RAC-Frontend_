@@ -246,11 +246,11 @@ const UserProfile = () => {
                             <div className="d-flex justify-content-center align-items-center stats">
                                 <div className="px-3">
                                     <h5 className="text-heading">Cars Booked</h5>
-                                    <p className="text-center text-sub mt-3">{bookings && bookings.length}</p>
+                                    <p className="text-center text-sub mt-3">{bookings ? bookings.length : 0}</p>
                                 </div>
                                 <div className="px-3">
                                     <h5 className="text-heading">Luxury Rentals</h5>
-                                    <p className="text-center text-sub mt-3">{luxuryRental}</p>
+                                    <p className="text-center text-sub mt-3">{luxuryRental ? luxuryRental : 0}</p>
                                 </div>
                             </div>
                         </div>

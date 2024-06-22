@@ -13,6 +13,8 @@ import Pagination from "../../../commonComponent/pagination/pagination";
 import { useNavigate } from "react-router-dom";
 import { categoryInterface } from "../../../../types/categoryInterface";
 
+
+
 const CarManagement = () => {
     const [formData, setFormData] = useState<carAdminInterface[]>([]);
     const [load, setLoad] = useState(true);

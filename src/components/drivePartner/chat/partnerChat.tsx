@@ -112,7 +112,7 @@ const PartnerNegotiate: React.FC = () => {
         [userId]: 0,
       }));
     } catch (error: any) {
-      toast.error(error.message);
+      console.log(error)
     }
   };
 

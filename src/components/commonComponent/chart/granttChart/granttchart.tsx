@@ -2,8 +2,7 @@ import React from "react";
 import Highcharts from 'highcharts';
 import HighchartsReact from 'highcharts-react-official';
 import HighchartsGantt from 'highcharts/modules/gantt';
-import './granttchart.css'
-
+import './granttchart.css';
 
 if (typeof Highcharts === 'object') {
     HighchartsGantt(Highcharts);
