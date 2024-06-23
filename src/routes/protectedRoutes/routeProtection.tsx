@@ -3,6 +3,8 @@ import { Navigate } from "react-router-dom";
 import { decodeToken } from "../../utils/tokenUtil";
 import { tokenInterface } from "../../types/payloadInterface";
 import { clearToken } from "../../features/axios/redux/slices/user/tokenSlice";
+import { jwtDecode } from "jwt-decode";
+import { toast } from "react-toastify";
 
 interface RouteProtectionProps {
   children: ReactNode;
@@ -20,34 +22,47 @@ export const AdminRouteProtection: React.FC<RouteProtectionProps> = ({ children 
   }
 };
 
-export const UserRouteProtection : React.FC<RouteProtectionProps> =({children})=>{
+export const UserRouteProtection: React.FC<RouteProtectionProps> = ({ children }) => {
+  const token = localStorage.getItem('token');
 
-  const token = localStorage.getItem('token')
-  console.log("token found for user : ", token)
-  if(token)
-  {
-    const userId = decodeToken(token).payload
-    console.log("userId : ", userId)
-    const userBlock = localStorage.getItem('BlockedUsers')
-    console.log("blocked user : ",userBlock)
-    if(userBlock)
-    {
-      const parseblock = JSON.parse(userBlock)
-      console.log("", parseblock)
-      if(parseblock.includes(userId))
-      {
-        return <Navigate to={'/users/UserBlocked'}/>
+  if (token) {
+    try {
+      const decodedToken : tokenInterface= jwtDecode(token);
+      const userId = decodedToken.payload;
+      const expirationTime = decodedToken.exp * 1000;
+
+      console.log('Token expiration time:', new Date(expirationTime));
+
+      
+      if (Date.now() >= expirationTime) {
+        console.log('Token expired');
+        localStorage.removeItem('token');
+        toast.error("token expired")
+        return <Navigate to={'/signIn'} />;
       }
-    } 
-    console.log(userId)
-    console.log('user exist')
-    return <>{children}</>
+
+      const userBlock = localStorage.getItem('BlockedUsers');
+
+      if (userBlock) {
+        const parseBlockedUsers = JSON.parse(userBlock);
+        console.log('Blocked users:', parseBlockedUsers);
+
+        if (parseBlockedUsers.includes(userId)) {
+          return <Navigate to={'/UserBlocked'} />;
+        }
+      }
+
+      console.log('User authenticated');
+      return <>{children}</>;
+    } catch (error) {
+      console.error('Error decoding token:', error);
+      return <Navigate to={'/'} />; 
+    }
+  } else {
+    console.log('No token found');
+    return <Navigate to={'/signIn'} />;
   }
-  else
-  {
-    return <Navigate to={'/users/signIn'}/>
-  }
-}
+};
 
 export const UserSignInSignupProtection : React.FC<RouteProtectionProps> = ({children})=>{
   const token = localStorage.getItem('token')
@@ -89,35 +104,32 @@ export const UserSignInSignupProtection : React.FC<RouteProtectionProps> = ({chi
   }
 }
 
-export const BlockedRoutes :React.FC<RouteProtectionProps> = ({children})=>{
-  try
-  {
-    const token = localStorage.getItem('token') ?? ''
-  const UBuser = localStorage.getItem('BlockedUsers') ?? ''
-  if(token && UBuser)
-    {
-      const ParsedUsers = JSON.parse(UBuser)
-      const userId = decodeToken(token).payload
-      if(!ParsedUsers.includes(userId))
-        {
-          return <>{children}</>
-        }
+export const BlockedRoutes: React.FC<RouteProtectionProps> = ({ children }) => {
+  try {
+    const token = localStorage.getItem('token') ?? '';
+    const UBuser = localStorage.getItem('BlockedUsers') ?? '';
 
-        return <Navigate to={'/UserBlocked'}/>
-        
+    if (token) {
+      const userId = decodeToken(token).payload; 
+
+      if (UBuser) {
+        const ParsedUsers = JSON.parse(UBuser);
+
+        if (ParsedUsers.includes(userId)) {
+          return <Navigate to={'/UserBlocked'} />;
+        }
+      }
+
+      return <>{children}</>;
+    } else {
+      return <Navigate to={'/signIn'} />;
     }
-    else
-    {
-      return <Navigate to={'/signIn'}/>
-    }
+  } catch (error) {
+    console.error('Error in BlockedRoutes:', error);
+    // Handle error gracefully, possibly redirecting to an error page or logging out the user
+    return <Navigate to={'/error'} />; // Example of redirecting to an error page
   }
-  catch(error:any)
-  {
-    console.log(error.message)
-    throw new Error(error.message)
-  }
-  
-}
+};
 
 
 

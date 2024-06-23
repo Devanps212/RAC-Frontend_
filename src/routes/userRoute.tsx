@@ -8,7 +8,7 @@ import { useSelector } from 'react-redux';
 import { RootState } from '../features/axios/redux/reducers/reducer';
 import BookingEndCheck from './protectedRoutes/bookingEndProtection';
 import { BlockedRoutes } from './protectedRoutes/routeProtection';
-import FpOTP from '../pages/user/FPOTP';
+
 
 const UsersLogins = lazy(() => import('../pages/user/login'));
 const UserSignUp = lazy(() => import('../pages/user/signUp'));
