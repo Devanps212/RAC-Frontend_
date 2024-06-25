@@ -69,8 +69,8 @@ const BookedCars = () => {
             total: parseInt(additionalCharge),
         }
         const scheduleDate = await bookingRescheduler(data, userId)
-        const stripe = await loadStripe('pk_test_51PDiVJSFg3h3pm8hFZ9xw2Duq8djIUTp0t5I6M5yMguU8KpIdUnUt0epBFvTkOx0jWV3NWOQkE402iZat4c2JX8P00Hl0S8Igy');
-        console.log("received session id : ", scheduleDate.sessionId)
+        const stripe = await loadStripe(import.meta.env.VITE_STRIPE_KEY); //any payment error then it will be from here
+        console.log("stripe key : ", import.meta.env.VITE_STRIPE_KEY)
         const result = await stripe?.redirectToCheckout({
             sessionId: scheduleDate.sessionId
         });
@@ -80,7 +80,7 @@ const BookedCars = () => {
         const searchParams = new URLSearchParams(location.search);
         const message = searchParams.get('message');
         const status = searchParams.get('status');
-        console.log(message)
+        
     
         if (message) {
           setSuccessMessage(message);
@@ -98,12 +98,11 @@ const BookedCars = () => {
           setSuccessMessage('');
         }
     
-        console.log('Message:', message);
-        console.log('Status:', status);
+       
       }, [location.search, navigate]);
 
     const rescheduleBooking = (booking : detailBooking)=>{
-        console.log("currentBookings : ", booking)
+
         setCurrentBoking(booking)
         setReschedule(true)
     }
@@ -114,11 +113,11 @@ const BookedCars = () => {
                 _id: bookingId,
                 status:'Completed'
             }
-            console.log("updating car : ", car)
+            
             setReviewCar(car)
             const updateBooking = await bookingUpdater(data)
             toast.success("booking Completed")
-            console.log("updated booking :", updateBooking)
+            
             setReview(true)
         } catch(error: any){
             toast.error(error.message)
@@ -140,7 +139,7 @@ const BookedCars = () => {
         } else {
             car = response.data.data.carId;
         }
-        console.log("car found : ",car)
+        
         setCar(car);
         setBookingInfo(response.data.data);
         setFilteredBookingInfo(response.data.data);
@@ -148,7 +147,7 @@ const BookedCars = () => {
         const bookedDatesArray = Array.isArray(booking)
       ? booking.map((bookings: detailBooking) => new Date(bookings.date.start))
       : [new Date(booking.date.start)];
-        console.log(bookedDatesArray)
+        
         setBookedDates(bookedDatesArray)
     };
 
@@ -176,14 +175,14 @@ const BookedCars = () => {
     };
 
     const submitIssue = async (bookingId: string) => {
-        console.log("submitting : ", bookingId)
+        
         setSingleBooking(PrevState => ({
             ...PrevState,
             _id: bookingId
         }));
         if (singleBooking && singleBooking.issues && singleBooking._id) {
             const response = await bookingUpdater(singleBooking);
-            console.log("booking response  :", response)
+            
             if (response && response.status === 'success') {
                 toast.success("Booking issue successfully submitted! We will get back to you");
                 setShowModal(false)
@@ -195,10 +194,9 @@ const BookedCars = () => {
     };
 
     const handleRatingSubmit = async()=>{
-        console.log("handling update")
-        console.log("updatiing rating")
+        
         const response = await updateRating(ratings, String(reviewCar?._id), userId.payload)
-        console.log(response)
+        
         setRatings({} as reviewInterface)
         setReviewCar(null)
         toast.success(response.message)
@@ -252,7 +250,7 @@ const BookedCars = () => {
     //Date Setting
 
     const handleDate = (date: Date | null) => {
-        console.log("date setting")
+        
         setSelectedDate(date);
         if (date && Array.isArray(bookingInfo) && filteredBookingInfo !== null) {
             let filteredData: detailBooking[];
@@ -267,7 +265,7 @@ const BookedCars = () => {
                     return bookingStartDate.toDateString() === date.toDateString();
                 });
             }
-            console.log(filteredData)
+            
             setBookingInfo(filteredData);
         }
     };

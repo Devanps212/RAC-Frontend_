@@ -1,7 +1,7 @@
 export interface signInPayload{
-    email:string,
-    password:string,
-    purpose: string
+    email?:string,
+    password?:string,
+    purpose?: string
 }
 
 export interface signUpPayload extends signInPayload{

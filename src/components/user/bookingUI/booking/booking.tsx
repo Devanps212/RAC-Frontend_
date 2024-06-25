@@ -100,7 +100,7 @@ const BookingUI = () => {
 
     const handlePayNow  = async()=>{
         console.log("entered booking")
-        const stripe = await loadStripe('pk_test_51PDiVJSFg3h3pm8hFZ9xw2Duq8djIUTp0t5I6M5yMguU8KpIdUnUt0epBFvTkOx0jWV3NWOQkE402iZat4c2JX8P00Hl0S8Igy');
+        const stripe = await loadStripe(import.meta.env.VITE_STRIPE_KEY); //any payment error then it will be from here
         const token = localStorage.getItem('token') ?? ''
         const userId = await decodeToken(token).payload
         const bookingPayment = await bookingPaymentUI(bookings, car._id, userId)

@@ -17,9 +17,10 @@ const UserLogin = () => {
   const dispatch = useDispatch()
   const navigate = useNavigate()
   const [isLoading, setIsLoading] = useState(false)
-    const [formData, setFormdata] = useState({
+    const [formData, setFormdata] = useState<Partial<signInPayload>>({
         email:'',
         password:'',
+
     })
     const [errors, setErrors] = useState({
         email:'',
@@ -42,13 +43,14 @@ const UserLogin = () => {
             
             let isValid = true
             console.log(isValid)
-            const{email, password} = formData as signInPayload
+            const{email, password} = formData
+            
             
             //email Validation
             const emailRegexp = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
-            const pass = emailRegexp.test(email)
+            const pass = emailRegexp.test(email ?? '')
             console.log("checking email")
-            if(!pass || email.trim() == '')
+            if(!email ||!pass || email.trim() == '')
             {
                 isValid = false
                 console.log("email",isValid)
@@ -63,7 +65,7 @@ const UserLogin = () => {
 
             //Password Validation
             const passRegexp = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*()_+{}[\]:;<>,.?~\\/-]).{8,}$/;
-            const passCheck = passRegexp.test(password)
+            const passCheck = passRegexp.test(password!)
             console.log("passCheck", passCheck)
             console.log("checking password")
             if(!password || password.trim() == '')
@@ -109,7 +111,7 @@ const UserLogin = () => {
             }
             console.log("checking isValid")
             console.log(isValid)
-            if(isValid)
+            if(isValid )
             {
               setIsLoading(true)
               console.log("Everything is valid")

@@ -47,6 +47,7 @@ const CarDetails = () => {
                 const findUsers = await findUser(userId);
                 setUser(findUsers.data);
                 const response = await findAllCars(carId, 'user');
+                console.log("response recieved : ", response)
                 setCar(response);
                 setCategory(response.category);
                 setComments(response.comments)
@@ -63,6 +64,10 @@ const CarDetails = () => {
             fetchCarData();
         }
     }, [carId, userToken]);
+
+    useEffect(()=>{
+        console.log("cars : ", car)
+    }, [car])
 
     const handleClick = (bigImg: string, smallestImg: string) => {
         const smallImgIndex = smallImg.findIndex(img => img === bigImg);

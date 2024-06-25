@@ -1,22 +1,21 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { IoPaperPlaneSharp } from 'react-icons/io5';
-import { OverlayTrigger, Tooltip } from 'react-bootstrap';
 import Message from '../../messengers/user/Messsage/userMessage';
-import './chat.css'
-import io, { Socket } from "socket.io-client";
+import './chat.css';
+import { io, Socket } from "socket.io-client";
 import { toast } from 'react-toastify';
 import { findOnePartner } from '../../../features/axios/api/partner/partner';
 import { findUser } from '../../../features/axios/api/user/user';
-import { userInterface } from '../../../types/userInterface';
-import { partnerDetailInterface } from '../../../types/partnerInterface';
 import { useParams } from 'react-router-dom';
-import { showCarInterface } from '../../../types/carAdminInterface';
+import { findAllCars } from '../../../features/axios/api/car/carAxios';
 import { getUserConversations, getUserMessages } from '../../../features/axios/api/messenger/userConversation';
 import { useSelector } from 'react-redux';
 import { RootState } from '../../../features/axios/redux/reducers/reducer';
+import {jwtDecode} from 'jwt-decode';
 import { conversationInterface } from '../../../types/messageInterface';
-import { findAllCars } from '../../../features/axios/api/car/carAxios';
-import { jwtDecode } from 'jwt-decode';
+import { showCarInterface } from '../../../types/carAdminInterface';
+import { userInterface } from '../../../types/userInterface';
+import { partnerDetailInterface } from '../../../types/partnerInterface';
 import { tokenInterface } from '../../../types/payloadInterface';
 
 const Chat: React.FC = () => {
@@ -26,7 +25,7 @@ const Chat: React.FC = () => {
   const [partnerData, setPartnerData] = useState<partnerDetailInterface | null>(null);
   const [car, setCar] = useState<showCarInterface | null>(null);
   const scrollRef = useRef<HTMLDivElement>(null);
-  const [socket, setSocket] = useState<Socket | null>(null);
+  const socketRef = useRef<Socket | null>(null);
   const { userId, partnerId, carId } = useParams<{ userId: string; partnerId: string; carId: string }>();
   const [loading, setLoading] = useState(false);
   const userToken = useSelector((root: RootState) => root.token.token) ?? '';
@@ -54,49 +53,40 @@ const Chat: React.FC = () => {
     fetchInitialData();
   }, [userId, partnerId, carId]);
 
-  useEffect(()=>{
-    console.log("car details : ", car)
-  }, [car])
-
   useEffect(() => {
-    const socketConnection = io("http://localhost:5000/");
-    setSocket(socketConnection);
+    const socketConnection = io(import.meta.env.VITE_SCOKET);
+    socketRef.current = socketConnection;
+
+    socketConnection.emit("addUser", userID);
+
+    socketConnection.on("getUsers", (users: any) => {
+      console.log("getUsers event called with users:", users);
+      setCurrentUserSocketDetail(users);
+    });
+
+    socketConnection.on("getMessage", (data: any) => {
+      console.log("getMessage event called with data:", data);
+      const messageWithTimestamp = {
+        ...data,
+        createdAt: new Date().toISOString(),
+      };
+      setMessages((prevMessages) => [...prevMessages, messageWithTimestamp]);
+    });
 
     return () => {
+      console.log("Cleaning up socket event listeners");
+      socketConnection.off("getUsers");
+      socketConnection.off("getMessage");
       socketConnection.disconnect();
     };
-  }, []);
+  }, [userID]);
 
   useEffect(() => {
-    if (socket) {
-      
-      socket.emit("addUser", userID);
-      socket.on("getUsers", (users: any) => {
-        setCurrentUserSocketDetail(users);
-      });
-
-      socket.on("getMessage", async (data: any) => {
-        
-        
-        const messageWithTimestamp = {
-          ...data,
-          createdAt: new Date().toISOString()
-        };
-        const existingMessages = await getUserMessages(partnerId!, userID!, 'partner');
-        
-        setMessages([...existingMessages, messageWithTimestamp]);
-      });
-    }
-  }, [socket, partnerId, userID]);
-
-  useEffect(() => {
-    
-      const fetchingMessages = async () => {
-      
-      const fetchMessages = await getUserMessages(partnerId!, userID!, 'partner');
-      setMessages(fetchMessages);
+    const fetchMessages = async () => {
+      const messages = await getUserMessages(partnerId!, userID!, 'partner');
+      setMessages(messages);
     };
-    fetchingMessages();
+    fetchMessages();
   }, [partnerId, userID]);
 
   useEffect(() => {
@@ -105,19 +95,19 @@ const Chat: React.FC = () => {
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    
+
     if (!newMessage) return;
-    socket?.emit("sendMessage", {
+
+    socketRef.current?.emit("sendMessage", {
       senderId: userID,
       receiverId: partnerId,
-      message: newMessage
+      message: newMessage,
     });
 
     const newMessageSave = await getUserConversations(partnerId!, userId!, newMessage);
-    
+
     setNewMessage('');
-    setMessages((prevMessages) => [...prevMessages, newMessageSave]);
-    
+    // setMessages((prevMessages) => [...prevMessages, newMessageSave]);
   };
 
   return (
@@ -131,7 +121,7 @@ const Chat: React.FC = () => {
             <strong className="car-name mt-3">{car?.name}</strong>
             <div className="price-details text-center mt-3">
               <h4>Price per Day</h4>
-              {<h5>Price: {car?.rentPricePerDay}</h5>}
+              <h5>Price: {car?.rentPricePerDay}</h5>
             </div>
           </div>
         </div>

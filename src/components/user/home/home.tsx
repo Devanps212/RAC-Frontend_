@@ -98,6 +98,7 @@ function Home() {
   }
 
 
+
   const handleSubMission = async( value: string,
     DropOffValue: string,
     pickUpDate: Date,
@@ -117,7 +118,7 @@ function Home() {
         dropOffTime: dropOffTime
       }
       const checking = await bookingValidator(data)
-      console.log("checking : ",checking)
+      
       if(checking !== null){
         toast.error(Object.values(checking).join(", "));
       }

@@ -11,7 +11,7 @@ interface ChatSidebarProps {
 }
 
 const ChatSidebar: React.FC<ChatSidebarProps> = ({ users, unreadMessageCounts, onSelectContact, selectedUserId }) => {
-  console.log("user data ================================:", users)
+  
   return (
     <div className="chat-sidebar">
       <h2>Chats</h2>

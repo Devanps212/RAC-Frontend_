@@ -1,5 +1,5 @@
 const configKeys  = {
-    API_URL:"http://localhost:5000/api/",
-    SOCKET_PORT: "http://localhost:5000/"
+    API_URL:import.meta.env.VITE_BACKEND_SERVER,
+    SOCKET_PORT: import.meta.env.VITE_SCOKET
 }
 export default configKeys

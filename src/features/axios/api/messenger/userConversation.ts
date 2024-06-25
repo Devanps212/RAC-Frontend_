@@ -9,7 +9,7 @@ const userApi = setupAxiosInterceptors()
 
 export const getUserConversations = async(recieverId: string, senderId:string, message: string): Promise<any> => {
     try {
-        console.log("recieverid :", recieverId)
+        
         const config: AxiosRequestConfig = {
             url: `${apiConfig.getConversations}/${recieverId}`,
             method: 'post',
@@ -18,9 +18,9 @@ export const getUserConversations = async(recieverId: string, senderId:string, m
                 message
             }
         }
-        console.log("config : ", config)
+       
         const res = await userApi(config);
-        console.log("data get user api : ", res.data)
+        
         return res.data;
     } catch (error: any) {
         toast.error(error.response.data.message)
