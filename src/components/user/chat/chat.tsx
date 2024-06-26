@@ -54,7 +54,8 @@ const Chat: React.FC = () => {
   }, [userId, partnerId, carId]);
 
   useEffect(() => {
-    const socketConnection = io(import.meta.env.VITE_SCOKET);
+    const socketConnection = io(import.meta.env.VITE_BACKEND_SERVER);
+    console.log(socketConnection)
     socketRef.current = socketConnection;
 
     socketConnection.emit("addUser", userID);

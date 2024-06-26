@@ -58,7 +58,7 @@ const PartnerNegotiate: React.FC = () => {
   }, [partnerId]);
 
   useEffect(() => {
-    const socketConnection = io(import.meta.env.VITE_SCOKET);
+    const socketConnection = io(import.meta.env.VITE_BACKEND_SERVER);
     setSocket(socketConnection);
     
     return () => {
