@@ -81,9 +81,9 @@ const PartnerNegotiate: React.FC = () => {
             ...data,
             createdAt: new Date().toISOString()
           };
-          const userMessages = await getUserMessages(selectedUserId!, partnerId, 'user');
+          // const userMessages = await getUserMessages(selectedUserId!, partnerId, 'user');
           
-          setMessages([...userMessages, messageWithTimestamp]);
+          setMessages((prevMessages) => [...prevMessages, messageWithTimestamp]);
         } else {
           setUnreadMessageCounts((prevCounts) => ({
             ...prevCounts,
