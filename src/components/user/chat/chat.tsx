@@ -54,10 +54,13 @@ const Chat: React.FC = () => {
   }, [userId, partnerId, carId]);
 
   useEffect(() => {
+    try{
     const socketConnection = io(import.meta.env.VITE_BACKEND_SERVER);
     console.log(socketConnection)
     socketRef.current = socketConnection;
-
+    socketConnection.on('error', (error) => {
+      console.error('Socket connection error:', error);
+    });
     socketConnection.emit("addUser", userID);
 
     socketConnection.on("getUsers", (users: any) => {
@@ -80,6 +83,9 @@ const Chat: React.FC = () => {
       socketConnection.off("getMessage");
       socketConnection.disconnect();
     };
+  }catch(error:any){
+    console.error(error)
+  }
   }, [userID]);
 
   useEffect(() => {
