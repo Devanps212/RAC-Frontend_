@@ -54,39 +54,52 @@ const Chat: React.FC = () => {
   }, [userId, partnerId, carId]);
 
   useEffect(() => {
-    try{
-    const socketConnection = io(import.meta.env.VITE_BACKEND_SERVER);
-    console.log(socketConnection)
-    socketRef.current = socketConnection;
-    socketConnection.on('error', (error) => {
-      console.error('Socket connection error:', error);
-    });
-    socketConnection.emit("addUser", userID);
-
-    socketConnection.on("getUsers", (users: any) => {
-      console.log("getUsers event called with users:", users);
-      setCurrentUserSocketDetail(users);
-    });
-
-    socketConnection.on("getMessage", (data: any) => {
-      console.log("getMessage event called with data:", data);
-      const messageWithTimestamp = {
-        ...data,
-        createdAt: new Date().toISOString(),
+    try {
+      console.log("Attempting to connect to:", import.meta.env.VITE_BACKEND_SERVER);
+      const socketConnection = io(import.meta.env.VITE_BACKEND_SERVER);
+      console.log("Socket connection established:", socketConnection);
+  
+      socketRef.current = socketConnection;
+  
+      socketConnection.on('connect', () => {
+        console.log('Socket connected successfully');
+      });
+  
+      socketConnection.on('disconnect', (reason) => {
+        console.log('Socket disconnected:', reason);
+      });
+  
+      socketConnection.on('error', (error) => {
+        console.error('Socket connection error:', error);
+      });
+  
+      socketConnection.emit("addUser", userID);
+  
+      socketConnection.on("getUsers", (users) => {
+        console.log("getUsers event called with users:", users);
+        setCurrentUserSocketDetail(users);
+      });
+  
+      socketConnection.on("getMessage", (data) => {
+        console.log("getMessage event called with data:", data);
+        const messageWithTimestamp = {
+          ...data,
+          createdAt: new Date().toISOString(),
+        };
+        setMessages((prevMessages) => [...prevMessages, messageWithTimestamp]);
+      });
+  
+      return () => {
+        console.log("Cleaning up socket event listeners");
+        socketConnection.off("getUsers");
+        socketConnection.off("getMessage");
+        socketConnection.disconnect();
       };
-      setMessages((prevMessages) => [...prevMessages, messageWithTimestamp]);
-    });
-
-    return () => {
-      console.log("Cleaning up socket event listeners");
-      socketConnection.off("getUsers");
-      socketConnection.off("getMessage");
-      socketConnection.disconnect();
-    };
-  }catch(error:any){
-    console.error(error)
-  }
+    } catch (error) {
+      console.error("Socket initialization error:", error);
+    }
   }, [userID]);
+  
 
   useEffect(() => {
     const fetchMessages = async () => {
