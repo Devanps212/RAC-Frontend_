@@ -131,7 +131,7 @@ const PartnerNegotiate: React.FC = () => {
 
     const savedMessage = await getUserConversations(selectedUserId, partnerId, newMessage);
     setNewMessage('');
-    setMessages((prevMessages) => [...prevMessages, savedMessage]);
+    // setMessages((prevMessages) => [...prevMessages, savedMessage]);
   };
 
   const getProfileImage = (userId: string) => {
