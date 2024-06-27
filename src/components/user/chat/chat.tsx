@@ -56,7 +56,7 @@ const Chat: React.FC = () => {
   useEffect(() => {
     try {
       console.log("Attempting to connect to:", import.meta.env.VITE_BACKEND_SERVER);
-      const socketConnection = io('https://easyrentacar.shop/socket.io');
+      const socketConnection = io('https://easyrentacar.shop');
       console.log("Socket connection established:", socketConnection);
   
       socketRef.current = socketConnection;
