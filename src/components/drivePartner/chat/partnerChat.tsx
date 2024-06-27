@@ -81,7 +81,7 @@ const PartnerNegotiate: React.FC = () => {
             ...data,
             createdAt: new Date().toISOString()
           };
-          // const userMessages = await getUserMessages(selectedUserId!, partnerId, 'user');
+          const userMessages = await getUserMessages(selectedUserId!, partnerId, 'user');
           
           setMessages((prevMessages) => [...prevMessages, messageWithTimestamp]);
         } else {
@@ -131,7 +131,7 @@ const PartnerNegotiate: React.FC = () => {
 
     const savedMessage = await getUserConversations(selectedUserId, partnerId, newMessage);
     setNewMessage('');
-    // setMessages((prevMessages) => [...prevMessages, savedMessage]);
+    setMessages((prevMessages) => [...prevMessages, savedMessage]);
   };
 
   const getProfileImage = (userId: string) => {
