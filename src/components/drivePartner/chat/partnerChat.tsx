@@ -58,7 +58,7 @@ const PartnerNegotiate: React.FC = () => {
   }, [partnerId]);
 
   useEffect(() => {
-    const socketConnection = io(import.meta.env.VITE_BACKEND_SERVER);
+    const socketConnection = io('https://easyrentacar.shop');
     console.log("socket connecion : ", socketConnection)
     setSocket(socketConnection);
     
