@@ -88,7 +88,7 @@ const ManageCategory = ()=>{
                         </Button>
                         {' '}
                         {' '}
-                        <Button variant={category.isListed ? 'success' : 'danger'} size="sm" onClick={()=>(category.isListed ? handleUnlist(category._id) : handleList(category._id))}>
+                        <Button variant={category.isListed ? 'success' : 'danger'} size="sm" onClick={()=>(category.isListed ? handleUnlist(category._id!) : handleList(category._id!))}>
                             <BsList /> {category.isListed ? 'Listed' : 'Unlisted'}
                         </Button>
                     </td>

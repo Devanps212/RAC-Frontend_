@@ -45,6 +45,7 @@ const apiConfig = {
     partnerAll:`${configKeys.API_URL}partner/All`,
     partnerOne : `${configKeys.API_URL}partner/findOne`,
     userForConversation : `${configKeys.API_URL}partner/getUserForConversation`,
+    getPartnerCategory:`${configKeys.API_URL}partner/getCategory`,
 
     locationFinding: `${configKeys.API_URL}user-auth/location`,
 

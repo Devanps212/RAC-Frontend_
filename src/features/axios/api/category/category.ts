@@ -1,6 +1,6 @@
 import axios, {Axios, AxiosRequestConfig} from "axios";
 import apiConfig from "../../../../utils/apiConfig";
-import { setAdminInterceptor } from "../../axios_Interceptor/Interceptor";
+import { setAdminInterceptor, setPartnerInterceptor } from "../../axios_Interceptor/Interceptor";
 import { categoryInterface } from "../../../../types/categoryInterface";
 import { toast } from "react-toastify";
 
@@ -101,6 +101,28 @@ export const categorySingle = async(name?:string, categoryId?:string)=>{
             url:apiConfig.singleCateg,
             method:"get",
             params:{name, categoryId}
+        }
+
+        const response = await axios(categConfig)
+        console.log(response)
+        return response.data
+        
+    }
+    catch(error:any)
+    {
+        console.log(error)
+        throw new Error(error.message)
+    }
+}
+
+export const partnerCategory = async()=>{
+    try
+    {
+        setPartnerInterceptor()
+
+        const categConfig : AxiosRequestConfig = {
+            url:apiConfig.getCategories,
+            method:"get",
         }
 
         const response = await axios(categConfig)

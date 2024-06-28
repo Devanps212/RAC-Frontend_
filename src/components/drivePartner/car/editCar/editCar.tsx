@@ -1,7 +1,7 @@
 import React, { useEffect, useState, useRef } from "react";
 import { Container, Button, Col, Row, Form, Modal } from "react-bootstrap";
 import { showCarInterface } from "../../../../types/carAdminInterface";
-import { getCategory } from "../../../../features/axios/api/category/category";
+import { getCategory, partnerCategory } from "../../../../features/axios/api/category/category";
 import { findAllCars, editCar } from "../../../../features/axios/api/car/carAxios";
 import { carValidator } from "../../../../Validators/adminValidators.ts/addCarValidator";
 import { carInterface } from "../../../../types/carAdminInterface";
@@ -68,7 +68,7 @@ const PartnerEditCar = ()=>{
     useEffect(() => {
         const fetchData = async () => {
             try {
-                const response = await getCategory();
+                const response = await partnerCategory();
                 const categories: categoryInterface[] = response.allData;
                 console.log("category  :", response);
                 setCategory(categories);

@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { Container, Button, Col, Row, Form, Modal } from "react-bootstrap";
 import { carInterface, showCarInterface } from "../../../../types/carAdminInterface";
-import { getCategory } from "../../../../features/axios/api/category/category";
+import { getCategory, partnerCategory } from "../../../../features/axios/api/category/category";
 import { carValidator } from "../../../../Validators/adminValidators.ts/addCarValidator";
 import { categoryInterface } from "../../../../types/categoryInterface";
 import { createCar } from "../../../../features/axios/api/car/carAxios";
@@ -12,10 +12,14 @@ import { toast } from "react-toastify";
 import { useSelector } from "react-redux";
 import { RootState } from "../../../../features/axios/redux/reducers/reducer";
 import { useNavigate } from "react-router-dom";
+import { tokenInterface } from "../../../../types/payloadInterface";
+import { jwtDecode } from "jwt-decode";
 
 const PartnerAddCar = ()=>{
 
     const partnerToken = useSelector((root: RootState)=>root.partnerToken.partnerToken) ?? ''
+    const partnerDecode : tokenInterface = jwtDecode(partnerToken)
+    const partnerId = partnerDecode.payload
     console.log(partnerToken)
     const [formData, setFormData] = useState<carInterface>({
         addedById:partnerToken
@@ -32,7 +36,7 @@ const PartnerAddCar = ()=>{
 
 
     useEffect(() => {
-        getCategory()
+        partnerCategory()
           .then((response) => {
             const categories: categoryInterface[] = response.allData;
             console.log("category response : ", response);
