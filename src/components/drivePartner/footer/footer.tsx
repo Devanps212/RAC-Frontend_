@@ -1,12 +1,12 @@
 import React from "react"
 import './footer.css'
-import { Row, Col, Container } from "react-bootstrap"
+import { Row, Col} from "react-bootstrap"
 import { Link } from "react-router-dom"
 import { FaHome, FaEnvelope, FaPhone, FaInstagram, FaFacebook, FaTwitter } from "react-icons/fa"
 
 const Footer = ()=>{
     return(
-        <Container fluid className="bg-dark text-light py-5 mt-5 p-0 m-0">
+        <div className="container-fluid bg-dark text-light py-5 mt-5 p-0 m-0">
         <footer>
                 <Row className="mx-0">
                     <Col md={3}>
@@ -54,7 +54,7 @@ const Footer = ()=>{
                     </Col>
                 </Row>
             </footer>
-            </Container>
+            </div>
     )
 }
 

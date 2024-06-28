@@ -8,7 +8,6 @@ import { bookingInterface } from '../../../types/bookingInterface';
 import { locationFinding } from '../../../features/axios/api/user/userAuthentication';
 import { LocationSuggestion } from '../../../types/bookingInterface';
 import { bookingValidator } from "../../../Validators/userValidator.ts/bookingValidator";
-import CollaboratedPartners from '../../commonComponent/partners/partners';
 import CustomerFav from '../../commonComponent/customerFavorite/customerFavorite';
 import Footer from '../../drivePartner/footer/footer';
 import { useSelector } from 'react-redux';

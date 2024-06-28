@@ -36,7 +36,6 @@
     display: flex;
     justify-content: center;
     align-items: center;
-    min-width: 300px; /* Ensure minimum width for each card */
-    /* Removed inline style for width */
+    min-width: 300px; 
 }
 
