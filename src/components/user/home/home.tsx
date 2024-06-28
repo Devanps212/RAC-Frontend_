@@ -163,9 +163,6 @@ function Home() {
       <div className='customerFavour'>
         <CustomerFav/>
       </div>
-
-      <CollaboratedPartners/>
-
       <Footer/>
 
     </div>

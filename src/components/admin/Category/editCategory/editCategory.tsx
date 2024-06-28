@@ -1,10 +1,12 @@
 import React, {useEffect, useState} from "react";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { Form, Button } from "react-bootstrap";
 import { categorySingle,editCategory } from "../../../../features/axios/api/category/category";
 import './editCategory.css'
-import { categoryInterface } from "../../../../types/categoryInterface";
 import { toast } from "react-toastify";
+
+
+const navigate = useNavigate()
 
 const EditCategory = ()=>{
 
@@ -41,6 +43,7 @@ const EditCategory = ()=>{
         .then((response)=>{
             console.log("response taken: ",response.message)
             toast.success(response.message)
+            navigate('/admin/manageCategory')
         })
         .catch((error:any)=>{
             console.log(error)

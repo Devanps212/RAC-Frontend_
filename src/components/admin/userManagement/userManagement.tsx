@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
-import { Button, Form, Modal, Table } from "react-bootstrap";
-import { FaInfoCircle, FaLock, FaTrash, FaUnlock } from "react-icons/fa";
-import { getAllUsers, blockUnblockUser, findOneUser} from "../../../features/axios/api/admin/adminUser";
+import { Button, Modal, Table } from "react-bootstrap";
+import { FaInfoCircle, FaLock, FaUnlock } from "react-icons/fa";
+import { blockUnblockUser, findOneUser, getAllUsersPartner} from "../../../features/axios/api/admin/adminUser";
 import { userAdminInterface, userInterface } from "../../../types/userInterface";
 import { confirmAlert } from "react-confirm-alert";
 import { block, unBlock } from "../../../features/axios/redux/slices/user/BlockUnblockuser";
@@ -17,7 +17,7 @@ const UserManagement = ()=>{
     const [selectedUser, setSelectedUser] = useState<userInterface | null>(null)
 
     useEffect(()=>{
-        getAllUsers()
+        getAllUsersPartner()
         .then((response)=>{
             console.log("response data :", response.users)
             setUserData(response.users)

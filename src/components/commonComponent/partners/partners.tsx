@@ -1,5 +1,5 @@
 import React from "react";
-import "./partners.css";
+import "./partners.css"
 
 interface PartnerLogo {
   src: string;
@@ -60,25 +60,37 @@ const CollaboratedPartners: React.FC = () => {
 
   return (
     <div className="container container-lists">
-      <div className="row">
-        <div className="col-12">
-          <h1 className="text-center" style={{fontFamily:'Orbitron', fontSize:'34px'}}>Partner Cars</h1>
-          <div className="logo-list mt-5">
-            <ul>
-              {partnerLogos.map((logo, index) => (
-                <li key={index} className={index < 7 ? 'row-1' : 'row-2'}>
-                  <img
-                    src={logo.src}
-                    className="list-images"
-                    alt={logo.alt}
-                  />
-                </li>
-              ))}
-            </ul>
-          </div>
+    <div className="row">
+      <div className="col-12">
+        <h4 className="text-center" style={{fontFamily:'Orbitron'}}>Partner Cars</h4>
+        <div className="logo-list mt-2">
+          <ul className="row-1">
+            {partnerLogos.slice(0, 7).map((logo, index) => (
+              <li key={index}>
+                <img
+                  src={logo.src}
+                  className="list-images"
+                  alt={logo.alt}
+                />
+              </li>
+            ))}
+          </ul>
+          <ul className="row-2">
+            {partnerLogos.slice(7).map((logo, index) => (
+              <li key={index}>
+                <img
+                  src={logo.src}
+                  className="list-images"
+                  alt={logo.alt}
+                />
+              </li>
+            ))}
+          </ul>
         </div>
       </div>
     </div>
+  </div>
+
   );
 };
 

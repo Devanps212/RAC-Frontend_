@@ -109,6 +109,7 @@ const PartnerCarManagement = ()=>{
                     setFormData((prevState) => prevState.filter((car, i) => i !== index));
         
                     toast.success('Car deleted successfully');
+                    window.location.reload()
                   } catch (error) {
                     console.error('Error deleting car:', error);
 

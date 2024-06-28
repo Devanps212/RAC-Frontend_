@@ -200,10 +200,6 @@ const PartnerAddCar = ()=>{
               status: 'available',
             });
         }
-        
-        // const decode : tokenInterface = jwtDecode(partnerToken) ?? ''
-        // // const partnerId = decode.payload
-        // //   setFormData({...formData, addedById : partnerToken})
 
           setFormData((prevFormData) => {
             console.log("form status : ", prevFormData.status, {...prevFormData});
@@ -277,7 +273,7 @@ const PartnerAddCar = ()=>{
 
     return(
         <div className="addCar-body">
-            {isLoading && <Loading/>}
+        {isLoading && <Loading/>}
         <Container className="custom-container">
             <h3 className="mb-5">Add Car</h3>
             <Form onSubmit={handleSubmit} encType="multipart/form-data">

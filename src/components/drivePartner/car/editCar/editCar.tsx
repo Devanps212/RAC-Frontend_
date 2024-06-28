@@ -32,11 +32,7 @@ const PartnerEditCar = ()=>{
 
     let mergedExteriorImages = currentData.exterior ? [...currentData.exterior, ...exteriorImg] : [...exteriorImg];
     const mergedInteriorImages = currentData.interior ? [...currentData.interior, ...interiorImg] : [...interiorImg]
-    const mergedThumbnailImages = currentData.thumbnailImg ? [currentData.thumbnailImg, ...thumbnail] : [...thumbnail]
-    
-    // const partnerToken = localStorage.getItem('partnerToken')
-    // console.log("Partner Id is : ",partnerToken)
-    // if(partnerToken)setFormData({...formData, addedById: partnerToken})   
+    const mergedThumbnailImages = currentData.thumbnailImg ? [currentData.thumbnailImg, ...thumbnail] : [...thumbnail]  
 
     
     useEffect(()=>{
@@ -301,7 +297,6 @@ const PartnerEditCar = ()=>{
                         setIsLoading(false)
                         setShowModal(true);
                         toast.success(response.message);
-                        navigate('/partner/manageCar')
                     } else {
                         setIsLoading(false)
                         toast.error("Error uploading car");
@@ -328,8 +323,8 @@ const PartnerEditCar = ()=>{
 
     return(
         <div className="addCar-body">
+        {isLoading && <Loading/>}
         <Container className="custom-container">
-            {isLoading && <Loading/>}
             <h3 className="mb-5">Edit Car</h3>
             <Form onSubmit={handleSubmit} encType="multipart/form-data">
                 <Row className="mb-3">
@@ -679,7 +674,10 @@ const PartnerEditCar = ()=>{
                     Submit
                 </Button>
             </Form>
-            <Modal show={!!SelectedImg} onHide={()=>setSelectedImg(null)}>
+            <Modal show={!!SelectedImg} onHide={()=>{   
+                    setSelectedImg(null)
+                    navigate('/partner/manageCar')
+                }}>
                 <Modal.Body>
                     {
                         typeof SelectedImg === 'string' ? (

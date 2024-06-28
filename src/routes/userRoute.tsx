@@ -18,6 +18,7 @@ const CarDetails = lazy(() => import('../pages/user/carDetails'));
 const Bookings = lazy(() => import('../pages/user/TimeSelectionUI'));
 const Cars = lazy(() => import('../pages/user/carPage'));
 const SuccessfullTransaction = lazy(() => import('../pages/user/successFullTransacrtion'));
+const AboutUs = lazy(()=>import('../pages/user/aboutUs'))
 const BookedCars = lazy(() => import('../pages/user/bookedCars'));
 const Profile = lazy(() => import('../pages/user/profile'));
 const Negotiate = lazy(() => import('../pages/user/userChat'));
@@ -52,6 +53,7 @@ const UserRouter = () => {
                 <Route path="/forgotPassword" element={valid ? <Navigate to="/" /> : <ForgotPassword/>} />
                 <Route path="/verifyOtp/:userEmail/:userId" element={valid ? <Navigate to="/" /> : <OTPverification/>} />
                 <Route path="/resetPassword/:userEmail/:userId" element={valid ? <Navigate to="/" /> : <ResetPassword/>} />
+                <Route path='/aboutUs' element={valid ? <BlockedRoutes><AboutUs /></BlockedRoutes> : <UsersLogins />}/>
             </Routes>
         </Suspense>
     );

@@ -25,30 +25,10 @@ const AdminRoutes = ()=>{
     return(
         <Suspense fallback={<Loading/>}>
             <Routes>
-                {/* <Route path="/signIn" element={<AdminLogin/>}/>
-                <Route path="/home" element= {<Home/>}/>
-                <Route path="/addCategory" element={<AddCategory/>}/>
-                <Route path="/manageCategory" element={<ManageCategory/>}/>
-                <Route path="/editCategory/:categoryId" element={<EditCategory/>}/>
-                <Route path="/car/*" element={<CarRoutes/>}/>
-                <Route path="/user/*" element={<UserAdminRouter/>}/>
-                <Route path="/booking/*" element={<BookingRoutes/>}/>
-                <Route path="/Dashboard" element={<AdminDashBoard/>}/>
-                <Route path="/OfferManagement" element={<AdminOfferManage/>}/>
-                <Route path="/coupon/*" element={<CouponRoute/>}/> */}
                 <Route path="/signIn" element={<AdminLogin />} />
-                <Route
-                path="/addCategory"
-                element={isValid ? <AddCategory /> : <Navigate to="/admin/signIn" />}
-                />
-                <Route
-                path="/manageCategory"
-                element={isValid ? <ManageCategory /> : <Navigate to="/admin/signIn" />}
-                />
-                <Route
-                path="/editCategory/:categoryId"
-                element={isValid ? <EditCategory /> : <Navigate to="/admin/signIn" />}
-                />
+                <Route path="/addCategory" element={isValid ? <AddCategory /> : <Navigate to="/admin/signIn" />}/>
+                <Route path="/manageCategory" element={isValid ? <ManageCategory /> : <Navigate to="/admin/signIn" />}/>
+                <Route path="/editCategory/:categoryId" element={isValid ? <EditCategory /> : <Navigate to="/admin/signIn" />}/>
                 <Route path="/profile" element={isValid ? <Profile/> : <Navigate to="/admin/signIn" />}/>
                 <Route path="/car/*" element={isValid ? <CarRoutes /> : <Navigate to="/admin/signIn" />} />
                 <Route path="/user/*" element={isValid ? <UserAdminRouter /> : <Navigate to="/admin/signIn" />} />

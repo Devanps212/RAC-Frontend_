@@ -90,6 +90,7 @@ const CouponGeneration = () => {
                     <div className="main-contents">
                         <h5 className="title">Coupon Generate</h5>
                         <div className="input-group mb-3">
+                        <label>Car Price:</label>
                             <input
                                 type="number"
                                 className="form-control"
@@ -99,14 +100,14 @@ const CouponGeneration = () => {
                             />
                         </div>
                         <div className="input-group mb-3">
-                            <input
-                                type="date"
-                                className="form-control"
-                                placeholder="Enter car price"
-                                min={currentDate}
-                                value={formatDate(expiryDate)}
-                                onChange={(e) => setExpiryDate(new Date(e.target.value))}
-                            />
+                        <label>Select a valid date:</label>
+                        <input
+                            type="date"
+                            className="form-control"
+                            min={currentDate}
+                            value={formatDate(expiryDate)}
+                            onChange={(e) => setExpiryDate(new Date(e.target.value))}
+                        />
                         </div>
                         <div className="input-group mb-3 animated">
                             <input

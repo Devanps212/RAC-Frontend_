@@ -1,6 +1,6 @@
 import axios, {AxiosRequestConfig} from "axios";
 import apiConfig from "../../../../utils/apiConfig";
-import { setAdminInterceptor } from "../../axios_Interceptor/Interceptor";
+import { setAdminInterceptor, setPartnerInterceptor } from "../../axios_Interceptor/Interceptor";
 
 
 
@@ -8,6 +8,25 @@ export const getAllUsers = async()=>{
     try
     {
         setAdminInterceptor()
+        const allUsersConfig : AxiosRequestConfig = {
+            url:apiConfig.getAllUsers,
+            method:'get',
+        }
+        const response = await axios(allUsersConfig)
+        console.log(response.data)
+        return response.data
+    }
+    catch(error:any)
+    {
+        throw new Error(error.data.response.message)
+    }
+}
+
+
+export const getAllUsersPartner = async()=>{
+    try
+    {
+        setPartnerInterceptor()
         const allUsersConfig : AxiosRequestConfig = {
             url:apiConfig.getAllUsers,
             method:'get',

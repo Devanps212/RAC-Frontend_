@@ -12,7 +12,7 @@ const Footer = ()=>{
                     <Col md={3}>
                         <h3>About Us</h3>
                         <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Pellentesque ultrices mattis odio. Integer ullamcorper nulla sed consectetur id ipsum aliquam.</p>
-                        <Link to='#' className="btn btn-primary">Learn More</Link>
+                        <Link to='/aboutUs' className="btn btn-primary">Learn More</Link>
                     </Col>
                     <Col md={3}>
                         <h3>Contact Us</h3>
