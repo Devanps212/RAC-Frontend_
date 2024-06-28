@@ -6,9 +6,9 @@ import './editCategory.css'
 import { toast } from "react-toastify";
 
 
-const navigate = useNavigate()
-
 const EditCategory = ()=>{
+
+    const navigate = useNavigate()
 
     const [data, setData] = useState({
         _id:'',
