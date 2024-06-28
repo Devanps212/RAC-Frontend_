@@ -186,6 +186,7 @@ const UserProfile = () => {
             formData.append('_id', userData?._id ?? '')
             
             const userSave = await saveUserDetails(formData)
+            console.log("profile updated :", userSave)
             if (userSave.data.status === "success" && userData && userData.profilePic) {
                 userData.profilePic = userSave.data.data.profilePic;
                 
