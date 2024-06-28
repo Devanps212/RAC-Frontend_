@@ -187,13 +187,14 @@ const UserProfile = () => {
             
             const userSave = await saveUserDetails(formData)
             console.log("profile updated :", userSave)
-            if (userSave.data.status === "success" && userData && userData.profilePic) {
+            if (userSave.data.status === "success" && userData) {
                 userData.profilePic = userSave.data.data.profilePic;
                 
                 toast.success("userProfile updated successfully")
                 setShowLoad(false)
             } else {
                 toast.error("Profile picture Upload failed")
+                setShowLoad(false)
             }
             
             console.log("user saved : ", userSave)
