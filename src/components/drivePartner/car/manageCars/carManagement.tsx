@@ -229,6 +229,17 @@ const PartnerCarManagement = ()=>{
                                     </div>
                                 )}
                           </Col>
+                          <Col>
+                          { CarData && CarData.thumbnailImg && (
+                            <>
+                            <h5>Thumbnail</h5>
+                            <div>
+                              <img src={CarData.thumbnailImg} alt={"thumbnail"} style={{ width: '100px', height: '100px', marginRight: '10px' }} />
+                            </div>
+                            </>
+                          )
+                          }
+                          </Col>
                         </Row>
                         <p><strong>Name:</strong> {CarData.name}</p>
                         <p><strong>Owner:</strong> {CarData.owner}</p>
