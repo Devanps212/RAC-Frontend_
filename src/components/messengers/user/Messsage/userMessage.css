@@ -1,38 +1,97 @@
-.message {
+.message-container {
   display: flex;
   flex-direction: column;
-  margin-bottom: 15px;
+  margin: 20px 0;
 }
 
-.message.own {
+.own {
   align-items: flex-end;
 }
 
-.message-top {
+.receiver {
+  align-items: flex-start;
+}
+
+.message-bubble {
+  max-width: 70%;
+  padding: 12px 18px;
+  border-radius: 18px;
+  position: relative;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+  margin-bottom: 8px;
   display: flex;
-  justify-content: flex-start; 
+  flex-direction: row;
+}
+
+.own .message-bubble {
+  background-color: #cdcdcd; 
+  color: #333333; 
+  border-bottom-right-radius: 4px;
+  border: 1px solid #e0e0e0;
+}
+
+.receiver .message-bubble {
+  background-color: rgb(73, 121, 243);
+  color: #ffffff; 
+  border-bottom-right-radius: 4px;
+  border: 1px solid #e0e0e0;
+}
+
+.profile-image {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  margin-right: 12px;
+  border: 2px solid #fff;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+}
+
+.message-content {
+  display: flex;
+  flex-direction: column;
+  margin-left: 12px;
+  flex: 1;
 }
 
 .message-text {
-  max-width: 300px;
-  padding: 10px;
-  border-radius: 20px;
-  background-color: #f1f0f0;
-  color: #000;
+  font-size: 16px;
+  line-height: 1.4;
+  margin: 0;
 }
 
-.message.own .message-text {
-  background-color: #0b93f6;
-  color: #fff;
+.message-time {
+  font-size: 11px;
+  margin-top: 4px;
+  color: #999999;
 }
 
-.message-bottom {
-  font-size: 12px;
-  color: white;
+.own .message-time {
+  color: #999999; 
 }
 
-.round-image {
-  border-radius: 50%;
-  width: 45px;
-  height: 45px;
+.receiver .message-time {
+  color: #65676b; 
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.message-bubble {
+  animation: fadeIn 0.3s ease-out;
+}
+
+.message-bubble:hover {
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.15);
+}
+
+@media (max-width: 768px) {
+  .message-bubble {
+    max-width: 85%;
+  }
+  
+  .message-text {
+    font-size: 14px;
+  }
 }

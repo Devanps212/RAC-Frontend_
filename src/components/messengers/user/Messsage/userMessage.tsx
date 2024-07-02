@@ -15,8 +15,8 @@ const Message: React.FC<MessageProps> = ({ message, own, profileImage, loading }
 
   if (loading) {
     return (
-      <div className={`message ${messageClass}`}>
-        <div className="message-top">
+      <div className={`message-container ${messageClass}`}>
+        <div className="message-bubble">
           <Skeleton width={200} height={20} />
           <Skeleton width={150} height={15} style={{ marginTop: '5px' }} />
         </div>
@@ -25,21 +25,16 @@ const Message: React.FC<MessageProps> = ({ message, own, profileImage, loading }
   }
 
   return (
-    <div className={`message ${messageClass}`}>
-      {own ? (
-        <div className="message-top own">
+    <div className={`message-container ${messageClass}`}>
+      <div className="message-bubble">
+        {!own && profileImage && (
+          <img src={profileImage} alt="Profile" className="profile-image" />
+        )}
+        <div className="message-content">
           <p className="message-text">{message?.message}</p>
-          <div className="message-time">{message ? new Date(message.createdAt).toLocaleTimeString() : ''}</div>
         </div>
-      ) : (
-        <div className="message-top receiver">
-          {profileImage && <img src={profileImage} alt="Profile" className="profile-image round-image" />}
-          <div className="ms-2">
-            <p className="message-text">{message?.message}</p>
-            <div className="message-time">{message ? new Date(message.createdAt).toLocaleTimeString() : ''}</div>
-          </div>
-        </div>
-      )}
+      </div>
+      <div className="message-time">{message ? new Date(message.createdAt).toLocaleTimeString() : ''}</div>
     </div>
   );
 };

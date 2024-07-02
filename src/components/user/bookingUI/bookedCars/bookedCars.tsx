@@ -201,6 +201,7 @@ const BookedCars = () => {
         setReviewCar(null)
         toast.success(response.message)
         setReview(false)
+        window.location.reload()
     }
 
     useEffect(() => {
@@ -247,7 +248,6 @@ const BookedCars = () => {
     useEffect(() => {
         fetchBookingDetail();
     }, []);
-    //Date Setting
 
     const handleDate = (date: Date | null) => {
         
@@ -361,7 +361,12 @@ const BookedCars = () => {
                         <div className="col-8" style={{ maxHeight: '488px', overflowY: 'auto' }}>
                             {bookingInfo &&  (
                                 Array.isArray(bookingInfo) ? (
-                                    sortBookingStatus([...bookingInfo]).map((bookings) => (
+                                    sortBookingStatus([...bookingInfo]).map((bookings) => {
+
+                                        const twoDaysAfterStartDate = new Date(bookings.date.start);
+                                        twoDaysAfterStartDate.setDate(twoDaysAfterStartDate.getDate() + 2);
+
+                                        return(
                                         <div className="right-side-contents mb-3" key={bookings._id}>
                                             <div className="row d-flex justify-content-center align-items-center">
                                                 <div className="col-4">
@@ -432,7 +437,7 @@ const BookedCars = () => {
                                                         </>
                                                     ) : (
                                                         <>
-                                                            {new Date(bookings.date.end) <= new Date() ? (
+                                                            {new Date(bookings.date.end) === new Date() || new Date(bookings.date.end) > twoDaysAfterStartDate ? ( //changes done without commiting 
                                                                 bookings.status !== 'Completed' ? (
                                                                     <Button variant="success" onClick={() => handleBookingCompleted(bookings._id, bookings.carId)}>
                                                                         Booking Completed
@@ -547,7 +552,7 @@ const BookedCars = () => {
                                                 </Modal.Body>
                                             </Modal>
                                         </div>
-                                    ))
+                                    )})
                                 ) : (
                                     <div className="right-side-contents mb-3" key={bookingInfo._id}>
                                         <div className="row d-flex justify-content-center align-items-center">

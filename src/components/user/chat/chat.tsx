@@ -11,7 +11,7 @@ import { findAllCars } from '../../../features/axios/api/car/carAxios';
 import { getUserConversations, getUserMessages } from '../../../features/axios/api/messenger/userConversation';
 import { useSelector } from 'react-redux';
 import { RootState } from '../../../features/axios/redux/reducers/reducer';
-import {jwtDecode} from 'jwt-decode';
+import { jwtDecode } from 'jwt-decode';
 import { conversationInterface } from '../../../types/messageInterface';
 import { showCarInterface } from '../../../types/carAdminInterface';
 import { userInterface } from '../../../types/userInterface';
@@ -58,28 +58,28 @@ const Chat: React.FC = () => {
       console.log("Attempting to connect to:", import.meta.env.VITE_BACKEND_SERVER);
       const socketConnection = io('https://easyrentacar.shop');
       console.log("Socket connection established:", socketConnection);
-  
+
       socketRef.current = socketConnection;
-  
+
       socketConnection.on('connect', () => {
         console.log('Socket connected successfully');
       });
-  
+
       socketConnection.on('disconnect', (reason) => {
         console.log('Socket disconnected:', reason);
       });
-  
+
       socketConnection.on('error', (error) => {
         console.error('Socket connection error:', error);
       });
-  
+
       socketConnection.emit("addUser", userID);
-  
+
       socketConnection.on("getUsers", (users) => {
         console.log("getUsers event called with users:", users);
         setCurrentUserSocketDetail(users);
       });
-  
+
       socketConnection.on("getMessage", (data) => {
         console.log("getMessage event called with data:", data);
         const messageWithTimestamp = {
@@ -88,7 +88,7 @@ const Chat: React.FC = () => {
         };
         setMessages((prevMessages) => [...prevMessages, messageWithTimestamp]);
       });
-  
+
       return () => {
         console.log("Cleaning up socket event listeners");
         socketConnection.off("getUsers");
@@ -99,7 +99,7 @@ const Chat: React.FC = () => {
       console.error("Socket initialization error:", error);
     }
   }, [userID]);
-  
+
 
   useEffect(() => {
     const fetchMessages = async () => {
@@ -132,22 +132,22 @@ const Chat: React.FC = () => {
 
   return (
     <div className="container-fluid content-container">
-      <div className="row">
-        <div className="col-12 col-md-5 left-col">
-          <div className="car-item mt-3 d-flex flex-column align-items-center">
-            <div className="image-container d-flex justify-content-center align-items-center">
-              <img src={car?.thumbnailImg} style={{ width: '50%', height: 'auto' }} alt={car?.name} />
+      <div className="row" style={{marginTop:'5.5rem'}}>
+        <div className="col-12 col-md-3 left-col">
+          <div className="car-item mt-3">
+            <div className="image-container">
+              <img src={car?.thumbnailImg} alt={car?.name} />
             </div>
             <strong className="car-name mt-3">{car?.name}</strong>
-            <div className="price-details text-center mt-3">
+            <div className="price-details mt-3">
               <h4>Price per Day</h4>
               <h5>Price: {car?.rentPricePerDay}</h5>
             </div>
           </div>
         </div>
-        <div className="col-7 right-col">
-          <div className="chat-box me-3">
-            <div className="d-flex justify-content-center align-items-center bg-dark text-light py-3 mb-1" style={{ height: '12px' }}>
+        <div className="col-12 col-md-9 right-col">
+          <div className="chat-box">
+            <div className="d-flex justify-content-center align-items-center bg-dark text-light py-3">
               <h4 className="ms-5 mb-0">{`Connected to: ${partnerData?.name || "Unknown"}`}</h4>
             </div>
 
@@ -164,6 +164,7 @@ const Chat: React.FC = () => {
                 className="form-control"
                 value={newMessage}
                 onChange={(e) => setNewMessage(e.target.value)}
+                placeholder="Type your message..."
               />
               <button type="submit" className="btn btn-primary">
                 <IoPaperPlaneSharp />

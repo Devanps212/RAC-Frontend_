@@ -20,6 +20,7 @@ import { couponInterface } from "../../../types/couponInterface";
 import { findAllCategory } from "../../../features/axios/api/category/category";
 import { categoryInterface } from "../../../types/categoryInterface";
 import { Types } from "mongoose";
+import ImageCropper from "../../commonComponent/imageCropper/imageCropper";
 
 
 const UserProfile = () => {
@@ -33,7 +34,9 @@ const UserProfile = () => {
     const [showComponent, setShowComponent] = useState(true)
     const [luxuryRental, setLuxuryRental] = useState<number>(0)
     const tokenPayload = useSelector((root: RootState)=> root.token.token) ?? ''
-
+    const [image, setImage] = useState<string | null>(null)
+    const [croppedImage, setCroppedImage] = useState<string | null>(null);
+    const [showCropper, setShowCropper] = useState(false);
 
     const toggleEditUser = () => {
         setShowEditUser((prevShowEditUser) => !prevShowEditUser);
@@ -44,6 +47,29 @@ const UserProfile = () => {
     const toggleSwitch = () => {
         setIsOn(!isOn);
     };
+
+    const onChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        e.preventDefault()
+        let files = e.target.files;
+        if(files && files.length > 0){
+            const reader = new FileReader()
+            reader.onload = () => {
+                setImage(reader.result as string)
+                setShowCropper(true)
+            }
+            reader.readAsDataURL(files[0])
+        }
+    }
+
+    const handleCroppedImage = (file : File) => {
+
+        setCroppedImage(URL.createObjectURL(file))
+        const event = {
+            target: { files: [file] } as unknown as HTMLInputElement, 
+        } as React.ChangeEvent<HTMLInputElement>
+        handleImageUpload(event);
+        setShowCropper(false)
+    }
 
 
     const findBookings = async()=>{
@@ -211,32 +237,37 @@ const UserProfile = () => {
     return (
         <>
             <div className="container-fluid" style={{ paddingTop: '5rem' }}>
+                {showCropper && (
+                    <ImageCropper image={image!} onCrop={handleCroppedImage} onClose={() => setShowCropper(false)}/>
+                )}
                 <div className="row d-flex flex-column justify-content-center align-items-center min-vw100">
                     <div className="contents mt-5">
                         <div className="col-12">
                         <div className="d-flex justify-content-center position-relative">
-                                <div className="profile-img-container">
-                                    {showLoad ? (
-                                        <div className="loader-container">
-                                            <div className="wave-loader"></div>
-                                        </div>
-                                    ) : (
-                                        <img
-                                            src={userData?.profilePic === '' ? '/assets/Logos/User_placeholder.png' : userData?.profilePic}
-                                            className="profile-img"
-                                            alt="Profile"
-                                        />
-                                    )}
-                                    <input
-                                        type="file"
-                                        id="profilePicUpload"
-                                        accept="image/*"
-                                        onChange={handleImageUpload}
-                                        className="file-input"
+                            <div className="profile-img-container">
+                                {croppedImage ? (
+                                    <img src={croppedImage} className="profile-img" alt="Profile" />
+                                ) : (
+                                    <img
+                                    src={
+                                        userData?.profilePic === ''
+                                        ? '/assets/Logos/User_placeholder.png'
+                                        : userData?.profilePic
+                                    }
+                                    className="profile-img"
+                                    alt="Profile"
                                     />
-                                    <label htmlFor="profilePicUpload" className="plus-button">
-                                        +
-                                    </label>
+                                )}
+                                <input
+                                    type="file"
+                                    id="profilePicUpload"
+                                    accept="image/*"
+                                    onChange={onChange}
+                                    className="file-input"
+                                />
+                                <label htmlFor="profilePicUpload" className="plus-button">
+                                    +
+                                </label>
                                 </div>
                             </div>
                             <div className="text-center">
@@ -244,6 +275,7 @@ const UserProfile = () => {
                                 <p className="mb-0 user-email">{userData?.email}</p>
                             </div>
                         </div>
+                        
                         <div className="col-12">
                             <div className="d-flex justify-content-center align-items-center stats">
                                 <div className="px-3">
