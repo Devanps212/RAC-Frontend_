@@ -105,8 +105,8 @@ const CarManagement = () => {
                             toast.success('Car deleted successfully');
                             window.location.reload()
                         } catch (error: any) {
-                            console.log(error)
-                            toast.error(error.response.data.message);
+                            console.error(error)
+                            toast.error(error.message);
                         }
                     },
                 },
