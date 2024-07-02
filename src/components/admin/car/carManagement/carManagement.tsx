@@ -106,7 +106,8 @@ const CarManagement = () => {
                             window.location.reload()
                         } catch (error: any) {
                             console.error(error)
-                            toast.error(error.message);
+                            toast.error("Unable to delete this car as it has ongoing bookings. Please ensure all bookings are completed or canceled before deletion.");
+
                         }
                     },
                 },
