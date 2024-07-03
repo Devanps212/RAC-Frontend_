@@ -41,7 +41,6 @@ const OfferManagement = () => {
 
             if (selectedCar.rentPricePerDay && selectedCar.rentPricePerWeek) {
                 const updatedPricePerDay = parseFloat((selectedCar.rentPricePerDay * (1 - parseInt(offerPercentage) / 100)).toFixed(2));
-                const updatedPricePerWeek = parseFloat((selectedCar.rentPricePerWeek * (1 - parseInt(offerPercentage) / 100)).toFixed(2));
 
                 const updatedCar : showCarInterface = {
                     ...selectedCar,
@@ -49,8 +48,8 @@ const OfferManagement = () => {
                         discount: parseInt(offerPercentage),
                         price: updatedPricePerDay
                     }, 
-                    rentPricePerDay: updatedPricePerDay,
-                    rentPricePerWeek: updatedPricePerWeek
+                    // rentPricePerDay: updatedPricePerDay,
+                    // rentPricePerWeek: updatedPricePerWeek
                 };
                 console.log(updatedCar)
                 try{
