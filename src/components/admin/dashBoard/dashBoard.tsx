@@ -160,7 +160,7 @@ const Dashboard: React.FC = () => {
     useEffect(()=>{
             const socketConnection = io('https://easyrentacar.shop')
 
-            socketConnection.on('newBooking', ({message})=>{
+            socketConnection.on('newBookingAdmin', ({message})=>{
                 toast.info(message)
             })
             
