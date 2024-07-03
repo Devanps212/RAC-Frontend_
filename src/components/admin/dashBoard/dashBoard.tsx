@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import './dashBoard.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import { FaBook, FaFileInvoice, FaUserAlt, FaUserFriends } from "react-icons/fa";
@@ -11,6 +11,7 @@ import { findAllUsers } from "../../../features/axios/api/user/user";
 import { userDetailPayload } from "../../../types/payloadInterface";
 import { findAllPartner } from "../../../features/axios/api/partner/partner";
 import { partnerDetailInterface } from "../../../types/partnerInterface";
+import { Socket, io } from "socket.io-client";
 
 const Dashboard: React.FC = () => {
     const [chartData, setChartData] = useState<any>({
@@ -30,6 +31,8 @@ const Dashboard: React.FC = () => {
     const [totalBookings, setTotalBookings] = useState<number>(0);
     const [totalPartners, setTotalPartners] = useState<number>(0);
     const [totalAmountEarned, setTotalAmountEarned] = useState<number>(0);
+    const socketRef = useRef<Socket | null>(null)
+
 
     useEffect(() => {
         const fetchUsers = async () => {
@@ -153,6 +156,19 @@ const Dashboard: React.FC = () => {
         fetchPartner();
         fetchBookings();
     }, []);
+
+    useEffect(()=>{
+            const socketConnection = io('https://easyrentacar.shop')
+
+            socketConnection.on('newBooking', ({message})=>{
+                toast.info(message)
+            })
+            
+            return()=>{
+                socketConnection.disconnect()
+            }
+
+    }, [])
 
     return (
         <div className="container-fluid">
