@@ -13,6 +13,9 @@ import Footer from '../../drivePartner/footer/footer';
 import { useSelector } from 'react-redux';
 import { RootState } from '../../../features/axios/redux/reducers/reducer';
 import TopBookedCars from '../../commonComponent/availableCars/topBookedCars';
+import { io } from 'socket.io-client';
+import { useSpring, animated } from 'react-spring';
+import { Alert, Button, Modal } from 'react-bootstrap';
 
 
 function Home() {
@@ -23,6 +26,8 @@ function Home() {
   const [PickupSuggestions, setPickupSuggestions] = useState<LocationSuggestion[]>([]);
   const [DropOffSuggestions, setDropOffSuggestions] = useState<LocationSuggestion[]>([]);
   const [Pickuplocation, setPickupLocation]= useState('')
+  const [message, setMessage] = useState('');
+  const [showModal, setShowModal] = useState(false);
   const [DropOffLocation, setDropOffLocation]= useState('')
   const [selectedLocation, setSelectedLocation] = useState<LocationSuggestion>({} as LocationSuggestion)
   const [selectedDropLocation, setSelectedDropLocation] = useState<LocationSuggestion>({} as LocationSuggestion)
@@ -96,6 +101,23 @@ function Home() {
       }
   }
 
+  const animationProps = useSpring({
+    to: { opacity: 1, transform: 'scale(1)' },
+    from: { opacity: 0, transform: 'scale(0.5)' },
+    config: { tension: 200, friction: 10 },
+    immediate: showModal,
+});
+
+  useEffect(()=>{
+    
+    const socketConnection = io('https://easyrentacar.shop')
+
+    socketConnection.on('carCreation', (message)=>{
+      setMessage(message);
+      setShowModal(true);
+    })
+
+  }, [])
 
 
   const handleSubMission = async( value: string,
@@ -163,6 +185,23 @@ function Home() {
         <CustomerFav/>
       </div>
       <Footer/>
+      <Modal show={showModal} onHide={()=>setShowModal(false)} centered>
+            <animated.div style={animationProps}>
+                <Modal.Header closeButton>
+                    <Modal.Title>New Car Added</Modal.Title>
+                </Modal.Header>
+                <Modal.Body>
+                    <Alert variant="success">
+                        <p>{message}</p>
+                    </Alert>
+                </Modal.Body>
+                <Modal.Footer>
+                    <Button variant="secondary" onClick={()=>setShowModal(false)}>
+                        Close
+                    </Button>
+                </Modal.Footer>
+            </animated.div>
+        </Modal>
 
     </div>
   );
