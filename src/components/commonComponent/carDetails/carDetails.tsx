@@ -38,7 +38,7 @@ const CarDetails = () => {
     const placement = 'bottom'
 
     const bookingDetail = searchParams.get('bookingDetail');
-    console.log("booking detail : ", bookingDetail)
+
 
     useEffect(() => {
         const fetchCarData = async () => {
@@ -47,7 +47,7 @@ const CarDetails = () => {
                 const findUsers = await findUser(userId);
                 setUser(findUsers.data);
                 const response = await findAllCars(carId, 'user');
-                console.log("response recieved : ", response)
+                
                 setCar(response);
                 setCategory(response.category);
                 setComments(response.comments)
@@ -65,9 +65,6 @@ const CarDetails = () => {
         }
     }, [carId, userToken]);
 
-    useEffect(()=>{
-        console.log("cars : ", car)
-    }, [car])
 
     const handleClick = (bigImg: string, smallestImg: string) => {
         const smallImgIndex = smallImg.findIndex(img => img === bigImg);
@@ -177,7 +174,9 @@ const CarDetails = () => {
                                     <li className="Detail-List">Category: <strong>{category?.name}</strong></li>
                                     <li className="mb-4">Mileage :<strong>{car?.mileage} km/hr</strong></li>
                                     <li className="RPW">Rent/Week :<strong>₹ {car?.rentPricePerWeek}</strong></li>
-                                    <li className="RPD">Rent/Day :<strong>₹ {car?.rentPricePerDay}</strong></li>
+                                    <li className="RPD">Rent/Day :<strong>₹{
+                                        car?.offer?.price ? car?.offer?.price : car?.rentPricePerDay
+                                    }</strong></li>
                                 </ul>
                             </div>
                             <div className="d-flex justify-content-center align-items-center">
