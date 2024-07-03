@@ -2,27 +2,38 @@ import React, { useEffect, useState } from "react";
 import { Button, Modal, Table, Badge } from "react-bootstrap";
 import { FaInfoCircle } from "react-icons/fa";
 import './bookingManagement.css'
+import Pagination from "../../../commonComponent/pagination/pagination";
 import { detailBooking } from "../../../../types/bookingInterface";
-import { bookingFindingBasedOnRole, findBookings } from "../../../../features/axios/api/booking/booking";
+import { bookingFindingBasedOnRole } from "../../../../features/axios/api/booking/booking";
 import { BiSolidMessage } from "react-icons/bi";
 import { Link } from "react-router-dom";
+import { BookingPagination } from "../../../../features/axios/api/booking/booking";
 
 const BookingManagementTable = () => {
     const [allBookings, setAllBookings] = useState<detailBooking[] | null>(null);
     const [showModal, setShowModal] = useState(false);
     const [bookingData, setBookingData] = useState<detailBooking | null>(null);
+    const [totalPage, setTotalPage] = useState(1);
+    const [currentPage, setCurrentPage] = useState(1);
+    const [totalItems, setTotalItems] = useState(0);
+
+    const ItemsperPage = 5
 
     useEffect(() => {
         fetchAllBookings();
-    }, []);
+    }, [currentPage]);
 
     const fetchAllBookings = async () => {
         try {
             const data : Partial<detailBooking> = {
                 ownerRole : 'Admin'
             }
-            const response = await bookingFindingBasedOnRole(data);
-            setAllBookings(response.data.data);
+            const response = await BookingPagination(data, currentPage, ItemsperPage);
+            console.log("resposne : ", response)
+            setAllBookings(response.bookings);
+            setTotalItems(response.totalCount);
+            setTotalPage(Math.ceil(response.totalCount / ItemsperPage));
+
         } catch (error) {
             console.error('Error fetching bookings:', error);
         }
@@ -49,6 +60,10 @@ const BookingManagementTable = () => {
 
         messagesCount = 0;
         return messagesCount;
+    };
+
+    const onPageChange = (page: number) => {
+        setCurrentPage(page); 
     };
 
     return (
@@ -115,6 +130,9 @@ const BookingManagementTable = () => {
                     )}
                 </tbody>
             </Table>
+            <div className="d-flex justify-content-center align-items-center">
+                <Pagination currentPage={currentPage} totalPages={totalPage} onPageChange={onPageChange} />
+            </div>
 
             <Modal show={showModal} onHide={() => setShowModal(false)} centered>
                 <Modal.Header closeButton>
