@@ -7,6 +7,7 @@ import { bookingInterface } from "../../../../types/bookingInterface";
 
 const CarCards: React.FC<{ cars: showCarInterface[], bookings: bookingInterface | null }> = ({ cars, bookings }) => {
     const parsedBooking = JSON.stringify(bookings)
+    console.log("cars: ", cars)
     return (
         <div className="carousel-container">
             <Carousel interval={null} wrap={false} touch={true} pause={false} keyboard={false} indicators={false}>
