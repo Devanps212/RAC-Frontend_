@@ -31,7 +31,6 @@ const Dashboard: React.FC = () => {
     const [totalBookings, setTotalBookings] = useState<number>(0);
     const [totalPartners, setTotalPartners] = useState<number>(0);
     const [totalAmountEarned, setTotalAmountEarned] = useState<number>(0);
-    const socketRef = useRef<Socket | null>(null)
 
 
     useEffect(() => {
@@ -161,6 +160,7 @@ const Dashboard: React.FC = () => {
             const socketConnection = io('https://easyrentacar.shop')
 
             socketConnection.on('newBookingAdmin', ({message})=>{
+                console.log("message got : ", message)
                 toast.info(message)
             })
             

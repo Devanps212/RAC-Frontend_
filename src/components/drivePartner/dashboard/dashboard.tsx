@@ -117,6 +117,7 @@ const PartnerDashboard: React.FC = () => {
         const socketConnection = io('https://easyrentacar.shop')
 
         socketConnection.on('newBookingPartner', ({message})=>{
+            console.log("message got : ", message)
             toast.info(message)
         })
         
