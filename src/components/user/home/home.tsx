@@ -14,9 +14,7 @@ import { useSelector } from 'react-redux';
 import { RootState } from '../../../features/axios/redux/reducers/reducer';
 import TopBookedCars from '../../commonComponent/availableCars/topBookedCars';
 import { io } from 'socket.io-client';
-import { useSpring, animated } from 'react-spring';
 import { Alert, Button, Modal } from 'react-bootstrap';
-import Confetti from 'react-dom-confetti';
 
 
 function Home() {
@@ -33,18 +31,12 @@ function Home() {
   const [selectedLocation, setSelectedLocation] = useState<LocationSuggestion>({} as LocationSuggestion)
   const [selectedDropLocation, setSelectedDropLocation] = useState<LocationSuggestion>({} as LocationSuggestion)
   const [pickupTime, setPickupTime] = useState<string>('')
+  const [picture, setPicture] = useState('');
   const [dropOffTime, setDropOffTime] = useState<string>('')
   const [pickUpDate, setPickupDate] = useState<Date>(new Date())
   const [dropOffDate, setDropOffDate] = useState<Date>(new Date())
   const token = useSelector((state: RootState)=>state.token.token)
   const navigate = useNavigate()
-
-  interface IConfettiOptions {
-    recycle?: boolean;
-    numberOfPieces?: number;
-    gravity?: number;
-    colors?: string[];
-  }
   
   const handleSearch = async(locations: string, purpose: string)=>{
     try
@@ -114,8 +106,9 @@ function Home() {
     
     const socketConnection = io('https://easyrentacar.shop')
 
-    socketConnection.on('carCreation', (message)=>{
-      setMessage(message);
+    socketConnection.on('carCreation', (data: { message: string; picture: string })=>{
+      setMessage(data.message);
+      setPicture(data.picture);
       setShowModal(true);
     })
 
@@ -161,12 +154,6 @@ function Home() {
       }
     }, [bookingData, navigate])
 
-    const confettiOptions: Partial<IConfettiOptions> = {
-      recycle: false,
-      numberOfPieces: 200,
-      gravity: 0.2,
-      colors: ['#33CC33', '#66CC00', '#99CC00'],
-    };
 
 
   return (
@@ -195,15 +182,15 @@ function Home() {
       </div>
       <Footer/>
       <Modal show={showModal} onHide={() => setShowModal(false)} centered>
-      <Modal.Header closeButton>
-        <Modal.Title>New Car Added!</Modal.Title>
-      </Modal.Header>
-      <Modal.Body>
-        <Alert variant="success">
-          <p>{message}</p>
-        </Alert>
-        <Confetti active={showModal} {...confettiOptions} />
-      </Modal.Body>
+        <Modal.Header closeButton>
+          <Modal.Title>New Car Added!</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          <Alert variant="success">
+            <p>{message}</p>
+          </Alert>
+          <img src={picture} alt="Car Thumbnail" style={{ maxWidth: '100%', height: 'auto' }} />
+        </Modal.Body>
       <Modal.Footer>
         <Button variant="secondary" onClick={() => setShowModal(false)}>
           Close
