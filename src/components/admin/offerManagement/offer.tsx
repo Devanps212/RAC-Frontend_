@@ -95,6 +95,7 @@ const OfferManagement = () => {
                                 <th>Image</th>
                                 <th>Price Per Week</th>
                                 <th>Price per Day</th>
+                                <th>Offer Price</th>
                                 <th>Action</th>
                             </tr>
                         </thead>
@@ -106,6 +107,7 @@ const OfferManagement = () => {
                                     <td><img src={car.thumbnailImg} style={{ width: '9rem' }} alt="Car Thumbnail" /></td>
                                     <td>₹{car.rentPricePerWeek}</td>
                                     <td>₹{car.rentPricePerDay}</td>
+                                    <td>₹{car.offer?.price ? car.offer.price : 0}</td>
                                     <td>
                                         <Button variant="primary" onClick={() => handleApplyOffer(car)}>Apply Offer</Button>
                                     </td>
