@@ -16,6 +16,7 @@ import TopBookedCars from '../../commonComponent/availableCars/topBookedCars';
 import { io } from 'socket.io-client';
 import { useSpring, animated } from 'react-spring';
 import { Alert, Button, Modal } from 'react-bootstrap';
+import Confetti from 'react-dom-confetti';
 
 
 function Home() {
@@ -37,6 +38,13 @@ function Home() {
   const [dropOffDate, setDropOffDate] = useState<Date>(new Date())
   const token = useSelector((state: RootState)=>state.token.token)
   const navigate = useNavigate()
+
+  interface IConfettiOptions {
+    recycle?: boolean;
+    numberOfPieces?: number;
+    gravity?: number;
+    colors?: string[];
+  }
   
   const handleSearch = async(locations: string, purpose: string)=>{
     try
@@ -101,12 +109,6 @@ function Home() {
       }
   }
 
-  const animationProps = useSpring({
-    to: { opacity: 1, transform: 'scale(1)' },
-    from: { opacity: 0, transform: 'scale(0.5)' },
-    config: { tension: 200, friction: 10 },
-    immediate: showModal,
-});
 
   useEffect(()=>{
     
@@ -159,6 +161,13 @@ function Home() {
       }
     }, [bookingData, navigate])
 
+    const confettiOptions: Partial<IConfettiOptions> = {
+      recycle: false,
+      numberOfPieces: 200,
+      gravity: 0.2,
+      colors: ['#33CC33', '#66CC00', '#99CC00'],
+    };
+
 
   return (
     <div className="home">
@@ -185,23 +194,22 @@ function Home() {
         <CustomerFav/>
       </div>
       <Footer/>
-      <Modal show={showModal} onHide={()=>setShowModal(false)} centered>
-            <animated.div style={animationProps}>
-                <Modal.Header closeButton>
-                    <Modal.Title>New Car Added</Modal.Title>
-                </Modal.Header>
-                <Modal.Body>
-                    <Alert variant="success">
-                        <p>{message}</p>
-                    </Alert>
-                </Modal.Body>
-                <Modal.Footer>
-                    <Button variant="secondary" onClick={()=>setShowModal(false)}>
-                        Close
-                    </Button>
-                </Modal.Footer>
-            </animated.div>
-        </Modal>
+      <Modal show={showModal} onHide={() => setShowModal(false)} centered>
+      <Modal.Header closeButton>
+        <Modal.Title>New Car Added!</Modal.Title>
+      </Modal.Header>
+      <Modal.Body>
+        <Alert variant="success">
+          <p>{message}</p>
+        </Alert>
+        <Confetti active={showModal} {...confettiOptions} />
+      </Modal.Body>
+      <Modal.Footer>
+        <Button variant="secondary" onClick={() => setShowModal(false)}>
+          Close
+        </Button>
+      </Modal.Footer>
+    </Modal>
 
     </div>
   );
