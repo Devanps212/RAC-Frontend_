@@ -447,6 +447,7 @@ const BookedCars = () => {
                                                                     </>
                                                                 )
                                                             ) : (
+                                                                bookings.status !== "Completed" && (
                                                                 <>
                                                                     <Button className="ms-5" onClick={() => {
                                                                         setShowModal(true);
@@ -461,7 +462,7 @@ const BookedCars = () => {
                                                                         Reschedule
                                                                     </Button>
                                                                 </>
-                                                            )}
+                                                            ))}
                                                         </>
                                                     )}
 
