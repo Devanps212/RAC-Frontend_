@@ -7,6 +7,7 @@ import { bookingInterface, bookingInterfaceReschedule, detailBooking } from "../
 import BarChart from "../../commonComponent/chart/barChart/chart";
 import GanttChart from "../../commonComponent/chart/granttChart/granttchart";
 import { AxiosResponse } from "axios";
+import { io } from "socket.io-client";
 
 const PartnerDashboard: React.FC = () => {
     const [totalBookings, setTotalBookings] = useState<number>(0);
@@ -111,6 +112,19 @@ const PartnerDashboard: React.FC = () => {
             toast.error(error.message);
         }
     };
+
+    useEffect(()=>{
+        const socketConnection = io('https://easyrentacar.shop')
+
+        socketConnection.on('newBooking', ({message})=>{
+            toast.info(message)
+        })
+        
+        return()=>{
+            socketConnection.disconnect()
+        }
+
+    }, [])
 
     useEffect(() => {
         findPartnerBooking();
