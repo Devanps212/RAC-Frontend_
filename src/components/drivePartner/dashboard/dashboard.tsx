@@ -120,6 +120,11 @@ const PartnerDashboard: React.FC = () => {
             console.log("message got : ", message)
             toast.info(message)
         })
+
+        socketConnection.on('partnerReport', ({message})=>{
+            console.log("report success : ", message)
+            toast.warning(message)
+        })
         
         return()=>{
             socketConnection.disconnect()
