@@ -114,6 +114,7 @@ function Home() {
     })
 
     socketConnection.on('offerUpdate', (data:{message:string, car: string, carImage: string})=>{
+      console.log("data recieved : ", data)
       setMessage(data.message)
       setPicture(data.carImage)
       setCarname(data.car)
