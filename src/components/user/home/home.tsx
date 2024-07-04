@@ -31,6 +31,7 @@ function Home() {
   const [selectedLocation, setSelectedLocation] = useState<LocationSuggestion>({} as LocationSuggestion)
   const [selectedDropLocation, setSelectedDropLocation] = useState<LocationSuggestion>({} as LocationSuggestion)
   const [pickupTime, setPickupTime] = useState<string>('')
+  const [carName, setCarname] = useState('')
   const [picture, setPicture] = useState('');
   const [dropOffTime, setDropOffTime] = useState<string>('')
   const [pickUpDate, setPickupDate] = useState<Date>(new Date())
@@ -112,6 +113,12 @@ function Home() {
       setShowModal(true);
     })
 
+    socketConnection.on('offerUpdate', (data:{message:string, car: string, carImage: string})=>{
+      setMessage(data.message)
+      setPicture(data.carImage)
+      setCarname(data.car)
+    })
+
   }, [])
 
 
@@ -181,18 +188,30 @@ function Home() {
         <CustomerFav/>
       </div>
       <Footer/>
-      <Modal show={showModal} onHide={() => setShowModal(false)} centered>
+      <Modal show={showModal} onHide={() => 
+        {
+          setShowModal(false)
+          setPicture('')
+          setMessage('')
+          setCarname('')
+        }} centered>
         <Modal.Header closeButton>
-          <Modal.Title>New Car Added!</Modal.Title>
+          <Modal.Title>{ carName ? "Offer Update" : "New Car Added!" }</Modal.Title>
         </Modal.Header>
         <Modal.Body>
+          {carName && <h4>{carName}</h4>}
           <Alert variant="success">
             <p>{message}</p>
           </Alert>
           <img src={picture} alt="Car Thumbnail" style={{ maxWidth: '100%', height: 'auto' }} />
         </Modal.Body>
       <Modal.Footer>
-        <Button variant="secondary" onClick={() => setShowModal(false)}>
+        <Button variant="secondary" onClick={() => {
+            setShowModal(false)
+            setPicture('')
+            setMessage('')
+            setCarname('')
+          }}>
           Close
         </Button>
       </Modal.Footer>
