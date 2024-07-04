@@ -118,6 +118,7 @@ function Home() {
       setMessage(data.message)
       setPicture(data.carImage)
       setCarname(data.car)
+      setShowModal(true);
     })
 
   }, [])
