@@ -190,15 +190,21 @@ function Home() {
         <CustomerFav/>
       </div>
       <Footer/>
-      <Modal show={showModal} onHide={() => 
+      <Modal 
+      size='sm' 
+      aria-labelledby="example-modal-sizes-title-sm" 
+      show={showModal} 
+      centered={false}
+      dialogClassName="custom-modal-top"
+      onHide={() => 
         {
           setShowModal(false)
           setPicture('')
           setMessage('')
           setCarname('')
-        }} centered>
+        }}>
         <Modal.Header closeButton>
-          <Modal.Title>{ carName ? "Offer Update" : "New Car Added!" }</Modal.Title>
+          <Modal.Title  id="example-modal-sizes-title-sm">{ carName ? "Offer Update" : "New Car Added!" }</Modal.Title>
         </Modal.Header>
         <Modal.Body>
           {carName && <h4>{carName}</h4>}
