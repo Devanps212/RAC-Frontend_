@@ -191,8 +191,6 @@ function Home() {
       </div>
       <Footer/>
       <Modal 
-      size='lg' 
-      aria-labelledby="example-modal-sizes-title-sm" 
       show={showModal} 
       centered={false}
       dialogClassName="custom-modal-top"
@@ -204,7 +202,7 @@ function Home() {
       }}
     >
       <Modal.Header closeButton>
-        <Modal.Title id="example-modal-sizes-title-sm">
+        <Modal.Title>
           { carName ? "Offer Update" : "New Car Added!" }
         </Modal.Title>
       </Modal.Header>
