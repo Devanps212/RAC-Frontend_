@@ -191,35 +191,37 @@ function Home() {
       </div>
       <Footer/>
       <Modal 
-      size='sm' 
+      size='lg' 
       aria-labelledby="example-modal-sizes-title-sm" 
       show={showModal} 
       centered={false}
       dialogClassName="custom-modal-top"
-      onHide={() => 
-        {
-          setShowModal(false)
-          setPicture('')
-          setMessage('')
-          setCarname('')
-        }}>
-        <Modal.Header closeButton>
-          <Modal.Title  id="example-modal-sizes-title-sm">{ carName ? "Offer Update" : "New Car Added!" }</Modal.Title>
-        </Modal.Header>
-        <Modal.Body>
-          {carName && <h4>{carName}</h4>}
-          <Alert variant="success">
-            <p>{message}</p>
-          </Alert>
-          <img src={picture} alt="Car Thumbnail" style={{ maxWidth: '100%', height: 'auto' }} />
-        </Modal.Body>
+      onHide={() => {
+        setShowModal(false);
+        setPicture('');
+        setMessage('');
+        setCarname('');
+      }}
+    >
+      <Modal.Header closeButton>
+        <Modal.Title id="example-modal-sizes-title-sm">
+          { carName ? "Offer Update" : "New Car Added!" }
+        </Modal.Title>
+      </Modal.Header>
+      <Modal.Body>
+        {carName && <h4>{carName}</h4>}
+        <Alert variant="success">
+          <p>{message}</p>
+        </Alert>
+        <img src={picture} alt="Car Thumbnail" style={{ maxWidth: '100%', height: 'auto' }} />
+      </Modal.Body>
       <Modal.Footer>
         <Button variant="secondary" onClick={() => {
-            setShowModal(false)
-            setPicture('')
-            setMessage('')
-            setCarname('')
-          }}>
+          setShowModal(false);
+          setPicture('');
+          setMessage('');
+          setCarname('');
+        }}>
           Close
         </Button>
       </Modal.Footer>
