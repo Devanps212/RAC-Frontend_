@@ -252,7 +252,7 @@ const PartnerDashboard: React.FC = () => {
                 <h3>Dashboard</h3>
                 <div className="contents d-flex flex-column justify-content-center align-items-center">
                     {noBookings ? (
-                        <div>No bookings found for partners.</div>
+                        <div>Welcome to Partner Dashboard</div>
                     ) : (
                         <>
                             <div className="col-md-6" style={{ width: 'inherit' }}>

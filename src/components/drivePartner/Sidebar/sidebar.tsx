@@ -18,9 +18,9 @@ const PartnerSidebar: React.FC = () => {
             </div>
             <ul className="sidebar-list">
                 <li className="sidebar-list-item">
-                    <Link to={"/partner/Dashboard"} className='text-link-side'>
-                        <BsGrid1X2Fill className="icon" /> <span className='text-item-side'>Dashboard</span>
-                    </Link>
+                <Link to={`/partner/Dashboard?key=${Math.random()}`} className='text-link-side'>
+                    <BsGrid1X2Fill className="icon" /> <span className='text-item-side'>Dashboard</span>
+                </Link>
                 </li>
                 <li className="sidebar-list-item">
                     <NavDropdown
