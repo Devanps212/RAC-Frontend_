@@ -222,7 +222,6 @@ export const carBasedOnInterface = async(data: Partial<showCarInterface>)=>{
         return response.data.cars
     } catch(error: any){
         console.log(error)
-        toast.error(error.message)
-        throw new Error(error.message)
+        toast.warning(error.response.data.message)
     }
 }
