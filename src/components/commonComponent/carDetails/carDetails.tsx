@@ -220,7 +220,7 @@ const CarDetails = () => {
                                             ): (
                                                 <Link to={`/negotiate/${user?._id}/${car?.addedById}/${car?._id}`} style={{ textDecoration: 'none' }}>
                                                     <button className="negotiate me-3" style={{ zIndex: 1 }}>
-                                                        <span className="position-relative">Negotiate</span>
+                                                        <span className="position-relative">Chat</span>
                                                     </button>
                                                 </Link>
                                             )}
