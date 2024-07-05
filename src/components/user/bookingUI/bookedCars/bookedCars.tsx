@@ -449,7 +449,7 @@ const BookedCars = () => {
                                                             {new Date(bookings.date.end) === new Date() || new Date(bookings.date.end) > twoDaysAfterStartDate ? ( //changes done without commiting 
                                                                 bookings.status !== 'Completed' ? (
                                                                     <Button variant="success" onClick={() => handleBookingCompleted(bookings._id, bookings.carId)}>
-                                                                        Booking Completed
+                                                                        Completed Booking
                                                                     </Button>
                                                                 ) : (
                                                                     <>
@@ -642,25 +642,41 @@ const BookedCars = () => {
                                                                     <></>
                                                                 )
                                                             ) : (
-                                                                <>
-                                                                    <Button className="ms-5" onClick={() => setShowModal(true)}>
-                                                                        Report an issue
-                                                                    </Button>
-                                                                    <Button 
-                                                                        variant="danger" 
-                                                                        onClick={() => handleBookingCancel(bookingInfo._id, bookingInfo.carId.name, bookingInfo.transaction.amount || 0)} 
-                                                                        className="ms-5 mt-2"
-                                                                    >
-                                                                        Cancel booking
-                                                                    </Button>
-                                                                    <Button 
-                                                                        variant="dark" 
-                                                                        onClick={() => rescheduleBooking(bookingInfo)} 
-                                                                        className="ms-5 mt-2"
-                                                                    >
-                                                                        Reschedule Date
-                                                                    </Button>
-                                                                </>
+                                                                // <>
+                                                                //     <Button className="ms-5" onClick={() => setShowModal(true)}>
+                                                                //         Report an issue
+                                                                //     </Button>
+                                                                //     <Button 
+                                                                //         variant="danger" 
+                                                                //         onClick={() => handleBookingCancel(bookingInfo._id, bookingInfo.carId.name, bookingInfo.transaction.amount || 0)} 
+                                                                //         className="ms-5 mt-2"
+                                                                //     >
+                                                                //         Cancel booking
+                                                                //     </Button>
+                                                                //     <Button 
+                                                                //         variant="dark" 
+                                                                //         onClick={() => rescheduleBooking(bookingInfo)} 
+                                                                //         className="ms-5 mt-2"
+                                                                //     >
+                                                                //         Reschedule Date
+                                                                //     </Button>
+                                                                // </>
+                                                                bookingInfo.status !== "Completed" && (
+                                                                    <>
+                                                                        <Button className="ms-5" onClick={() => {
+                                                                            setShowModal(true);
+                                                                            setSingleBooking(bookingInfo);
+                                                                        }}>
+                                                                            Report an issue
+                                                                        </Button>
+                                                                        <Button variant="danger" onClick={() => handleBookingCancel(bookingInfo._id, bookingInfo.carId.name, bookingInfo.transaction.amount || 0)} className="ms-5 mt-2">
+                                                                            Cancel booking
+                                                                        </Button>
+                                                                        <Button variant="dark" onClick={() => rescheduleBooking(bookingInfo)} style={{ width: '60%' }} className="ms-5 mt-2">
+                                                                            Reschedule
+                                                                        </Button>
+                                                                    </>
+                                                                )
                                                             )}
                                                         </>
                                                     )
