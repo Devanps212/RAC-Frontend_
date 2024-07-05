@@ -8,8 +8,22 @@ import BarChart from "../../commonComponent/chart/barChart/chart";
 import GanttChart from "../../commonComponent/chart/granttChart/granttchart";
 import { AxiosResponse } from "axios";
 import { io } from "socket.io-client";
+import { jwtDecode } from "jwt-decode";
+import { useSelector } from "react-redux";
+import { RootState } from "../../../features/axios/redux/reducers/reducer";
+import { tokenInterface } from "../../../types/payloadInterface";
+
+
+
 
 const PartnerDashboard: React.FC = () => {
+
+    const partnerToken = useSelector((root: RootState)=>root.partnerToken.partnerToken) ?? ''
+    const partnerDecode : tokenInterface = jwtDecode(partnerToken)
+
+    const partnerId = partnerDecode.payload
+
+
     const [totalBookings, setTotalBookings] = useState<number>(0);
     const [totalPartners, setTotalPartners] = useState<number>(0);
     const [totalEarnings, setTotalEarnings] = useState<number>(0);
@@ -27,7 +41,10 @@ const PartnerDashboard: React.FC = () => {
 
     const findPartnerBooking = async () => {
         try {
-            const data: Partial<detailBooking> = { ownerRole: 'Partner' };
+            const data: Partial<detailBooking> = { 
+                owner: partnerId,
+                ownerRole: 'Partner' 
+            };
             const response: AxiosResponse = await bookingFindingBasedOnRole(data);
             const bookings = response.data.data;
 
