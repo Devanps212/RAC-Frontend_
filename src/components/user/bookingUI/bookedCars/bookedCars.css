@@ -36,8 +36,7 @@
 }
 
 .booked-date:hover {
-  background-color: darkred; /* Change hover background color */
-  /* Add any other hover styles you want */
+  background-color: darkred;
 }
 
 

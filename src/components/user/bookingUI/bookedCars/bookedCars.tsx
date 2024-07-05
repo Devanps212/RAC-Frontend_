@@ -448,8 +448,8 @@ const BookedCars = () => {
                                                         <>
                                                             {new Date(bookings.date.end) === new Date() || new Date(bookings.date.end) > twoDaysAfterStartDate ? ( //changes done without commiting 
                                                                 bookings.status !== 'Completed' ? (
-                                                                    <Button variant="success" onClick={() => handleBookingCompleted(bookings._id, bookings.carId)}>
-                                                                        Completed Booking
+                                                                    <Button variant="warning" onClick={() => handleBookingCompleted(bookings._id, bookings.carId)}>
+                                                                        Complete Booking
                                                                     </Button>
                                                                 ) : (
                                                                     <>
@@ -635,8 +635,8 @@ const BookedCars = () => {
                                                         <>
                                                             {new Date(bookingInfo.date.end) <= new Date() ? (
                                                                 bookingInfo.status !== 'Completed' ? (
-                                                                    <Button variant="success" onClick={() => handleBookingCompleted(bookingInfo._id, bookingInfo.carId)}>
-                                                                        Completed Booking
+                                                                    <Button variant="warning" onClick={() => handleBookingCompleted(bookingInfo._id, bookingInfo.carId)}>
+                                                                        Complete Booking
                                                                     </Button>
                                                                 ) : (
                                                                     <></>
