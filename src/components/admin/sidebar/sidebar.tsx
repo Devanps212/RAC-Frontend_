@@ -19,9 +19,9 @@ const Sidebar = () => {
                     </Link>
                 </li>
                 <li className="sidebar-list-item">
-                    <Link to="/admin/user/userManagement" className="link-texts">
+                    <a href="/admin/user/userManagement" className="link-texts">
                         <BsGrid3X3 className="icon" /> <span>User</span>
-                    </Link>
+                    </a>
                 </li>
                 <li className="sidebar-list-item">
                     <NavDropdown
