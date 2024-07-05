@@ -297,6 +297,10 @@ const PartnerEditCar = ()=>{
                         setIsLoading(false)
                         setShowModal(true);
                         toast.success(response.message);
+                        
+                        setTimeout(()=>{
+                            navigate('/partner/manageCar')
+                        }, 1000)
                     } else {
                         setIsLoading(false)
                         toast.error("Error uploading car");
