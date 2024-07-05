@@ -61,11 +61,10 @@ const PartnerCarManagement = ()=>{
               setLoad(false);
             }
           } 
-          catch(error:any) 
-          {
-            if (mounted)
-            {
-              toast.error(error.message);
+          catch(error:any) {
+            if (mounted){
+              console.log(error)
+              toast.warning(error);
               setLoad(false);
             }
           }
