@@ -446,7 +446,7 @@ const BookedCars = () => {
                                                         </>
                                                     ) : (
                                                         <>
-                                                            {new Date(bookings.date.end) === new Date() || new Date(bookings.date.end) > twoDaysAfterStartDate ? ( //changes done without commiting 
+                                                            {new Date(bookings.date.end) === new Date() || new Date(bookings.date.start) > twoDaysAfterStartDate ? ( //changes done without commiting 
                                                                 bookings.status !== 'Completed' ? (
                                                                     <Button variant="warning" onClick={() => handleBookingCompleted(bookings._id, bookings.carId)}>
                                                                         Complete Booking
