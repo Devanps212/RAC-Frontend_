@@ -45,76 +45,169 @@ const PartnerDashboard: React.FC = () => {
                 owner: partnerId,
                 ownerRole: 'Partner' 
             };
-            const response: AxiosResponse = await bookingFindingBasedOnRole(data);
+            const response = await bookingFindingBasedOnRole(data);
+            
             const bookings = response.data.data;
 
+            // if (bookings) {
+            //     setNoBookings(false);
+            //     const partnerBookings = Array.isArray(bookings) ? bookings : [bookings];
+
+            //     const totalBookings = partnerBookings.length;
+            //     const totalEarnings = partnerBookings.reduce((sum: number, booking: any) => sum + booking.transaction.amount, 0);
+
+            //     setTotalBookings(totalBookings);
+            //     setTotalEarnings(totalEarnings);
+
+            //     const partnerSet = new Set(partnerBookings.map((booking: any) => booking.owner));
+            //     setTotalPartners(partnerSet.size);
+
+            //     const labels = partnerBookings.map((booking: any) => booking.date.start);
+            //     const earnings = partnerBookings.map((booking: any) => booking.transaction.amount);
+
+            //     setChartData({
+            //         labels: labels,
+            //         datasets: [
+            //             {
+            //                 label: 'Earnings',
+            //                 data: earnings,
+            //                 backgroundColor: 'rgba(75, 192, 192, 0.2)',
+            //                 borderColor: 'rgba(75, 192, 192, 1)',
+            //                 borderWidth: 1,
+            //             }
+            //         ]
+            //     });
+
+            //     const dateCounts: { [key: string]: number } = {};
+            //     partnerBookings.forEach((booking: any) => {
+            //         const date = new Date(booking.date.start).toISOString().split('T')[0];
+            //         if (dateCounts[date]) {
+            //             dateCounts[date]++;
+            //         } else {
+            //             dateCounts[date] = 1;
+            //         }
+            //     });
+
+            //     const dateLabels = Object.keys(dateCounts);
+            //     const counts = Object.values(dateCounts);
+
+            //     setDateChartData({
+            //         labels: dateLabels,
+            //         datasets: [
+            //             {
+            //                 label: 'Bookings',
+            //                 data: counts,
+            //                 backgroundColor: 'rgba(153, 102, 255, 0.2)',
+            //                 borderColor: 'rgba(153, 102, 255, 1)',
+            //                 borderWidth: 1,
+            //             }
+            //         ]
+            //     });
+
+            //     const tasks = partnerBookings.map((booking: any) => ({
+            //         id: booking.id,
+            //         start: new Date(booking.date.start).getTime(),
+            //         end: new Date(booking.date.end).getTime(),
+            //         name: `Booking ${booking.id}`,
+            //         y: partnerBookings.indexOf(booking)
+            //     }));
+
+            //     const categories = partnerBookings.map((booking: bookingInterfaceReschedule) => booking.carId.name);
+            //     console.log("partner booking : ", partnerBookings)
+            //     setGanttData(tasks);
+            //     setGanttCategories(categories);
+            // } else {
+            //     setNoBookings(true);
+            //     setTotalBookings(0);
+            //     setTotalEarnings(0);
+            //     setTotalPartners(0);
+            //     setChartData({ labels: [], datasets: [] });
+            //     setDateChartData({ labels: [], datasets: [] });
+            //     setGanttData([]);
+            //     setGanttCategories([]);
+            // }
             if (bookings) {
-                setNoBookings(false);
-                const partnerBookings = Array.isArray(bookings) ? bookings : [bookings];
-
-                const totalBookings = partnerBookings.length;
-                const totalEarnings = partnerBookings.reduce((sum: number, booking: any) => sum + booking.transaction.amount, 0);
-
-                setTotalBookings(totalBookings);
-                setTotalEarnings(totalEarnings);
-
-                const partnerSet = new Set(partnerBookings.map((booking: any) => booking.owner));
-                setTotalPartners(partnerSet.size);
-
-                const labels = partnerBookings.map((booking: any) => booking.date.start);
-                const earnings = partnerBookings.map((booking: any) => booking.transaction.amount);
-
-                setChartData({
-                    labels: labels,
-                    datasets: [
-                        {
-                            label: 'Earnings',
-                            data: earnings,
-                            backgroundColor: 'rgba(75, 192, 192, 0.2)',
-                            borderColor: 'rgba(75, 192, 192, 1)',
-                            borderWidth: 1,
+                // Ensure bookings are filtered by the correct partnerId
+                const partnerBookings = (Array.isArray(bookings) ? bookings : [bookings]).filter(
+                    (booking: any) => booking.owner === partnerId
+                );
+            
+                if (partnerBookings.length > 0) {
+                    setNoBookings(false);
+            
+                    const totalBookings = partnerBookings.length;
+                    const totalEarnings = partnerBookings.reduce((sum: number, booking: any) => sum + booking.transaction.amount, 0);
+            
+                    setTotalBookings(totalBookings);
+                    setTotalEarnings(totalEarnings);
+            
+                    const partnerSet = new Set(partnerBookings.map((booking: any) => booking.owner));
+                    setTotalPartners(partnerSet.size);
+            
+                    const labels = partnerBookings.map((booking: any) => booking.date.start);
+                    const earnings = partnerBookings.map((booking: any) => booking.transaction.amount);
+            
+                    setChartData({
+                        labels: labels,
+                        datasets: [
+                            {
+                                label: 'Earnings',
+                                data: earnings,
+                                backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                                borderColor: 'rgba(75, 192, 192, 1)',
+                                borderWidth: 1,
+                            }
+                        ]
+                    });
+            
+                    const dateCounts: { [key: string]: number } = {};
+                    partnerBookings.forEach((booking: any) => {
+                        const date = new Date(booking.date.start).toISOString().split('T')[0];
+                        if (dateCounts[date]) {
+                            dateCounts[date]++;
+                        } else {
+                            dateCounts[date] = 1;
                         }
-                    ]
-                });
-
-                const dateCounts: { [key: string]: number } = {};
-                partnerBookings.forEach((booking: any) => {
-                    const date = new Date(booking.date.start).toISOString().split('T')[0];
-                    if (dateCounts[date]) {
-                        dateCounts[date]++;
-                    } else {
-                        dateCounts[date] = 1;
-                    }
-                });
-
-                const dateLabels = Object.keys(dateCounts);
-                const counts = Object.values(dateCounts);
-
-                setDateChartData({
-                    labels: dateLabels,
-                    datasets: [
-                        {
-                            label: 'Bookings',
-                            data: counts,
-                            backgroundColor: 'rgba(153, 102, 255, 0.2)',
-                            borderColor: 'rgba(153, 102, 255, 1)',
-                            borderWidth: 1,
-                        }
-                    ]
-                });
-
-                const tasks = partnerBookings.map((booking: any) => ({
-                    id: booking.id,
-                    start: new Date(booking.date.start).getTime(),
-                    end: new Date(booking.date.end).getTime(),
-                    name: `Booking ${booking.id}`,
-                    y: partnerBookings.indexOf(booking)
-                }));
-
-                const categories = partnerBookings.map((booking: bookingInterfaceReschedule) => booking.carId.name);
-                console.log("partner booking : ", partnerBookings)
-                setGanttData(tasks);
-                setGanttCategories(categories);
+                    });
+            
+                    const dateLabels = Object.keys(dateCounts);
+                    const counts = Object.values(dateCounts);
+            
+                    setDateChartData({
+                        labels: dateLabels,
+                        datasets: [
+                            {
+                                label: 'Bookings',
+                                data: counts,
+                                backgroundColor: 'rgba(153, 102, 255, 0.2)',
+                                borderColor: 'rgba(153, 102, 255, 1)',
+                                borderWidth: 1,
+                            }
+                        ]
+                    });
+            
+                    const tasks = partnerBookings.map((booking: any, index: number) => ({
+                        id: booking.id,
+                        start: new Date(booking.date.start).getTime(),
+                        end: new Date(booking.date.end).getTime(),
+                        name: `Booking ${booking.id}`,
+                        y: index
+                    }));
+            
+                    const categories = partnerBookings.map((booking: bookingInterfaceReschedule) => booking.carId.name);
+                    console.log("partner booking : ", partnerBookings)
+                    setGanttData(tasks);
+                    setGanttCategories(categories);
+                } else {
+                    setNoBookings(true);
+                    setTotalBookings(0);
+                    setTotalEarnings(0);
+                    setTotalPartners(0);
+                    setChartData({ labels: [], datasets: [] });
+                    setDateChartData({ labels: [], datasets: [] });
+                    setGanttData([]);
+                    setGanttCategories([]);
+                }
             } else {
                 setNoBookings(true);
                 setTotalBookings(0);
