@@ -3,7 +3,7 @@ import { confirmAlert } from 'react-confirm-alert';
 import { Table, Button, FormControl, Form, Modal, Row, Col } from "react-bootstrap"
 import { FaTrash, FaEdit, FaInfoCircle } from 'react-icons/fa';
 import { carAdminInterface, category, showCarInterface } from "../../../../types/carAdminInterface";
-import { findAllCars } from "../../../../features/axios/api/car/carAxios";
+import { carBasedOnInterface } from "../../../../features/axios/api/car/carAxios";
 import './carManage.css'
 import { deleteCar } from "../../../../features/axios/api/car/carAxios";
 import { getStatus } from "../../../../utils/statuUtils";
@@ -12,9 +12,18 @@ import { toast } from "react-toastify";
 import SearchOne from "../../../commonComponent/search/search";
 import Pagination from "../../../commonComponent/pagination/pagination";
 import { useNavigate } from "react-router-dom";
+import { useSelector } from "react-redux";
+import { RootState } from "../../../../features/axios/redux/reducers/reducer";
+import { jwtDecode } from "jwt-decode";
+import { tokenInterface } from "../../../../types/payloadInterface";
 
 
 const PartnerCarManagement = ()=>{
+
+    const partnerToken = useSelector((root: RootState)=>root.partnerToken.partnerToken) ?? ''
+    const partnerDecode : tokenInterface = jwtDecode(partnerToken)
+
+    const partnerId = partnerDecode.payload
 
     const [formData, setFormData] = useState<carAdminInterface[]>([])
     const [load, setLoad] = useState(true)
@@ -37,7 +46,12 @@ const PartnerCarManagement = ()=>{
       
         const fetchData = async () => {
           try {
-            const response = await findAllCars('partnerCars', 'partner');
+            const data : Partial<showCarInterface> = {
+              addedById: partnerId,
+              owner: "Partner"
+            }
+            const response = await carBasedOnInterface(data);
+            console.log("responses :", response)
             if (mounted) {
               console.log('data received:', response);
               setFormData(response);

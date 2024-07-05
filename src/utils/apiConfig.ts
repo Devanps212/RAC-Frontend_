@@ -33,6 +33,7 @@ const apiConfig = {
     carUpdatePartial:`${configKeys.API_URL}cars/partialUpdate`,
     carRatingUpdater:`${configKeys.API_URL}cars/updateRating`,
     carPaginations:`${configKeys.API_URL}cars/carPage`,
+    basedOnInterface:`${configKeys.API_URL}cars/basedOnInterface`,
 
     getAllUsers:`${configKeys.API_URL}admin/allUsers`,
     UBuser:`${configKeys.API_URL}admin/UBUser`,

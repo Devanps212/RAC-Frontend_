@@ -207,3 +207,21 @@ export const topbookedCars = async()=>{
         throw new Error(error.message)
     }
 }
+
+export const carBasedOnInterface = async(data: Partial<showCarInterface>)=>{
+    try{
+        setPartnerInterceptor()
+        const carConfig : AxiosRequestConfig = {
+            url:apiConfig.basedOnInterface,
+            method:'post',
+            data:data
+        }
+
+        const response = await axios(carConfig)
+        console.log("data : ", response.data.cars)
+        return response.data.cars
+    } catch(error: any){
+        toast.error(error.message)
+        throw new Error(error.message)
+    }
+}
