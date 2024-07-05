@@ -325,6 +325,7 @@ const PartnerEditCar = ()=>{
         <div className="addCar-body">
         {isLoading && <Loading/>}
         <Container className="custom-container">
+        {isLoading && <Loading/>}
             <h3 className="mb-5">Edit Car</h3>
             <Form onSubmit={handleSubmit} encType="multipart/form-data">
                 <Row className="mb-3">
