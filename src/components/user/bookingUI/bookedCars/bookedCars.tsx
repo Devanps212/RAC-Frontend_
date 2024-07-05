@@ -55,6 +55,8 @@ const BookedCars = () => {
         review:''
     });
 
+    
+
 
     const handleSubmit: BookingOnSubmitType = async(values) => {
         console.log(values);
@@ -130,15 +132,22 @@ const BookedCars = () => {
     
     
     const fetchBookingDetail = async () => {
-        const userId = await decodeToken(token).payload;
+
+        const decodedUser : tokenInterface = jwtDecode(token)
+        const userId = decodedUser.payload
+
         const partialDetail: Partial<detailBooking> = { userId: userId };
         const response = await bookingFindingBasedOnRole(partialDetail);
+
+        console.log("data from backend : ", response)
+
         let car;
         if (Array.isArray(response.data.data)) {
             car = response.data.data.map((carData: detailBooking) => carData.carId);
         } else {
             car = response.data.data.carId;
         }
+        console.log("cars got boked : ", car)
         
         setCar(car);
         setBookingInfo(response.data.data);
