@@ -210,9 +210,13 @@ const PartnerCarManagement = ()=>{
                     </tr>)}
                 </tbody>
             </Table>
-            <div className="d-flex justify-content-center align-items-center">
-               <Pagination currentPage={currentPage} totalPages={totalPages} onPageChange={onPageChange}/>
-            </div>
+            {
+              currentItems.length > 0 && (
+                <div className="d-flex justify-content-center align-items-center">
+                  <Pagination currentPage={currentPage} totalPages={totalPages} onPageChange={onPageChange}/>
+                </div>
+              )
+            }
 
             <Modal show={showModal} onHide={() => setShowModal(false)}>
             <Modal.Header closeButton>
