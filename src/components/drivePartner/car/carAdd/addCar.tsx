@@ -244,9 +244,7 @@ const PartnerAddCar = ()=>{
                     toast.success(response.message)
                     setIsLoading(false)
                     setValidationErrors({})
-                    setTimeout(()=>{
-                        navigate('/partner/manageCar')
-                    }, 1000)
+                
                     return true
                 } 
                 else 
