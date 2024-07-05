@@ -160,9 +160,10 @@ export const updateRating = async(data: Partial<reviewInterface>, carId: string,
         }
 
         const response = await axios(carConfig)
-        
+
         return response.data.data
     } catch(error: any){
+        console.error(error)
         toast.error(error.message)
         throw new Error(error.message)
     }
