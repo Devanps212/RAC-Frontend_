@@ -77,7 +77,7 @@ const Banner: React.FC<BannerProps> = ({
             </p>
           </div>
           <div className="row d-flex flex-column justify-content-center align-items-center">
-            <div className="col-9">
+            <div className="col-md-9 col-12">
               <div className="input-group mb-2">
                 <FloatingLabel controlId="floatingInput" label="Pickup location" className="mb-3">
                   <Form.Control
@@ -108,7 +108,7 @@ const Banner: React.FC<BannerProps> = ({
               </div>
             </div>
             <div className="col-9">
-              <div className="input-group mb-3">
+              <div className="input-group mb-2">
                 <FloatingLabel controlId="floatingInputDropOff" label="Drop-Off Location" className="mb-3">
                   <Form.Control
                     type="text"

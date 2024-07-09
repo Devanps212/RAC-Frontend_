@@ -38,4 +38,21 @@
     align-items: center;
     min-width: 300px; 
 }
+@media (max-width: 1200px){
+    .horizontal-scroll-wrapper {
+        overflow-x: auto;
+        white-space: nowrap;
+      }
+      
+      .horizontal-scroll-container {
+        display: flex;
+        flex-direction: row;
+      }
+      
+      .card-wrapper {
+        display: inline-block;
+        width: calc(100% / 3); /* Adjust this to show the number of items you want */
+        margin-right: 10px; /* Adjust the gap between items */
+      }
+}
 

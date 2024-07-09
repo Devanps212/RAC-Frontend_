@@ -167,5 +167,22 @@
   line-height: 1.5;
 }
 
+@media (max-width: 1300px){
+  
+  .selection-T{
+    width: 50%;
+  }
+
+  .banner-text{
+    display: none;
+  }
+}
+
+@media (max-width: 768px){
+   .selection-T{
+    width: 85%;
+   }
+}
+
 
 
