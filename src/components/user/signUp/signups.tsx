@@ -206,16 +206,18 @@ const SignUp = ()=>{
                 </div>
       
                 {/* Login banner */}
-                <div className="banner col-md-6 rounded-r-md position-relative">
+                <div className="banner col-md-6 rounded-r-md position-relative d-none d-md-block">
                   <img
                     className="h-100 object-cover rounded-r-md"
                     src="/assets/admin/signUp/wp8326408-2021-aston-martin-dbx-wallpapers (3).jpg"
                     alt="Login banner"
                     style={{ objectFit: 'cover', width: '113%' }}
                   />
-                  <div className="position-absolute top-0 start-50 translate-middle-x">
-                    <p className="quote text-center py-3">Choose Your Vision</p>
-                  </div>
+                  <div className="position-absolute top-0 start-50 translate-middle-x" style={{ maxWidth: '100%', padding: '0 15px' }}>
+                    <p className="quote text-center py-3" style={{ wordWrap: 'break-word', maxWidth: '100%' }}>
+                        Choose Your Vision
+                    </p>
+                </div>
                 </div>
               </div>
             </div>

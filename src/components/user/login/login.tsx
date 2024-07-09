@@ -27,15 +27,6 @@ const UserLogin = () => {
         password:''
     })
 
-    // useEffect(()=>{
-    //   // const token = localStorage.getItem('token')
-    //   // const userId = decodeToken(token).payload
-    //   // if(blockedUser.includes())
-    //   // {
-    //   //   navigate('/users/home')
-    //   // }
-    //   const 
-    // },[])
     const handleSubmit = async(e: React.FormEvent)=>{
         try{
             console.log("checking form datas")
@@ -178,7 +169,6 @@ const UserLogin = () => {
       <div className="row justify-content-center align-items-center min-vh-100 bg-gray-200 py-5 pt-5">
         <div className="col-md-8" style={{backgroundColor:"#fff"}}>
           <div className="row shadow" style={{marginRight:"-24px"}}>
-            {/* Login form */}
             <div className="col-md-6 rounded-l-md bg-white p-4" style={{ maxWidth: '450px' }}>
               <h1 className="text-xl font-semibold">User SignIn</h1>
               <small className="text-gray-400">Enter your details below.</small>
@@ -238,15 +228,17 @@ const UserLogin = () => {
             </div>
 
             {/* Login banner */}
-            <div className="banner col-md-6 rounded-r-md position-relative">
+            <div className="banner col-md-6 rounded-r-md position-relative d-none d-md-block">
                 <img
                     className="h-100 object-cover rounded-r-md"
                     src="/assets/admin/login/Wallpapers World Cars Wallpapers Full HD 1080p (1).jpg"
                     alt="Login banner"
                     style={{ objectFit: 'cover', width: '115%' }}
                 />
-                <div className="position-absolute top-0 start-50 translate-middle-x">
-                    <p className="quote text-center py-3">Just Drive Your Dream</p>
+                <div className="position-absolute top-0 start-50 translate-middle-x" style={{ maxWidth: '100%', padding: '0 15px' }}>
+                    <p className="quote text-center py-3" style={{ wordWrap: 'break-word', maxWidth: '100%' }}>
+                        Just Drive Your Dream
+                    </p>
                 </div>
             </div>
           </div>
