@@ -2,6 +2,7 @@ import axios, { Axios, AxiosRequestConfig, AxiosResponse } from 'axios'
 import { signInPayload, signUpPayload } from '../../../../types/payloadInterface'
 import apiConfig from '../../../../utils/apiConfig'
 import { setUserInterceptor } from '../../axios_Interceptor/Interceptor'
+import { toast } from 'react-toastify'
 
 
 
@@ -79,6 +80,7 @@ export const otpGenerate = async(input : signInPayload | string, purpose = 'noth
     catch(error:any)
     {
         console.log(error)
+        toast.error(error.response.data.message)
         console.log("error : ",error.message)
         throw new Error(error.response.data.message)
     }
