@@ -20,10 +20,19 @@ const UserHeader = () => {
   console.log("token : ", token)
   const dispatch = useDispatch()
   const navigate = useNavigate()
+  let userId: string;
+  
+  if (token) {
+    try {
+      const userDecode: tokenInterface = jwtDecode(token);
+      userId = userDecode.payload;
+    } catch (error) {
+      console.error("Invalid token", error);
+      navigate('/');
+    }
+  }
 
-
-  const userDecode : tokenInterface = jwtDecode(token)
-  const userId = userDecode.payload
+  
 
   useEffect(() => {
     if (token) {
