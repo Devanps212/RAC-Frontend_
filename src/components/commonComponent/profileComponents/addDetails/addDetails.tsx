@@ -3,10 +3,13 @@ import { BiSolidUserBadge } from "react-icons/bi";
 import { FaAddressBook, FaCarAlt, FaCity, FaFemale, FaMale, FaUser } from "react-icons/fa";
 import './addDetails.css';
 import userDetailForm, { onSubmitType } from "../../../../Validators/userValidator.ts/userDetailValidation";
-import { userDetailPayload } from "../../../../types/payloadInterface";
+import { tokenInterface, userDetailPayload } from "../../../../types/payloadInterface";
 import { saveUserDetails } from "../../../../features/axios/api/user/user";
 import { toast } from "react-toastify";
 import { decodeToken } from "../../../../utils/tokenUtil";
+import { useSelector } from "react-redux";
+import { RootState } from "../../../../features/axios/redux/reducers/reducer";
+import { jwtDecode } from "jwt-decode";
 
 interface AddDetailsProps {
     userDetails: Partial<userDetailPayload>;
@@ -16,9 +19,10 @@ interface AddDetailsProps {
 
 const AddDetails: React.FC<AddDetailsProps> = ({userDetails, handleSuccess}) => {
   const onSubmit: onSubmitType = async(values, { setSubmitting, resetForm }) => {
-    const token = localStorage.getItem('token') ?? ''
-    const userId = await decodeToken(token).payload
-    console.log(values);
+    const token = useSelector((root: RootState)=> root.token.token) ?? ''
+    const userDecode: tokenInterface = jwtDecode(token)
+    const userId = userDecode.payload
+    
     setSubmitting(false);
     const data : Partial<userDetailPayload> = {
         ...values,

@@ -5,7 +5,7 @@ import EditUser from "../../commonComponent/profileComponents/editUser/editUser"
 import AddDetails from "../../commonComponent/profileComponents/addDetails/addDetails";
 import { decodeToken } from "../../../utils/tokenUtil";
 import { findUser, saveUserDetails } from "../../../features/axios/api/user/user";
-import { userDetailPayload } from "../../../types/payloadInterface";
+import { tokenInterface, userDetailPayload } from "../../../types/payloadInterface";
 import { toast } from "react-toastify";
 import { useSelector } from "react-redux";
 import { RootState } from "../../../features/axios/redux/reducers/reducer";
@@ -21,6 +21,7 @@ import { findAllCategory } from "../../../features/axios/api/category/category";
 import { categoryInterface } from "../../../types/categoryInterface";
 import { Types } from "mongoose";
 import ImageCropper from "../../commonComponent/imageCropper/imageCropper";
+import { jwtDecode } from "jwt-decode";
 
 
 const UserProfile = () => {
@@ -37,6 +38,9 @@ const UserProfile = () => {
     const [image, setImage] = useState<string | null>(null)
     const [croppedImage, setCroppedImage] = useState<string | null>(null);
     const [showCropper, setShowCropper] = useState(false);
+    const userToken = useSelector((root: RootState)=> root.token.token) ?? ''
+
+
 
     const toggleEditUser = () => {
         setShowEditUser((prevShowEditUser) => !prevShowEditUser);
@@ -74,13 +78,16 @@ const UserProfile = () => {
 
     const findBookings = async()=>{
         try{
-            const userId = await decodeToken(tokenPayload).payload
+
+            const userDecode: tokenInterface = jwtDecode(userToken)
+            const userId = userDecode.payload
 
             const data : Partial<detailBooking> = {
                 userId:userId
             }
             
             const bookings = await bookingFindingBasedOnRole(data)
+            
             const bookingDetail : detailBooking[] = bookings.data.data
             
             let categ: string[];
@@ -99,8 +106,7 @@ const UserProfile = () => {
             const findCategory :categoryInterface[] = await findAllCategory()
             const matchedCateg = findCategory.filter((category)=>categ.includes(category._id!))
             const luxuryrentalsLength = matchedCateg.length
-            console.log("luxury rental : ", matchedCateg)
-            console.log("length : ", luxuryrentalsLength);
+            
             
             setBookings(bookingDetail)
             setLuxuryRental(luxuryrentalsLength)
@@ -166,9 +172,11 @@ const UserProfile = () => {
 
     const userFinding = async()=>{
         
-        const token = await decodeToken(tokenPayload ?? '').payload
+        const userDecode: tokenInterface = jwtDecode(userToken)
+        const userId = userDecode.payload
 
-        const userFindings = await findUser(token)
+        const userFindings = await findUser(userId)
+        console.log("users :", userFindings)
         
         setUserData(userFindings.data)
     }
