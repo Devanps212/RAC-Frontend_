@@ -17,6 +17,7 @@ export const findUser = async(data:string)=>{
         return response.data
     }
     catch(error: any){
+      console.log(error)
         throw new Error(error.message)
     }
 }
