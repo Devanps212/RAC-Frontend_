@@ -41,7 +41,7 @@ const UserHeader = () => {
         try {
           const user = await findUser(userId);
           console.log("User found: ", user);
-          console.log("User found: ", user.user.profilePic);
+          console.log("User found: ", user.data.profilePic);
           setProfilePicture(user.data.profilePic); 
         } catch (error) {
           console.error("Failed to fetch user profile", error);
