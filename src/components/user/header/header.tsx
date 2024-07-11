@@ -1,22 +1,42 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { Navbar, Container, Nav, NavDropdown, Offcanvas, Button } from "react-bootstrap";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { logout } from "../../../features/axios/redux/slices/user/userLoginAuthSlice";
 import { clearToken } from "../../../features/axios/redux/slices/user/tokenSlice";
 import { toast } from 'react-toastify'
 import { auth } from "../../../../firebase/firebase";
 import "./headers.css";
 import { BiSolidUserCircle } from "react-icons/bi";
+import { RootState } from "../../../features/axios/redux/reducers/reducer";
+import { tokenInterface } from "../../../types/payloadInterface";
+import { jwtDecode } from "jwt-decode";
+import { findOneUser } from "../../../features/axios/api/admin/adminUser";
 
 const UserHeader = () => {
 
-  const token = localStorage.getItem('token')
+  const [profilePicture, setProfilePicture] = useState('')
+  const token =  useSelector((root: RootState)=>root.token.token) ?? ''
   const dispatch = useDispatch()
   const navigate = useNavigate()
 
+
+  const userDecode : tokenInterface = jwtDecode(token)
+  const userId = userDecode.payload
+
+  useEffect(()=>{
+    const findUser = async()=>{
+      const user = await findOneUser(userId)
+      console.log("user found : ", user)
+      setProfilePicture(user.profilePic)
+    }
+
+    findUser()
+  }, [token])
+
   const handleLogout = ()=>{
     dispatch(logout())
+    setProfilePicture('')
     dispatch(clearToken())
     auth.signOut()
     .then(()=>{
@@ -79,8 +99,17 @@ const UserHeader = () => {
               
             </div>
             {
-              token && <Nav.Link as={Link} to={'/profile'} className="custom-nav-link"><BiSolidUserCircle style={{fontSize:'42px'}}/></Nav.Link>
+              token && (
+                <Nav.Link as={Link} to={'/profile'} className="custom-nav-link">
+                  {profilePicture ? (
+                    <img src={profilePicture} alt="User Profile" style={{ width: '42px', height: '42px', borderRadius: '50%' }} />
+                  ) : (
+                    <BiSolidUserCircle style={{ fontSize: '42px' }} />
+                  )}
+                </Nav.Link>
+              )
             }
+
             
             </Nav>
 
