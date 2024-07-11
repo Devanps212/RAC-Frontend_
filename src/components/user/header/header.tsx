@@ -21,7 +21,7 @@ const UserHeader = () => {
   const dispatch = useDispatch()
   const navigate = useNavigate()
   let userId: string;
-  
+
   if (token) {
     try {
       const userDecode: tokenInterface = jwtDecode(token);
@@ -40,6 +40,7 @@ const UserHeader = () => {
         try {
           const user = await findOneUser(userId);
           console.log("User found: ", user);
+          console.log("User found: ", user.profilePic);
           setProfilePicture(user.profilePic); 
         } catch (error) {
           console.error("Failed to fetch user profile", error);
