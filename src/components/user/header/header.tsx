@@ -12,6 +12,7 @@ import { RootState } from "../../../features/axios/redux/reducers/reducer";
 import { tokenInterface } from "../../../types/payloadInterface";
 import { jwtDecode } from "jwt-decode";
 import { findOneUser } from "../../../features/axios/api/admin/adminUser";
+import { findUser } from "../../../features/axios/api/user/user";
 
 const UserHeader = () => {
 
@@ -36,9 +37,9 @@ const UserHeader = () => {
 
   useEffect(() => {
     if (token) {
-      const findUser = async () => {
+      const userFind = async () => {
         try {
-          const user = await findOneUser(userId);
+          const user = await findUser(userId);
           console.log("User found: ", user);
           console.log("User found: ", user.user.profilePic);
           setProfilePicture(user.user.profilePic); 
@@ -46,7 +47,7 @@ const UserHeader = () => {
           console.error("Failed to fetch user profile", error);
         }
       };
-      findUser();
+      userFind();
     } else {
       navigate('/');
     }
