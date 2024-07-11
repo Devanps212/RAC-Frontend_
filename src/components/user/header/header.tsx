@@ -17,6 +17,7 @@ const UserHeader = () => {
 
   const [profilePicture, setProfilePicture] = useState('')
   const token =  useSelector((root: RootState)=>root.token.token) ?? ''
+  console.log("token : ", token)
   const dispatch = useDispatch()
   const navigate = useNavigate()
 
