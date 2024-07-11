@@ -24,15 +24,22 @@ const UserHeader = () => {
   const userDecode : tokenInterface = jwtDecode(token)
   const userId = userDecode.payload
 
-  useEffect(()=>{
-    const findUser = async()=>{
-      const user = await findOneUser(userId)
-      console.log("user found : ", user)
-      setProfilePicture(user.profilePic)
+  useEffect(() => {
+    if (token) {
+      const findUser = async () => {
+        try {
+          const user = await findOneUser(userId);
+          console.log("User found: ", user);
+          setProfilePicture(user.profilePic); 
+        } catch (error) {
+          console.error("Failed to fetch user profile", error);
+        }
+      };
+      findUser();
+    } else {
+      navigate('/');
     }
-
-    findUser()
-  }, [token])
+  }, [token, navigate]);
 
   const handleLogout = ()=>{
     dispatch(logout())
