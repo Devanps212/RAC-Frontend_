@@ -7,7 +7,6 @@ export const bookingHelper = (
     carsAvailable: showCarInterface[]
 ) => {
     try {
-        const eligibleCarIds: Set<string> = new Set();
         const overlappingCarIds: Set<string> = new Set();
 
         fullDetailOfBookings.forEach((booking) => {
@@ -26,27 +25,14 @@ export const bookingHelper = (
                 if (isOverlapping) {
                     console.log(`Overlapping car: ${booking.carId.name}`);
                     overlappingCarIds.add(booking.carId.toString());
-                } else {
-                    console.log(`Eligible car: ${booking.carId.name}`);
-                    eligibleCarIds.add(booking.carId.toString());
                 }
             }
         });
 
-        const carsWithNoBookings = carsAvailable.filter(car => 
+        const uniqueCars = carsAvailable.filter(car => 
             car._id !== undefined && 
             !overlappingCarIds.has(car._id.toString())
         );
-
-        const uniqueCars = [...carsWithNoBookings];
-        eligibleCarIds.forEach(id => {
-            if (!overlappingCarIds.has(id)) {
-                const car = carsAvailable.find(car => car._id !== undefined && car._id.toString() === id);
-                if (car) {
-                    uniqueCars.push(car);
-                }
-            }
-        });
 
         console.log("Unique cars:", uniqueCars);
         return uniqueCars;
