@@ -23,8 +23,10 @@ export const bookingHelper = (currentBookingDetail: bookingInterface, fullDetail
                     console.log("isOverlapping : ", isOverlapping)
 
                 if (!isOverlapping) {
+                    console.log("cars not overlapping : ", booking.carId.name)
                     eligibleCarIds.add(booking.carId.toString());
                 } else {
+                    console.log("over lapping cars : ", booking.carId.name)
                     overlappingCarIds.add(booking.carId.toString());
                 }
             }
