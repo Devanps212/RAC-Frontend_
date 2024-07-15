@@ -29,6 +29,8 @@ export const bookingHelper = (
             }
         });
 
+        console.log("over Lapping Cars : ", overlappingCarIds)
+
         const uniqueCars = carsAvailable.filter(car => 
             car._id !== undefined && 
             !overlappingCarIds.has(car._id.toString())
