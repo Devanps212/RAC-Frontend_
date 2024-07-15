@@ -20,6 +20,8 @@ export const bookingHelper = (currentBookingDetail: bookingInterface, fullDetail
                     ((currentEnd < endDate && currentEnd > startDate) && currentStart <= startDate) ||
                     (currentStart <= endDate && currentEnd >= startDate);
 
+                    console.log("isOverlapping : ", isOverlapping)
+
                 if (!isOverlapping) {
                     eligibleCarIds.add(booking.carId.toString());
                 } else {
