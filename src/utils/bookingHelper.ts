@@ -23,20 +23,17 @@ export const bookingHelper = (
                     (currentStart <= startDate && currentEnd >= endDate);
 
                 if (isOverlapping && booking && booking.carId && booking.carId._id) {
-                    console.log(`Overlapping car: ${booking.carId.name}`);
                     overlappingCarIds.add(booking.carId?._id);
                 }
             }
         });
 
-        console.log("over Lapping Cars : ", overlappingCarIds)
 
         const uniqueCars = carsAvailable.filter(car => 
             car._id !== undefined && 
             !overlappingCarIds.has(car._id.toString())
         );
 
-        console.log("Unique cars:", uniqueCars);
         return uniqueCars;
     } catch (error) {
         console.log(error);

@@ -71,7 +71,6 @@ const Cars: React.FC = () => {
                 if(validBooking.length === 0){
                     setDetailedBooking(null)
                 } else {
-                    console.log("valid bookings : ", validBooking)
                     setDetailedBooking(response.data)
                 }
                 
@@ -160,7 +159,7 @@ const Cars: React.FC = () => {
 
     const handleRatingFilter = () => {
         if (selectedRatings === null) {
-            setSelectedCars(filteredCars); // Set back to original filtered cars when no rating is selected
+            setSelectedCars(filteredCars);
         } else {
             const filteredCarsByRating = filteredCars.filter((car) => {
                 const carRating = car.rating;
@@ -169,7 +168,7 @@ const Cars: React.FC = () => {
                 }
                 return false;
             });
-            setSelectedCars(filteredCarsByRating); // Set the selected cars based on the filteredCarsByRating
+            setSelectedCars(filteredCarsByRating);
         }
     };
     
