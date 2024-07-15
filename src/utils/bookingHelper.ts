@@ -23,7 +23,9 @@ export const bookingHelper = (
 
                 if (isOverlapping) {
                     overlappingCarIds.add(booking.carId.toString());
+                    console.log("booking car : ", booking.carId)
                 } else {
+                    console.log("eleigibke car :", booking.carId)
                     eligibleCarIds.add(booking.carId.toString());
                 }
             }
