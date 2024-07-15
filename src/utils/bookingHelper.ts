@@ -24,6 +24,7 @@ export const bookingHelper = (
 
                 if (isOverlapping) {
                     console.log(`Overlapping car: ${booking.carId.name}`);
+                    console.log(`Overlapping carId: ${booking.carId}`);
                     overlappingCarIds.add(booking.carId.toString());
                 }
             }
