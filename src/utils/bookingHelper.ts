@@ -20,13 +20,12 @@ export const bookingHelper = (currentBookingDetail: bookingInterface, fullDetail
                     ((currentEnd < endDate && currentEnd > startDate) && currentStart <= startDate) ||
                     (currentStart <= endDate && currentEnd >= startDate);
 
-                    console.log("isOverlapping : ", isOverlapping)
-
+                    
                 if (!isOverlapping) {
-                    console.log("cars not overlapping : ", booking.carId.name)
+                    console.log(`cars overlapping ${isOverlapping} : `, booking.carId.name)
                     eligibleCarIds.add(booking.carId.toString());
                 } else {
-                    console.log("over lapping cars : ", booking.carId.name)
+                    console.log(`over lapping cars ${isOverlapping} : `, booking.carId.name)
                     overlappingCarIds.add(booking.carId.toString());
                 }
             }
