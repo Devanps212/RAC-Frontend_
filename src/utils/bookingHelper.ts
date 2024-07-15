@@ -1,7 +1,11 @@
 import { bookingInterface, detailBooking } from "../types/bookingInterface";
 import { showCarInterface } from "../types/carAdminInterface";
 
-export const bookingHelper = (currentBookingDetail: bookingInterface, fullDetailOfBookings: detailBooking[], carsAvailable: showCarInterface[]) => {
+export const bookingHelper = (
+    currentBookingDetail: bookingInterface, 
+    fullDetailOfBookings: detailBooking[], 
+    carsAvailable: showCarInterface[]
+) => {
     try {
         const eligibleCarIds: Set<string> = new Set();
         const overlappingCarIds: Set<string> = new Set();
@@ -15,28 +19,25 @@ export const bookingHelper = (currentBookingDetail: bookingInterface, fullDetail
                 const currentEnd = new Date(currentBookingDetail.endDate).getTime();
 
                 const isOverlapping =
-                    (currentStart < startDate && currentEnd > endDate) ||
-                    ((currentStart > startDate && currentStart < endDate) && currentEnd > endDate) ||
-                    ((currentEnd < endDate && currentEnd > startDate) && currentStart <= startDate) ||
-                    (currentStart <= endDate && currentEnd >= startDate);
+                    (currentStart < endDate && currentEnd > startDate);
 
-                if (!isOverlapping) {
-                    eligibleCarIds.add(booking.carId.toString());
-                } else {
+                if (isOverlapping) {
                     overlappingCarIds.add(booking.carId.toString());
+                } else {
+                    eligibleCarIds.add(booking.carId.toString());
                 }
             }
         });
 
-        const carsWithNoBookings = carsAvailable.filter(car => car._id !== undefined && !overlappingCarIds.has(car._id.toString()) && !eligibleCarIds.has(car._id.toString()));
-        const uniqueCars = [...carsWithNoBookings];
-        eligibleCarIds.forEach(id => {
-            const car = carsAvailable.find(car => car._id !== undefined && car._id.toString() === id);
-            if (car) {
-                uniqueCars.push(car);
-            }
+        const uniqueCars = carsAvailable.filter(car => {
+            const carId = car._id?.toString();
+            return carId && !overlappingCarIds.has(carId);
         });
 
+        console.log("cars available : ", carsAvailable)
+        console.log("over lapping :", overlappingCarIds)
+
+        console.log("unique cars :", uniqueCars);
         return uniqueCars;
     } catch (error) {
         console.log(error);
