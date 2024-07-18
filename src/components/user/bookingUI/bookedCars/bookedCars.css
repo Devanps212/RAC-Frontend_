@@ -65,10 +65,6 @@
   padding: 6px !important;
 }
 
-.status-container {
-  margin-top: 10px;
-  margin-left: 5px;
-}
 
 .status {
   padding: 5px 10px;
@@ -452,3 +448,73 @@
     opacity: 1;
   }
 }
+
+.datePicker {
+  width: 100%;
+}
+
+.calender {
+  width: 100%;
+}
+
+@media (max-width: 767px) {
+  .left-side-contents h3 {
+    font-size: large;
+  }
+
+  .datePicker h4 {
+    font-size: medium;
+  }
+
+  .calender {
+    width: 100%;
+  }
+}
+
+.image img {
+  width: 100%;
+  height: auto;
+}
+
+.text-truncate {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.small-specs {
+  font-size: 0.9rem;
+}
+
+
+.status-container {
+  text-align: center;
+}
+
+@media (max-width: 767px) {
+  .small-specs {
+    font-size: 0.8rem;
+  }
+
+  .status-container {
+    text-align: center;
+  }
+
+  .buttons .btn {
+    width: 100%;
+    margin-bottom: 10px;
+  }
+}
+
+.small-specs {
+  font-size: 0.9rem;
+}
+
+@media (max-width: 767px) {
+  .small-specs {
+    font-size: 0.8rem;
+  }
+}
+
+
+

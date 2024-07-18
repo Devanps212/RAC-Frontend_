@@ -348,25 +348,26 @@ const BookedCars = () => {
             <div className="container-fluid" style={{ paddingTop: '8rem' }}>
                 <div className="mains-contents">
                     <div className="row">
-                        <div className="col-4">
-                            <div className="left-side-contents d-flex flex-column align-items-center">
-                                <h3 className="mb-4" style={{ fontSize: "x-large" }}>Check bookings</h3>
-                                <div className="mt-4 datePicker">
-                                    <h4 className="font-text">Check by date</h4>
-                                    <div className="calender">
+                    <div className="col-12 col-md-6 col-lg-4">
+                        <div className="left-side-contents d-flex flex-column align-items-center text-center">
+                            <h3 className="mb-4" style={{ fontSize: "x-large" }}>Check bookings</h3>
+                            <div className="mt-4 datePicker">
+                            <h4 className="font-text">Check by date</h4>
+                                <div className="calender">
                                     <DatePicker
-                                        selected={selectedDate}
-                                        onChange={handleDate}
-                                        dateFormat="dd/MM/yyyy"
-                                        className="form-control-input"
-                                        inline
-                                        filterDate={() => true}
-                                        dayClassName={getDayClassName}
-                                        />
-                                    </div>
+                                    selected={selectedDate}
+                                    onChange={handleDate}
+                                    dateFormat="dd/MM/yyyy"
+                                    className="form-control-input"
+                                    inline
+                                    filterDate={() => true}
+                                    dayClassName={getDayClassName}
+                                    />
                                 </div>
                             </div>
                         </div>
+                    </div>
+
                         <div className="col-8" style={{ maxHeight: '488px', overflowY: 'auto' }}>
                             {bookingInfo &&  (
                                 Array.isArray(bookingInfo) ? (
@@ -378,111 +379,105 @@ const BookedCars = () => {
                                         return(
                                         <div className="right-side-contents mb-3" key={bookings._id}>
                                             <div className="row d-flex justify-content-center align-items-center">
-                                                <div className="col-4">
+                                                <div className="col-12 col-md-4 mb-3 mb-md-0">
                                                     <div className="image">
-                                                        <img src={bookings.carId.thumbnailImg} style={{ width: '100%', height: 'auto' }} alt="Car" />
-
+                                                        <img src={bookings.carId.thumbnailImg} className="img-fluid" alt="Car" />
                                                     </div>
                                                 </div>
-                                                <div className="col-5">
-                                                    <strong>{bookings.carId.name}</strong>
-                                                    <div className="mt-2 row d-flex justify-content-center align-items-center">
+                                                <div className="col-12 col-md-5 mb-3 mb-md-0">
+                                                    <strong className="d-block text-truncate">{bookings.carId.name}</strong>
+                                                    <div className="mt-2 row justify-content-center align-items-center">
+                                                        <div className="col-4 mb-2 mb-md-0">
+                                                            <div className="small-specs text-center">
+                                                            <FaChair />
+                                                            <small>{bookings.carId.seats} Seats</small>
+                                                            </div>
+                                                        </div>
+                                                        <div className="col-4 mb-2 mb-md-0">
+                                                            <div className="small-specs text-center">
+                                                            <FaGasPump />
+                                                            <small>{bookings.carId.fuelType}</small>
+                                                            </div>
+                                                        </div>
                                                         <div className="col-4">
                                                             <div className="small-specs text-center">
-                                                                <FaChair />
-                                                                <small>{bookings.carId.seats}Seats</small>
-                                                            </div>
-                                                        </div>
-                                                        <div className="col-4">
-                                                            <div className="ms-2 small-specs text-center">
-                                                                <FaGasPump />
-                                                                <small>{bookings.carId.fuelType}</small>
-                                                            </div>
-                                                        </div>
-                                                        <div className="col-4">
-                                                            <div className="ms-4 small-specs text-center">
-                                                                <FaCar />
-                                                                <small>Luxury</small>
+                                                            <FaCar />
+                                                            <small>Luxury</small>
                                                             </div>
                                                         </div>
                                                     </div>
+
                                                     <div className="row mt-3">
-                                                        <div className="col-6">
-                                                            <div style={{ width: 'max-content' }}>
-                                                                <p className="mb-1">
-                                                                    <FaLocationArrow className="me-2" />
-                                                                    From:
-                                                                </p>
-                                                                <p className="mb-1">
-                                                                    <BiSolidLocationPlus className="me-2" />
-                                                                    {bookings.location.start}
-                                                                </p>
-                                                                <small>
-                                                                    <FaCalendarTimes className="me-2" />
-                                                                    {new Date(bookings.date.start).toLocaleString()}, {bookings.time.start}
-                                                                </small>
-                                                            </div>
+                                                    <div className="col-6">
+                                                        <div className="text-truncate">
+                                                        <p className="mb-1">
+                                                            <FaLocationArrow className="me-2" />
+                                                            From:
+                                                        </p>
+                                                        <p className="mb-1 text-truncate">
+                                                            <BiSolidLocationPlus className="me-2" />
+                                                            {bookings.location.start}
+                                                        </p>
+                                                        <small>
+                                                            <FaCalendarTimes className="me-2" />
+                                                            {new Date(bookings.date.start).toLocaleString()}, {bookings.time.start}
+                                                        </small>
                                                         </div>
-                                                        <div className="col-1">
-                                                            <div>
-                                                                <FaArrowRight />
-                                                            </div>
+                                                    </div>
+                                                    <div className="col-1 d-flex align-items-center justify-content-center">
+                                                        <FaArrowRight />
+                                                    </div>
+                                                    <div className="col-5">
+                                                        <div className="text-truncate">
+                                                        <p className="mb-1">To:</p>
+                                                        <p className="mb-1 text-truncate">{bookings.location.end.substring(0, 16)}...</p>
+                                                        <small>
+                                                            {new Date(bookings.date.end).toLocaleString()}, {bookings.time.end}
+                                                        </small>
                                                         </div>
-                                                        <div className="col-5 mr-3">
-                                                            <div style={{ width: 'max-content' }}>
-                                                                <p className="mb-1">To:</p>
-                                                                <p className="mb-1">{bookings.location.end.substring(0, 16)}...</p>
-                                                                <small>
-                                                                    {new Date(bookings.date.end).toLocaleString()}, {bookings.time.end}
-                                                                </small>
-                                                            </div>
-                                                        </div>
+                                                    </div>
                                                     </div>
                                                 </div>
-                                                <div className="col-3">
-                                                    <div className="buttons d-flex flex-column justify-content-center align-items-center">
+                                                <div className="col-12 col-md-3 p-0 m-0 d-flex flex-column align-items-center">
+                                                    <div className="buttons d-flex flex-column justify-content-center align-items-center w-100">
                                                     {bookings.status === 'Cancelled' ? (
                                                         <>
                                                         </>
                                                     ) : (
                                                         <>
-                                                            {new Date(bookings.date.end) === new Date() || new Date(bookings.date.start) > twoDaysAfterStartDate ? ( //changes done without commiting 
-                                                                bookings.status !== 'Completed' ? (
-                                                                    <Button variant="warning" onClick={() => handleBookingCompleted(bookings._id, bookings.carId)}>
-                                                                        Complete Booking
-                                                                    </Button>
-                                                                ) : (
-                                                                    <>
-                                                                    </>
-                                                                )
+                                                        {(new Date(bookings.date.end).getTime() === new Date().getTime() || new Date(bookings.date.start).getTime() > twoDaysAfterStartDate.getTime()) ? (
+                                                            bookings.status !== 'Completed' ? (
+                                                            <Button variant="warning" onClick={() => handleBookingCompleted(bookings._id, bookings.carId)}>
+                                                                Complete Booking
+                                                            </Button>
                                                             ) : (
-                                                                bookings.status !== "Completed" && (
-                                                                <>
-                                                                    <Button className="ms-5" onClick={() => {
-                                                                        setShowModal(true);
-                                                                        setSingleBooking(bookings);
-                                                                    }}>
-                                                                        Report an issue
-                                                                    </Button>
-                                                                    <Button variant="danger" onClick={() => handleBookingCancel(bookings._id, bookings.carId.name, bookings.transaction.amount || 0)} className="ms-5 mt-2">
-                                                                        Cancel booking
-                                                                    </Button>
-                                                                    <Button variant="dark" onClick={() => rescheduleBooking(bookings)} style={{ width: '60%' }} className="ms-5 mt-2">
-                                                                        Reschedule
-                                                                    </Button>
-                                                                </>
-                                                            ))}
+                                                            <>
+                                                            </>
+                                                            )
+                                                        ) : (
+                                                            bookings.status !== "Completed" && (
+                                                            <>
+                                                            <Button className="ms-0 mb-2" onClick={() => {
+                                                                setShowModal(true);
+                                                                setSingleBooking(bookings);
+                                                            }}>
+                                                                Report an issue
+                                                            </Button>
+                                                            <Button variant="danger" onClick={() => handleBookingCancel(bookings._id, bookings.carId.name, bookings.transaction.amount || 0)} className="ms-0 mb-2">
+                                                                Cancel booking
+                                                            </Button>
+                                                            <Button variant="dark" onClick={() => rescheduleBooking(bookings)} className="mb-2" style={{maxWidth:'133px'}}>
+                                                                Reschedule
+                                                            </Button>
+                                                            </>
+                                                        ))}
                                                         </>
                                                     )}
-
-                                                                
-                                                               
-                        
-                                                        <div className="status-container ms-5 mt-3">
-                                                            <p className={`status ${bookings.status.replace(/\s+/g, '-').toLowerCase()}`}>
-                                                                {bookings.status}
-                                                            </p>
-                                                        </div>
+                                                    <div className="status-container">
+                                                        <p className={`status ${bookings.status.replace(/\s+/g, '-').toLowerCase()}`}>
+                                                        {bookings.status}
+                                                        </p>
+                                                    </div>
                                                     </div>
                                                 </div>
                                             </div>
@@ -642,25 +637,6 @@ const BookedCars = () => {
                                                                     <></>
                                                                 )
                                                             ) : (
-                                                                // <>
-                                                                //     <Button className="ms-5" onClick={() => setShowModal(true)}>
-                                                                //         Report an issue
-                                                                //     </Button>
-                                                                //     <Button 
-                                                                //         variant="danger" 
-                                                                //         onClick={() => handleBookingCancel(bookingInfo._id, bookingInfo.carId.name, bookingInfo.transaction.amount || 0)} 
-                                                                //         className="ms-5 mt-2"
-                                                                //     >
-                                                                //         Cancel booking
-                                                                //     </Button>
-                                                                //     <Button 
-                                                                //         variant="dark" 
-                                                                //         onClick={() => rescheduleBooking(bookingInfo)} 
-                                                                //         className="ms-5 mt-2"
-                                                                //     >
-                                                                //         Reschedule Date
-                                                                //     </Button>
-                                                                // </>
                                                                 bookingInfo.status !== "Completed" && (
                                                                     <>
                                                                         <Button className="ms-5" onClick={() => {
