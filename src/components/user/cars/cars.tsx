@@ -229,7 +229,7 @@ const Cars: React.FC = () => {
         <div className="container-fluid full-container">
             <div className="contents">
                 <div className="row" style={{marginTop:'4rem'}}>
-                    <div className="col-4" style={{padding:'12px'}}>
+                    <div className="col-lg-4 col-md-12" style={{padding:'12px'}}>
                         <div className="left-contents">
                             <div className="row d-flex flex-column justify-content-center align-items-center">
                                 <div className="col-12">
@@ -296,12 +296,12 @@ const Cars: React.FC = () => {
                             </div>
                         </div>
                     </div>
-                    <div className="col-8">
+                    <div className="col-lg-8 col-md-12">
                         <div className="row">
                             <div className="rightSide-content">
                                 <div className="col-12">
                                     <div className="right-top-contents d-flex justify-content-center align-items-center">
-                                        <div className="col-2 d-flex justify-content-center">
+                                        <div className="col-4 col-md-2 d-flex justify-content-center pickup-date">
                                             <input
                                                 type="date"
                                                 value={bookingDetails?.startDate ? new Date(bookingDetails.startDate).toISOString().split('T')[0] : currentDate}
@@ -313,7 +313,7 @@ const Cars: React.FC = () => {
                                             />
 
                                         </div>
-                                        <div className="col-2 d-flex justify-content-center">
+                                        <div className="col-2 d-flex justify-content-center dropOffDate">
                                             <input
                                                 type="date"
                                                 value={bookingDetails?.endDate ? new Date(bookingDetails.endDate).toISOString().split('T')[0] : currentDate}
@@ -324,7 +324,7 @@ const Cars: React.FC = () => {
                                                 }}
                                             />
                                         </div>
-                                        <div className="col-1 d-flex justify-content-center">
+                                        <div className="col-1 d-flex justify-content-center pickup-time">
                                             <input
                                                 type="time"
                                                 value={bookingDetails?.pickupTime}
@@ -336,7 +336,7 @@ const Cars: React.FC = () => {
                                                 }}
                                             />
                                         </div>
-                                        <div className="col-1 d-flex justify-content-center">
+                                        <div className="col-1 d-flex justify-content-center dropOfTime">
                                             <input
                                                 type="time"
                                                 value={bookingDetails?.dropOffTime}
@@ -371,7 +371,7 @@ const Cars: React.FC = () => {
                                             )}
                                         </div>
 
-                                        <div className="col-1 d-flex justify-content-center position-relative">
+                                        <div className="col-1 d-flex justify-content-center position-relative dropOff-val">
                                             <input
                                                 type="text"
                                                 style={{ width: '120px' }}

@@ -24,6 +24,7 @@
     width: 100%;
 }
 
+
 .right-bottom-contents {
     overflow-y: auto; 
     max-height: 471px;
@@ -152,3 +153,36 @@
     }
   }
 
+@media (max-width: 767px) {
+  .left-contents {
+     width: 100%;
+     margin-bottom: 20px;
+   }
+  .rightSide-content {
+     width: 100%;
+   }
+   .pickup-time{
+    width: 100%;
+   }
+   .dropOfTime{
+    width: 100%;
+   }
+  .right-top-contents {
+     flex-direction: column;
+     align-items: flex-start;
+   }
+  .pickup-date,.dropOff-val {
+     width: 100%;
+   }
+  .suggestion-list {
+     width: 100%;
+   }
+   .dropOffDate{
+    width: 100%;
+   }
+   .btn{
+    height: 36px;
+   }
+ }
+ 
+ 
