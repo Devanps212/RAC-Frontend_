@@ -134,7 +134,7 @@ const CarDetails = () => {
             ) : (
                 <div className="container" style={{ paddingTop: "7rem" }}>
                     <div className="row">
-                        <div className="col-2">
+                        <div className="col-md-2 col-12">
                             <div className="row d-flex flex-column justify-content-start align-items-start">
                                 <div className="col tags">
                                     <p>24/7 Service</p>
@@ -150,27 +150,31 @@ const CarDetails = () => {
                                 </div>
                             </div>
                         </div>
-                        <div className="col-6">
+                        <div className="col-md-6 col-12">
                             <ImageSelector images={[bigImg, smallImg]} handleClick={handleClick} />
                         </div>
-                        <div className="col-4 d-flex flex-column justify-content-start align-items-start">
+                        <div className="col-md-4 col-12 d-flex flex-column justify-content-start align-items-start">
                             <h2>{car?.name}</h2>
                             <div className="specs mx-0 py-0">
                                 <ul className="list-unstyled pt-3" style={{ textAlign: "start", paddingLeft: "0" }}>
                                     <li>
-                                    <div className="star-rating mb-4">
-                                        {car && car.rating !== undefined && rating.map((_, index) => (
-                                            <span key={index}>
-                                            {index < Number(car.rating) ? <FaStar /> : <FaRegStar/>}
-                                            </span>
-                                        ))}
+                                        <div className="star-rating mb-4">
+                                            {car && car.rating !== undefined && rating.map((_, index) => (
+                                                <span key={index}>
+                                                    {index < Number(car.rating) ? <FaStar /> : <FaRegStar />}
+                                                </span>
+                                            ))}
                                         </div>
                                     </li>
                                     <li className="Detail-List">Engine: <strong>{car?.engine}</strong></li>
                                     <li className="Detail-List">Fuel: <strong>{car?.fuelType}</strong></li>
                                     <li className="Detail-List">Seats: <strong>5</strong></li>
                                     <li className="Detail-List">Transmission:<strong>{car?.transmission}</strong></li>
-                                    {car && car.owner && car.owner === 'Admin' ? (<li className="Detail-List">Owner: <strong>RAC(Company)</strong></li>) : (<li className="Detail-List">Owner: <strong>Partner(Third Party)</strong></li>)}
+                                    {car && car.owner && car.owner === 'Admin' ? (
+                                        <li className="Detail-List">Owner: <strong>RAC(Company)</strong></li>
+                                    ) : (
+                                        <li className="Detail-List">Owner: <strong>Partner(Third Party)</strong></li>
+                                    )}
                                     <li className="Detail-List">Category: <strong>{category?.name}</strong></li>
                                     <li className="mb-4">Mileage :<strong>{car?.mileage} km/hr</strong></li>
                                     <li className="RPW">Rent/Week :<strong>₹ {car?.rentPricePerWeek}</strong></li>
@@ -217,7 +221,7 @@ const CarDetails = () => {
                                                         <span className="position-relative">Chat</span>
                                                     </button>
                                                 </OverlayTrigger>
-                                            ): (
+                                            ) : (
                                                 <Link to={`/negotiate/${user?._id}/${car?.addedById}/${car?._id}`} style={{ textDecoration: 'none' }}>
                                                     <button className="negotiate me-3" style={{ zIndex: 1 }}>
                                                         <span className="position-relative">Chat</span>
@@ -233,11 +237,11 @@ const CarDetails = () => {
                         </div>
                     </div>
                     <div className="row">
-                        <div className="col-6 detailed-specs mb-4 mt-5">
+                        <div className="col-md-6 col-12 detailed-specs mb-4 mt-5">
                             <h2>Description</h2>
                             <p style={{ textAlign: "justify" }}>{car?.description}</p>
                         </div>
-                        <div className="col-5 d-flex flex-column mb-5 mt-5 ms-2">
+                        <div className="col-md-5 col-12 d-flex flex-column mb-5 mt-5 ms-md-2">
                             <h2>{car && car.comments && car.comments.length > 0 ? 'Reviews' : 'No Reviews'}</h2>
                             {car && car.comments && car.comments.length > 0 ? (
                                 car.comments.slice(0, 2).map((carData, index) => (
@@ -247,11 +251,11 @@ const CarDetails = () => {
                                             <div className="col">
                                                 <h5 style={{ marginLeft: "10px" }}>{carData.userId.name}</h5>
                                                 <strong style={{ marginLeft: "10px" }}>
-                                                {
-                                                        Array.from({length: 5}, (_, i)=>(
+                                                    {
+                                                        Array.from({ length: 5 }, (_, i) => (
                                                             <span key={i}>
                                                                 {
-                                                                    i < carData.userRating ? <FaStar style={{color:'black'}}/> : <FaRegStar/>
+                                                                    i < carData.userRating ? <FaStar style={{ color: 'black' }} /> : <FaRegStar />
                                                                 }
                                                             </span>
                                                         ))
@@ -275,12 +279,13 @@ const CarDetails = () => {
                             )}
                             {car && car.comments && car.comments.length > 0 &&
                                 <div className="d-flex justify-content-center align-items-center" style={{ marginTop: "2rem" }}>
-                                    <button className="hover-border-7 text-decoration-none" onClick={()=>setFullComment(true)}>View All Reviews</button>
+                                    <button className="hover-border-7 text-decoration-none" onClick={() => setFullComment(true)}>View All Reviews</button>
                                 </div>
                             }
                         </div>
                     </div>
                 </div>
+
             )}
              <Modal show={fullComment} onHide={()=>setFullComment(false)} size="lg">
             <Modal.Header closeButton>
