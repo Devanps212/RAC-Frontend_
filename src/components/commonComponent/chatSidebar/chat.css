@@ -3,6 +3,8 @@
   background-color: #f8f9fa;
   border-right: 1px solid #dee2e6;
   height: 100%;
+  display: flex;
+  flex-direction: column;
 }
 
 .chat-sidebar h2 {
@@ -25,6 +27,9 @@
 .chat-sidebar ul {
   list-style: none;
   padding: 0;
+  margin: 0;
+  max-height: 300px; /* Adjust this height as needed */
+  overflow-y: auto; /* Enable vertical scrolling */
 }
 
 .chat-sidebar li {
