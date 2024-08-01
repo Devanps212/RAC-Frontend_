@@ -133,7 +133,7 @@ const Chat: React.FC = () => {
   return (
     <div className="container-fluid content-container">
       <div className="row" style={{marginTop:'5.5rem'}}>
-        <div className="col-12 col-md-3 left-col d-flex flex-column align-items-center">
+        <div className="col-12 col-md-3 left-col">
           <div className="car-item mt-3">
             <div className="image-container">
               <img src={car?.thumbnailImg} alt={car?.name} />
