@@ -64,12 +64,12 @@ const Banner: React.FC<BannerProps> = ({
     <Carousel className="Banner with-shadow position-relative" interval={3000} controls={false} indicators={false}>
       <Carousel.Item className="inset-shadow">
         <div className="text-overlay">
-          <div className="banner-text">
+          <div className="banner-text mt-3">
             <h1>Don't Dream Just Drive</h1>
             <p>Find the perfect vehicle for your journey with our convenient booking system.</p>
           </div>
         </div>
-        <img className="bannerImg with-shadow" src="/assets/admin/banner/242725.jpg" alt="banner" />
+        <img className="bannerImg with-shadow vh-100 vw-100" src="/assets/admin/banner/242725.jpg" alt="banner" />
         <div className="selection-T position-absolute translate-middle-y">
           <div>
             <p className="mb-4" style={{ fontWeight: "bold" }}>

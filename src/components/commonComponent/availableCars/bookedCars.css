@@ -12,24 +12,23 @@
 .horizontal-scroll-container {
     display: flex;
     justify-content: center;
-    overflow-x: auto;
     padding: 10px;
     gap: 10px;
     width: 100%;
 }
 
-.horizontal-scroll-container::-webkit-scrollbar {
+/* .horizontal-scroll-container::-webkit-scrollbar {
     height: 8px;
-}
+} */
 
-.horizontal-scroll-container::-webkit-scrollbar-thumb {
+/* .horizontal-scroll-container::-webkit-scrollbar-thumb {
     background-color: #888;
     border-radius: 10px;
 }
 
 .horizontal-scroll-container::-webkit-scrollbar-track {
     background: #f1f1f1;
-}
+} */
 
 .card-wrapper {
     flex-shrink: 0;
@@ -51,8 +50,8 @@
       
       .card-wrapper {
         display: inline-block;
-        width: calc(100% / 3); /* Adjust this to show the number of items you want */
-        margin-right: 10px; /* Adjust the gap between items */
+        width: calc(100% / 3);
+        margin-right: 10px;
       }
 }
 
